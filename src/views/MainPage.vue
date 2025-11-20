@@ -25,12 +25,27 @@
         </iframe>
       </div>
     </section>
+
+    <section class="instagram-showcase">
+      <div class="instagram-header">
+        <h2>Ми в Instagram</h2>
+        <span class="decorative-line"></span>
+      </div>
+
+      <div class="instagram-widget-wrapper">
+        <InstagramFeed />
+      </div>
+    </section>
+
   </div>
 </template>
 
 <script>
+import InstagramFeed from "@/components/InstagramFeed.vue";
+
 export default {
   name: "MainPage",
+  components: {InstagramFeed},
   data() {
     return {
       // Вставте сюди ТІЛЬКИ ID відео (те, що після v= або в посиланні share)

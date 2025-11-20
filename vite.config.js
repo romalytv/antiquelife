@@ -7,7 +7,14 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+      vue({
+          template: {
+              compilerOptions: {
+                  // Кажемо Vue ігнорувати всі теги, що починаються на "behold-"
+                  isCustomElement: (tag) => tag.startsWith('behold-')
+              }
+          }
+      }),
     vueDevTools(),
   ],
   resolve: {

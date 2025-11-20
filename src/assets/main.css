@@ -41,7 +41,8 @@ a:hover {
 /* VIDEO SECTION STYLES    */
 /* ======================= */
 
-.video-showcase {
+.video-showcase,
+.instagram-showcase {
     padding: 60px 20px;
     background-color: var(--color-bg-light); /* Той самий кремовий фон */
     display: flex;
@@ -51,12 +52,14 @@ a:hover {
     border-top: 1px solid rgba(141, 110, 99, 0.2); /* Дуже легка лінія розділення */
 }
 
-.video-header {
+.video-header,
+.instagram-header {
     text-align: center;
     margin-bottom: 40px;
 }
 
-.video-header h2 {
+.video-header h2 ,
+.instagram-header h2 {
     font-family: var(--font-serif); /* Шрифт Aboreto/Serif */
     color: var(--color-text-dark);
     font-size: 2rem;
@@ -94,13 +97,46 @@ a:hover {
     height: 100%;
 }
 
+/* Примусові стилі для Behold Widget */
+behold-widget {
+    width: 100% !important;
+    max-width: 1200px !important;
+    display: block !important;
+    margin: 0 auto;
+    min-height: 300px;
+}
+
+.instagram-widget-wrapper {
+    width: 100%;
+    display: block
+}
+
 /* Адаптивність для мобільних */
 @media (max-width: 768px) {
-    .video-header h2 {
+    .video-header h2,
+    .instagram-header h2 {
         font-size: 1.5rem;
     }
 
     .video-showcase {
-        padding: 40px 15px;
+        padding-top: 40px;     /* Трохи менше зверху */
+        padding-bottom: 0px;   /* Прибираємо відступ знизу, щоб футер був ближче */
     }
+
+    .instagram-showcase {
+        padding-bottom: 10px !important; /* Лишаємо трішки, щоб не прилипло намертво */
+        min-height: auto !important;     /* Забороняємо розтягуватися на весь екран */
+    }
+
+    .instagram-widget-wrapper {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    behold-widget {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+
 }
