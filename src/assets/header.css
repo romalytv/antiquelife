@@ -1,0 +1,211 @@
+/* ======================= */
+/* HEADER */
+/* ======================= */
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 4%;
+    border-bottom: 1px solid #e0e0e0;
+    background: #ffffff;
+
+    /* --- ДОДАНО ДЛЯ "ПРИЛИПАННЯ" --- */
+    position: sticky; /* Змінено з relative */
+    top: 0;           /* Прилипнути до самого верху */
+    width: 100%;      /* Залишатися на повну ширину */
+    z-index: 9999;    /* Бути поверх усього іншого контенту */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.logo-icon {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.logo-icon img {
+    width: 32px;
+    height: auto;
+}
+
+.logo-text-lite {
+    color: #D8C390;
+    font-weight: 300;
+    font-size: 1em;
+    margin-left: 0.25rem;
+}
+
+.main-nav {
+    display: flex;
+    gap: 2.5rem;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Ваші .user-profile, .notification-badge, .cart-icon, .dropdown-arrow
+  залишаються без змін. Я просто скопіював їх для повноти.
+*/
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+}
+
+.notification-badge {
+    background-color: var(--color-notification);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.cart-icon, .dropdown-arrow {
+    font-size: 1.2rem;
+}
+
+.cart-icon img {
+    width: 32px;
+    height: auto;
+}
+
+
+/* ================================== */
+/* НОВИЙ КОД ДЛЯ АДАПТИВНОСТІ (START) */
+/* ================================== */
+
+/* 1. СТИЛІ ДЛЯ ДЕСКТОПУ (за замовчуванням) */
+
+/* Це обгортка, яку ми додали у .vue файлі.
+  На десктопі вона просто групує .main-nav та .user-menu.
+*/
+.header-collapsible-content {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem; /* Використовуємо той самий gap, що й у .main-nav */
+}
+
+/* Ховаємо гамбургер-кнопку на десктопі */
+.hamburger-button {
+    display: none;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333; /* Додамо колір, щоб її було видно */
+}
+
+
+/* 2. СТИЛІ ДЛЯ МОБІЛЬНИХ (Брейкпоінт) */
+
+/* Ви можете змінити 768px на будь-яке потрібне вам "конкретне розширення".
+  Наприклад, 900px.
+*/
+@media (max-width: 768px) {
+
+    /* Показуємо гамбургер-кнопку */
+    .hamburger-button {
+        display: block;
+    }
+
+    /* Ховаємо нашу обгортку (разом з nav і user-menu)
+      і перетворюємо її на випадаюче меню.
+    */
+    .header-collapsible-content {
+        /* ЗАВЖДИ display: flex */
+        display: flex;
+
+        /* СТИЛІ ДЛЯ "ЗАКРИТОГО" СТАНУ */
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+        overflow: hidden;
+        padding-top: 0;
+        padding-bottom: 0;
+        gap: 0;
+
+        /* ПЛАВНИЙ ПЕРЕХІД */
+        transition: max-height 0.3s ease-out,
+        opacity 0.2s ease-in,
+        visibility 0.3s ease-out,
+        padding 0.3s ease-out,
+        gap 0.3s ease-out;
+
+        /* Решта ваших стилів залишається без змін */
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background: white;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        border-top: 1px solid #e0e0e0;
+        flex-direction: column;
+        align-items: stretch;
+
+        /* Горизонтальні відступи залишаємо, а вертикальні анімуємо */
+        padding-left: 20px;
+        padding-right: 20px;
+
+        box-sizing: border-box;
+    }
+
+    /* Цей клас Vue додає, коли isMenuOpen = true
+      Він змушує меню з'явитися.
+    */
+    .header-collapsible-content.is-open {
+        /* Встановлюємо достатню висоту для розкриття */
+        max-height: 100vh;
+
+        /* Робимо видимим */
+        opacity: 1;
+        visibility: visible;
+
+        /* Повертаємо вертикальні відступи та проміжок */
+        padding-top: 20px;
+        padding-bottom: 20px;
+        gap: 20px;
+
+        /* Видаляємо text-align: left; звідси,
+           бо він вже є в .main-nav та .user-menu */
+    }
+
+    /* Перестилізуємо .main-nav та .user-menu всередині мобільного меню
+       (щоб вони теж стали вертикальними)
+    */
+    .main-nav {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        width: 100%;
+        border-bottom: 1px solid #eee; /* Відокремлюємо посилання від кнопок */
+        padding-bottom: 20px;
+    }
+
+    .user-menu {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+/* ================================ */
+/* НОВИЙ КОД ДЛЯ АДАПТИВНОСТІ (END) */
+/* ================================ */

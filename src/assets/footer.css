@@ -1,0 +1,163 @@
+/* Основні кольори та шрифти */
+:root {
+    --bg-color: #FDFBF7; /* Кремовий фон */
+    --text-color: #5E4B45; /* Темно-коричневий текст */
+    --border-color: #5E4B45;
+}
+
+.antique-footer {
+    background-color: #FDFBF7;
+    color: #5E4B45;
+    font-family: 'Garamond', 'Times New Roman', serif; /* Serif шрифт як на фото */
+    border-top: 1px solid #5E4B45; /* Тонка лінія зверху */
+    border-bottom: 1px solid #5E4B45; /* Тонка лінія знизу, якщо треба */
+    padding: 40px 5%; /* Зменшені відступи для "тоншого" вигляду */
+    font-size: 14px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ЛІВА КОЛОНКА */
+.left-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 200px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon img {
+    width: 32px;
+    height: auto;
+}
+
+.highlight {
+    color: #CDBA96; /* Золотистий відтінок для LIFE */
+}
+
+.contact-info p {
+    margin: 2px 0;
+    line-height: 1.4;
+}
+
+/* ПРАВА КОЛОНКА */
+.right-column {
+    flex: 1;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Форма підписки */
+.subscribe-section h3 {
+    font-weight: normal;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.subscribe-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #5E4B45;
+    padding: 5px 0;
+    outline: none;
+    color: #5E4B45;
+    width: 100%;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin: 5px 0;
+}
+
+.submit-btn {
+    background-color: #5E4B45;
+    color: #FDFBF7;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px; /* Округлена кнопка як на фото */
+    cursor: pointer;
+    align-self: flex-start;
+    width: 100%;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+/* Посилання */
+.links-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.links-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.links-col a {
+    color: #5E4B45;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.links-col a:hover {
+    opacity: 0.7;
+}
+
+.copyright {
+    margin-top: 20px;
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+/* Адаптивність для мобільних */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+    }
+
+    .left-column {
+        margin-bottom: 20px;
+    }
+}
