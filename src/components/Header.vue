@@ -35,6 +35,9 @@
       <div class="user-menu">
         <router-link to="/cart" class="cart-icon">
           <img src="/src/public/buy-icon.png" alt="Кошик">
+          <span v-if="cartStore.itemsCount > 0" class="badge">
+            {{ cartStore.itemsCount }}
+          </span>
         </router-link>
       </div>
     </div>
@@ -45,6 +48,9 @@
 <script setup lang="ts">
 // 4. НОВА ЛОГІКА для меню
 import { ref } from 'vue';
+
+import { useCartStore } from '../stores/cart';
+const cartStore = useCartStore();
 
 // Стан для відстеження, чи відкрите мобільне меню
 const isMenuOpen = ref(false);

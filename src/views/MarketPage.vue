@@ -72,9 +72,11 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useCartStore } from '../stores/cart'
 import axios from 'axios';
 
 // Стан
+const cartStore = useCartStore();
 const products = ref([]);
 const loading = ref(true);
 const searchQuery = ref('');
@@ -84,7 +86,8 @@ const selectedCategory = ref('');
 const fetchProducts = async () => {
   loading.value = true;
   try {
-    const response = await axios.get('http://localhost:8080/api/products');
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    const response = await axios.get(`${API_URL}/api/products`);
     products.value = response.data;
   } catch (error) {
     console.error("Помилка отримання товарів:", error);
@@ -126,8 +129,8 @@ const formatPrice = (price) => {
 };
 
 const addToCart = (product) => {
-  console.log("Додано:", product.name);
-  // Тут буде логіка кошика
+  cartStore.addToCart(product);
+
 };
 </script>
 
