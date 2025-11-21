@@ -35,7 +35,106 @@ a:hover {
     color: var(--color-highlight);
 }
 
-/* ... Ваш попередній код ... */
+/* ======================= */
+/* HERO SECTION STYLES     */
+/* ======================= */
+
+.hero-section {
+    /* Займає мінімум 70% висоти екрану для ефекту "обкладинки" */
+    min-height: 70vh;
+    background-color: var(--color-bg-light); /* Ваш кремовий фон */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 20px;
+    position: relative;
+}
+
+.hero-text-content {
+    max-width: 900px; /* Обмежуємо ширину, щоб текст не розпливався */
+    margin: 0 auto;
+    animation: fadeIn 1s ease-out; /* Плавна поява */
+}
+
+/* Заголовок */
+.hero-text-content h1 {
+    font-family: var(--font-serif); /* Aboreto */
+    font-size: 3.5rem; /* Великий розмір */
+    font-weight: 400;  /* Aboreto гарний, коли не жирний */
+    color: var(--color-text-dark);
+    line-height: 1.2;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Виділене слово "Lives" */
+.highlight-text {
+    color: var(--color-highlight); /* Золотистий */
+    font-style: italic; /* Трохи акценту */
+    font-family: 'Merriweather', serif; /* Можна використати інший шрифт для контрасту */
+}
+
+/* Опис (параграф) */
+.hero-description {
+    font-family: var(--font-sans); /* Lato */
+    font-size: 1.25rem; /* Більший за звичайний текст */
+    color: var(--color-text-light);
+    line-height: 1.8; /* Повітря між рядками */
+    max-width: 700px; /* Вужчий за заголовок для естетики */
+    margin: 0 auto 40px auto; /* Центруємо і даємо відступ знизу */
+    font-weight: 300;
+}
+
+/* Кнопка (CTA) */
+.btn-primary {
+    display: inline-block;
+    padding: 15px 40px;
+    border: 1px solid var(--color-text-dark);
+    color: var(--color-text-dark);
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    background: transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-text-dark);
+    color: #fff;
+    border-color: var(--color-text-dark);
+}
+
+/* Анімація появи */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* === АДАПТИВНІСТЬ HERO === */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 50vh; /* На мобільному менша висота */
+        padding: 60px 20px;
+    }
+
+    .hero-text-content h1 {
+        font-size: 2.2rem; /* Менший шрифт заголовка */
+    }
+
+    .hero-description {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .btn-primary {
+        width: 100%; /* Кнопка на всю ширину для зручності пальця */
+        padding: 15px 0;
+    }
+}
 
 /* ======================= */
 /* VIDEO SECTION STYLES    */
@@ -81,12 +180,25 @@ a:hover {
 /* АДАПТИВНИЙ КОНТЕЙНЕР ДЛЯ ВІДЕО (16:9) */
 .video-wrapper {
     position: relative;
-    width: 100%;
-    max-width: 900px; /* Максимальна ширина відео */
-    padding-bottom: 56.25%; /* Пропорція 16:9 (9 / 16 = 0.5625) */
-    height: 0;
-    box-shadow: 0 10px 30px rgba(74, 63, 53, 0.15); /* Тінь для об'єму */
-    border: 1px solid #e0dcd3; /* Тонка рамка */
+
+    /* 1. Прибираємо старий хак з padding-bottom */
+    padding-bottom: 0;
+    height: auto;
+
+    /* 2. Вмикаємо сучасний режим пропорцій */
+    aspect-ratio: 16 / 9;
+
+    /* 3. Логіка розмірів: */
+    width: 100%;        /* Намагайся зайняти всю ширину */
+    max-height: 450px;  /* АЛЕ! Якщо висота досягла 450px - зупинись.
+                           Через aspect-ratio ширина теж перестане рости. */
+
+    margin: 0 auto;     /* Центруємо блок, коли він стане вужчим за екран */
+
+    /* Декор */
+    box-shadow: 0 10px 30px rgba(74, 63, 53, 0.15);
+    border: 1px solid #e0dcd3;
+    background: #000;
 }
 
 .video-wrapper iframe {

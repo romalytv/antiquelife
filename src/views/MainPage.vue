@@ -2,16 +2,25 @@
   <div class="antique-page-container">
     <main class="hero-section">
       <div class="hero-text-content">
-        <h1>The World Where Timeless Beauty <span class="highlight-text">Lives</span></h1>
-        <p>
-          Відкрийте для себе унікальні античні меблі та предмети мистецтва...
+        <h1>
+          The World Where Timeless Beauty
+          <span class="highlight-text">Lives</span>
+        </h1>
+
+        <p class="hero-description">
+          Зануртесь в епоху вишуканості, де кожен предмет — це не просто річ, а німий свідок історії.
+          Ми зібрали колекцію, що зберігає тепло майстрів минулого та додає шляхетності вашому дому.
         </p>
+
+        <div class="hero-actions">
+          <router-link to="/market" class="btn-primary">Переглянути колекцію</router-link>
+        </div>
       </div>
     </main>
 
     <section class="video-showcase" ref="videoSection">
       <div class="video-header">
-        <h2>Discover Our Story</h2>
+        <h2>Відкрийте для себе цікавий світ антикваріату</h2>
         <span class="decorative-line"></span>
       </div>
 
@@ -49,7 +58,7 @@ export default {
   data() {
     return {
       // Вставте сюди ТІЛЬКИ ID відео (те, що після v= або в посиланні share)
-      videoId: "dQw4w9WgXcQ",
+      videoId: "cKiV0p6MhKk",
       isPlaying: false
     };
   },

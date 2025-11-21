@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from "@/views/MainPage.vue";
 import MarketPage from "@/views/MarketPage.vue";
+import ItemPage from "@/views/ItemPage.vue";
 
 // 1. Визначте ваші маршрути (routes)
 const routes = [
@@ -13,7 +14,13 @@ const routes = [
         path: '/market',
         name: 'Market',
         component: MarketPage
-    }
+    },
+    {
+        // :id означає, що сюди прилетить UUID
+        path: '/product/:id',
+        name: 'Item',
+        component: ItemPage
+    },
 ];
 
 // 2. Створіть екземпляр роутера

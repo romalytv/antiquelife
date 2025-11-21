@@ -209,3 +209,145 @@
 /* ================================ */
 /* НОВИЙ КОД ДЛЯ АДАПТИВНОСТІ (END) */
 /* ================================ */
+/* 1. ВАЖЛИВО: БАТЬКІВСЬКИЙ КОНТЕЙНЕР */
+.nav-dropdown-container {
+    position: relative; /* <--- ЦЕ КЛЮЧОВИЙ МОМЕНТ. Без нього меню не знає, де воно. */
+    display: flex;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* 2. САМЕ МЕНЮ */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;  /* Рівно під хедером */
+    right: 0;   /* Притискаємо до ПРАВОГО краю слова "Маркет" */
+    left: auto; /* Скасовуємо ліве вирівнювання */
+
+    /* Розміри */
+    width: 600px; /* Ширина меню */
+    background-color: #fdfaf3;
+
+    /* Сітка 3 колонки */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px 20px;
+
+    /* Стилізація */
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(74, 63, 53, 0.15);
+    border: 1px solid rgba(141, 110, 99, 0.2);
+    border-top: 3px solid #b08d57;
+    list-style: none;
+
+    /* Анімація */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+    transition: all 0.3s ease;
+
+    /* Щоб було поверх відео та слайдерів */
+    z-index: 9999;
+}
+
+/* 3. ПОКАЗ ПРИ НАВЕДЕННІ */
+/* Коли наводимо на контейнер -> показуємо меню */
+.nav-dropdown-container:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* 4. СТИЛІ ПОСИЛАНЬ ВСЕРЕДИНІ */
+.dropdown-menu li a {
+    display: block;
+    color: #4a3f35;
+    text-decoration: none;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.dropdown-menu li a:hover {
+    color: #b08d57;
+    transform: translateX(5px);
+}
+
+/* Приховуємо будь-які старі стрілочки, якщо вони лишились */
+.nav-dropdown-container .nav-link::after {
+    display: none !important;
+}
+
+/* ... ВАШІ СТАРІ СТИЛІ ... */
+
+/* ============================== */
+/* МОБІЛЬНА АДАПТАЦІЯ (ACCORDION) */
+/* ============================== */
+@media (max-width: 768px) {
+
+    /* 1. Робимо контейнер блочним, щоб він займав всю ширину */
+    .nav-dropdown-container {
+        display: block;
+        width: 100%;
+        text-align: center; /* Центруємо слово "Маркет" */
+        height: auto !important;
+        padding: 0; /* Скидаємо відступи */
+    }
+
+    /* 2. Змінюємо стиль самого слова "Маркет" */
+    .nav-dropdown-container .nav-link {
+        display: block;
+        width: 100%;
+        padding: 0px 0; /* Робимо зону кліку більшою */
+    }
+
+    /* 3. ПЕРЕТВОРЕННЯ ВИПАДАЮЧОГО МЕНЮ НА АКОРДЕОН */
+    .dropdown-menu {
+        /* Скасовуємо абсолютне позиціонування! */
+        position: static !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+
+        /* Приховуємо за замовчуванням (display: none) */
+        display: none;
+
+        /* Стиль списку */
+        width: 100%;
+        box-shadow: none; /* Прибираємо тінь */
+        border: none;     /* Прибираємо рамки */
+        border-top: 1px solid rgba(141, 110, 99, 0.1); /* Легка лінія розділення */
+        background-color: transparent; /* Або трохи темніший фон */
+        padding: 0;
+    }
+
+    /* 4. КОЛИ МЕНЮ ВІДКРИТЕ (клас додається через Vue) */
+    .dropdown-menu.is-expanded {
+        display: flex; /* Вмикаємо Flex для вертикального списку */
+        flex-direction: column; /* Одна колонка! */
+        gap: 0; /* Прибираємо відступи сітки */
+    }
+
+    /* 5. Стилізація пунктів списку на мобільному */
+    .dropdown-menu li a {
+        padding: 12px 0;
+        font-size: 0.9rem;
+        color: #5f5f5f;
+        border-bottom: 1px solid rgba(0,0,0,0.03); /* Тонкі лінії між пунктами */
+    }
+
+    /* Ефект при наведенні/кліку */
+    .dropdown-menu li a:hover {
+        background-color: rgba(0,0,0,0.02);
+        transform: none; /* Прибираємо зсув на мобільному */
+        padding-left: 0;
+    }
+
+    /* Вимикаємо ховер-ефект десктопу на мобільному */
+    .nav-dropdown-container:hover .dropdown-menu {
+        /* На мобільному hover не має відкривати меню, тільки клік */
+        /* Але ми вже керуємо display через клас .is-expanded, тому тут ок */
+    }
+}
