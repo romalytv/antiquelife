@@ -1,30 +1,22 @@
 <template>
   <header class="main-header">
-
-    <div class="logo mobile-only">
-      <router-link to="/" class="logo-link">
-        <span class="logo-icon"><img src="/src/public/key_logo.png"/></span>
-        <span class="logo-text">ANTIQUE <span class="logo-text-lite">LIFE</span></span>
-      </router-link>
-    </div>
-
-    <button class="hamburger-button" @click="toggleMenu" :class="{ 'is-active': isMenuOpen }">
-      <span v-if="!isMenuOpen">☰</span>
-      <span v-else>✕</span>
-    </button>
-
     <div class="header-collapsible-content" :class="{ 'is-open': isMenuOpen }">
-
       <div class="centered-nav-group">
-
         <nav class="main-nav">
+
           <div class="nav-dropdown-container">
             <router-link to="/market" class="nav-link" @click="toggleMarket">
               Маркет
             </router-link>
+
             <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
-              <li v-for="category in categories" :key="category.link">
-                <router-link :to="category.link">{{ category.name }}</router-link>
+              <li v-for="cat in categoriesList" :key="cat.category_id">
+                <router-link
+                    :to="{ path: '/market', query: { category: cat.category_name } }"
+                    @click="closeMenu"
+                >
+                  {{ cat.category_name }}
+                </router-link>
               </li>
             </ul>
           </div>
@@ -65,16 +57,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useCartStore } from '../stores/cart';
-const cartStore = useCartStore();
+import axios from 'axios'; // Не забудь імпортувати axios
 
+const cartStore = useCartStore();
 const isMenuOpen = ref(false);
+const isMarketExpanded = ref(false);
+
+// Список категорій (тепер динамічний)
+const categoriesList = ref([]);
+
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
-const isMarketExpanded = ref(false);
+// Функція щоб закривати меню після кліку (для мобілок зручно)
+const closeMenu = () => {
+  isMenuOpen.value = false;
+  isMarketExpanded.value = false;
+};
+
 const toggleMarket = (event: Event) => {
   if (window.innerWidth <= 768) {
     event.preventDefault();
@@ -82,22 +85,20 @@ const toggleMarket = (event: Event) => {
   }
 };
 
-const categories = [
-  { name: 'Антикварні меблі', link: '/market/furniture' },
-  { name: 'Декор та аксесуари', link: '/market/decor' },
-  { name: 'Люстри та світло', link: '/market/lighting' },
-  { name: 'Дзеркала та рами', link: '/market/mirrors' },
-  { name: 'Живописні полотна', link: '/market/painting' },
-  { name: 'Гравюри та графіка', link: '/market/graphics' },
-  { name: 'Старовинні годинники', link: '/market/clocks' },
-  { name: 'Художнє скло', link: '/market/glass' },
-  { name: 'Кераміка та порцеляна', link: '/market/ceramics' },
-  { name: 'Художній метал', link: '/market/metal' },
-  { name: 'Вінтажні прикраси', link: '/market/jewelry' },
-  { name: 'Старовинна оптика', link: '/market/optics' },
-  { name: 'Сакральне мистецтво', link: '/market/sacred' },
-  { name: 'Колекційні цікавинки', link: '/market/other' },
-];
+// ЗАВАНТАЖУЄМО КАТЕГОРІЇ З БЕКЕНДУ
+// Це гарантує, що назви в хедері будуть ідентичні тим, що в базі
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/categories');
+    categoriesList.value = response.data;
+  } catch (error) {
+    console.error("Помилка завантаження категорій в меню", error);
+  }
+};
+
+onMounted(() => {
+  fetchCategories();
+});
 </script>
 
 <style scoped src="/src/assets/header.css"></style>

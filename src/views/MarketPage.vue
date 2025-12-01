@@ -16,8 +16,12 @@
 
         <select v-model="selectedCategory" class="category-select">
           <option value="">Всі категорії</option>
-          <option v-for="cat in uniqueCategories" :key="cat" :value="cat">
-            {{ cat }}
+          <option
+              v-for="category in categoriesList"
+              :key="category.category_id"
+              :value="category.category_name"
+          >
+            {{ category.category_name }}
           </option>
         </select>
       </div>
@@ -40,7 +44,7 @@
 
         <div class="card-info">
       <span class="category-label">
-        {{ product.category ? product.category.categoryName : 'Інше' }}
+        {{ product.category ? product.category.category_name : 'Інше' }}
       </span>
 
           <h3 class="product-name">
@@ -71,66 +75,87 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import {ref, onMounted, computed, watch} from 'vue';
 import { useCartStore } from '../stores/cart'
 import axios from 'axios';
+import {useRoute} from "vue-router";
 
-// Стан
+const route = useRoute(); // Отримуємо доступ до URL
 const cartStore = useCartStore();
 const products = ref([]);
+// 1. Нова змінна для категорій
+const categoriesList = ref([]);
 const loading = ref(true);
 const searchQuery = ref('');
 const selectedCategory = ref('');
 
-// 1. Завантаження даних з Spring Boot
+const API_URL = import.meta.env.VITE_API_URL  || 'http://localhost:8080'; // Краще винести в константу
+
+// Отримання товарів
 const fetchProducts = async () => {
   loading.value = true;
   try {
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
     const response = await axios.get(`${API_URL}/api/products`);
     products.value = response.data;
   } catch (error) {
     console.error("Помилка отримання товарів:", error);
-    alert("Сервер не відповідає. Перевірте, чи запущено Spring Boot.");
   } finally {
     loading.value = false;
   }
 };
 
-onMounted(() => {
-  fetchProducts();
+// 2. Отримання категорій
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/categories`);
+    categoriesList.value = response.data;
+  } catch (error) {
+    console.error("Помилка отримання категорій:", error);
+  }
+};
+
+onMounted(async () => {
+  await fetchProducts();
+  await fetchCategories(); // Запускаємо при завантаженні
+  checkUrlForCategory();
 });
 
-// 2. Логіка фільтрації
+const checkUrlForCategory = () => {
+  if (route.query.category) {
+    // Беремо значення з ?category=... і ставимо в селект
+    selectedCategory.value = route.query.category;
+  } else {
+    selectedCategory.value = ''; // Якщо параметру немає - "Всі категорії"
+  }
+};
+
+// Фільтрація (залишається майже такою ж, бо ми в select передали categoryName)
 const filteredProducts = computed(() => {
   return products.value.filter(product => {
-    // Пошук по назві
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.value.toLowerCase());
 
-    // Фільтр по категорії (перевіряємо назву категорії з вкладеного об'єкта)
-    const categoryName = product.category ? product.category.categoryName : 'Інше';
+    const categoryName = product.category ? product.category.category_name : 'Інше';
+
+    // Якщо вибрано "Всі категорії" (порожній рядок) АБО назва співпадає
     const matchesCategory = selectedCategory.value === '' || categoryName === selectedCategory.value;
 
     return matchesSearch && matchesCategory;
   });
 });
 
-// 3. Автоматично збираємо список категорій з того, що є в товарах
-const uniqueCategories = computed(() => {
-  const categories = products.value
-      .map(p => p.category ? p.category.categoryName : 'Інше')
-      .filter((v, i, a) => a.indexOf(v) === i); // Залишаємо тільки унікальні
-  return categories;
-});
+watch(
+    () => route.query.category,
+    (newCategory) => {
+      selectedCategory.value = newCategory || '';
+    }
+);
 
-// 4. Форматування
 const formatPrice = (price) => {
   return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
 const addToCart = (product) => {
   cartStore.addToCart(product);
-
 };
 </script>
 

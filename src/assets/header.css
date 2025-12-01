@@ -231,6 +231,25 @@
     .mobile-only { display: block; }
     .desktop-only { display: none; } /* Слоган зникає тут */
 
+    .mobile-only .logo-text {
+        font-size: 1.4rem; /* Було 2.5rem, ставимо 1.4rem (або 1.2rem для ще меншого) */
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Відстань між ANTIQUE та LIFE */
+        white-space: nowrap; /* Забороняємо переносити слова на новий рядок */
+    }
+
+    .mobile-only .logo-text-lite {
+        font-size: 1.4rem; /* Такий самий розмір для LIFE */
+        /* Якщо LIFE має бути меншим/тоншим, можна залишити font-weight: 300 */
+    }
+
+    /* Також трохи зменшимо ключик */
+    .mobile-only .logo-icon img {
+        width: 24px; /* Оптимальний розмір для мобільного */
+        margin-right: 8px;
+    }
+
     /* Гамбургер з'являється ТІЛЬКИ тут */
     .hamburger-button {
         display: block;
