@@ -61,6 +61,7 @@ import { ref, onMounted } from 'vue';
 import { useCartStore } from '../stores/cart';
 import axios from 'axios'; // Не забудь імпортувати axios
 
+const API_URL = import.meta.env.VITE_API_URL  || 'http://localhost:8080';
 const cartStore = useCartStore();
 const isMenuOpen = ref(false);
 const isMarketExpanded = ref(false);
@@ -89,7 +90,7 @@ const toggleMarket = (event: Event) => {
 // Це гарантує, що назви в хедері будуть ідентичні тим, що в базі
 const fetchCategories = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/categories');
+    const response = await axios.get(`${API_URL}/api/categories`);
     categoriesList.value = response.data;
   } catch (error) {
     console.error("Помилка завантаження категорій в меню", error);
