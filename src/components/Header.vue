@@ -1,36 +1,55 @@
 <template>
   <header class="main-header">
-    <div class="logo">
-      <span class="logo-icon">
-        <img src="/src/public/key_logo.png"/>
-      </span>
-      <router-link to="/" class="logo-text">ANTIQUE <span class="logo-text-lite">LIFE</span></router-link>
+
+    <div class="logo mobile-only">
+      <router-link to="/" class="logo-link">
+        <span class="logo-icon"><img src="/src/public/key_logo.png"/></span>
+        <span class="logo-text">ANTIQUE <span class="logo-text-lite">LIFE</span></span>
+      </router-link>
     </div>
 
-    <button class="hamburger-button" @click="toggleMenu">
-      ☰
+    <button class="hamburger-button" @click="toggleMenu" :class="{ 'is-active': isMenuOpen }">
+      <span v-if="!isMenuOpen">☰</span>
+      <span v-else>✕</span>
     </button>
 
     <div class="header-collapsible-content" :class="{ 'is-open': isMenuOpen }">
 
-      <nav class="main-nav">
+      <div class="centered-nav-group">
 
-        <div class="nav-dropdown-container">
-          <router-link to="/market" class="nav-link" @click="toggleMarket">
-            Маркет
+        <nav class="main-nav">
+          <div class="nav-dropdown-container">
+            <router-link to="/market" class="nav-link" @click="toggleMarket">
+              Маркет
+            </router-link>
+            <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
+              <li v-for="category in categories" :key="category.link">
+                <router-link :to="category.link">{{ category.name }}</router-link>
+              </li>
+            </ul>
+          </div>
+
+          <router-link to="/news" class="nav-link">Новини</router-link>
+          <router-link to="/contacts" class="nav-link">Контакти</router-link>
+          <router-link to="/ai" class="nav-link">AI</router-link>
+        </nav>
+
+        <div class="desktop-branding desktop-only">
+
+          <router-link to="/" class="logo-link">
+            <span class="logo-text">ANTIQUE <span class="logo-text-lite">LIFE</span></span>
           </router-link>
 
-          <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
-            <li v-for="category in categories" :key="category.link">
-              <router-link :to="category.link">{{ category.name }}</router-link>
-            </li>
-          </ul>
+          <div class="brand-divider"></div>
+
+          <div class="desktop-slogan-block">
+            <span class="slogan-line">ВІНТАЖ ТА СТАРОВИНА</span>
+            <span class="slogan-line">ДЛЯ ВАШОГО ДОМУ ТА КОЛЕКЦІЇ</span>
+          </div>
+
         </div>
 
-        <router-link to="/news" class="nav-link">Новини</router-link>
-        <router-link to="/contacts" class="nav-link">Контакти</router-link>
-        <router-link to="/ai" class="nav-link">AI</router-link>
-      </nav>
+      </div>
 
       <div class="user-menu">
         <router-link to="/cart" class="cart-icon">
@@ -40,34 +59,25 @@
           </span>
         </router-link>
       </div>
-    </div>
 
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
-// 4. НОВА ЛОГІКА для меню
 import { ref } from 'vue';
-
 import { useCartStore } from '../stores/cart';
 const cartStore = useCartStore();
 
-// Стан для відстеження, чи відкрите мобільне меню
 const isMenuOpen = ref(false);
-
-// Функція для перемикання стану (відкрити/закрити)
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
-// --- НОВЕ: Стан для підменю "Маркет" ---
 const isMarketExpanded = ref(false);
-
 const toggleMarket = (event: Event) => {
-  // Ця перевірка важлива: на мобільному ми хочемо відкривати меню,
-  // а не переходити за посиланням одразу
   if (window.innerWidth <= 768) {
-    event.preventDefault(); // Скасовуємо перехід за посиланням
+    event.preventDefault();
     isMarketExpanded.value = !isMarketExpanded.value;
   }
 };
@@ -88,7 +98,6 @@ const categories = [
   { name: 'Сакральне мистецтво', link: '/market/sacred' },
   { name: 'Колекційні цікавинки', link: '/market/other' },
 ];
-
 </script>
 
 <style scoped src="/src/assets/header.css"></style>

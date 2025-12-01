@@ -1,353 +1,305 @@
 /* ======================= */
-/* HEADER */
+/* DESKTOP STYLES */
 /* ======================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
 
 .main-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center; /* Центр */
     padding: 1.5rem 4%;
     border-bottom: 1px solid #e0e0e0;
     background: #ffffff;
-
-    /* --- ДОДАНО ДЛЯ "ПРИЛИПАННЯ" --- */
-    position: sticky; /* Змінено з relative */
-    top: 0;           /* Прилипнути до самого верху */
-    width: 100%;      /* Залишатися на повну ширину */
-    z-index: 9999;    /* Бути поверх усього іншого контенту */
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 9999;
 }
 
-.logo {
+/* Приховуємо гамбургер на десктопі! */
+.hamburger-button {
+    display: none;
+}
+
+/* Центрований блок */
+.header-collapsible-content {
     display: flex;
     align-items: center;
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-weight: 700;
+    width: 100%;
+    justify-content: center;
 }
 
-.logo-icon {
-    margin-right: 0.5rem;
-    font-size: 1.2rem;
-}
-
-.logo-icon img {
-    width: 32px;
-    height: auto;
-}
-
-.logo-text-lite {
-    color: #D8C390;
-    font-weight: 300;
-    font-size: 1em;
-    margin-left: 0.25rem;
+.centered-nav-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Відступ між меню і логотипом */
+    gap: 1.2rem;
 }
 
 .main-nav {
     display: flex;
     gap: 2.5rem;
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: 0.95rem; /* Трохи акуратніше меню */
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.user-menu {
+/* Брендинг (Лого + Слоган) */
+.desktop-branding {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
 }
 
-/* Ваші .user-profile, .notification-badge, .cart-icon, .dropdown-arrow
-  залишаються без змін. Я просто скопіював їх для повноти.
-*/
-.user-profile {
+.desktop-slogan {
+    font-family: var(--font-serif), serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #888;
+    margin: 5px 0 0 0; /* Відступ від лого до слогану */
+    letter-spacing: 0.5px;
+}
+
+/* Логотип */
+.logo-link {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    justify-content: center;
+}
+
+.logo-text {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
     font-weight: 700;
 }
 
-.notification-badge {
-    background-color: var(--color-notification);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: bold;
+.logo-icon img {
+    width: 32px;
+    height: auto;
+    margin-right: 8px;
 }
 
-.cart-icon, .dropdown-arrow {
-    font-size: 1.2rem;
+.logo-text-lite {
+    color: #D8C390;
+    font-weight: 300;
+}
+
+/* User Menu (Кошик) - Абсолютно праворуч */
+.user-menu {
+    position: absolute;
+    right: 4%;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .cart-icon img {
+    width: 26px; /* Трохи менший, акуратніший кошик */
+}
+
+/* Видимість */
+.mobile-only { display: none; }
+.desktop-only { display: block; }
+
+
+/* ======================= */
+/* BRANDING BLOCK (NEW)    */
+/* ======================= */
+
+/* Контейнер для Лого + Лінія + Слоган */
+.desktop-branding {
+    display: flex;
+    flex-direction: row; /* Горизонтальне розташування */
+    align-items: center; /* Центрування по вертикалі */
+    gap: 25px; /* Відстань між логотипом і лінією */
+    margin-top: 10px;
+}
+
+/* 1. Логотип */
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo-text {
+    font-family: 'Cinzel', serif; /* Римський, жирний шрифт */
+    font-size: 2.5rem; /* Великий розмір */
+    font-weight: 700;
+    color: #1a1a1a; /* Чорний колір */
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+.logo-text-lite {
+    /* Робимо слово LIFE таким же шрифтом, але можна змінити колір */
+    font-weight: 700;
+    color: #D8C390; /* Або #D8C390 якщо хочеш золотим */
+}
+
+/* 2. Роздільна лінія */
+.brand-divider {
+    width: 1px;       /* Товщина лінії */
+    height: 45px;     /* Висота лінії */
+    background-color: #D8C390; /* Золотий колір роздільника */
+    opacity: 0.7;
+}
+
+/* 3. Слоган */
+.desktop-slogan-block {
+    display: flex;
+    flex-direction: column; /* Текст у два рядки */
+    align-items: flex-start; /* Вирівнювання по лівому краю */
+    gap: 4px; /* Відстань між рядками */
+}
+
+.slogan-line {
+    font-family: 'Playfair Display', serif; /* Елегантний шрифт */
+    font-size: 1rem;
+    color: #4a4a4a;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+}
+
+/* --- Інші стилі (Навігація, Кошик) залишаються без змін --- */
+
+.main-nav {
+    display: flex;
+    gap: 3rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888; /* Трохи світліший колір для меню, як на фото */
+}
+
+.logo-icon img {
+    /* Якщо десь ще використовується іконка, залишаємо стиль */
     width: 32px;
     height: auto;
 }
 
+/* Видимість */
+.mobile-only { display: none; }
+.desktop-only { display: flex; } /* Важливо: flex, щоб працював row layout */
 
-/* ================================== */
-/* НОВИЙ КОД ДЛЯ АДАПТИВНОСТІ (START) */
-/* ================================== */
-
-/* 1. СТИЛІ ДЛЯ ДЕСКТОПУ (за замовчуванням) */
-
-/* Це обгортка, яку ми додали у .vue файлі.
-  На десктопі вона просто групує .main-nav та .user-menu.
-*/
-.header-collapsible-content {
-    display: flex;
-    align-items: center;
-    gap: 2.5rem; /* Використовуємо той самий gap, що й у .main-nav */
-}
-
-/* Ховаємо гамбургер-кнопку на десктопі */
-.hamburger-button {
-    display: none;
-    font-size: 2rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #333; /* Додамо колір, щоб її було видно */
-}
-
-
-/* 2. СТИЛІ ДЛЯ МОБІЛЬНИХ (Брейкпоінт) */
-
-/* Ви можете змінити 768px на будь-яке потрібне вам "конкретне розширення".
-  Наприклад, 900px.
-*/
-@media (max-width: 768px) {
-
-    /* Показуємо гамбургер-кнопку */
-    .hamburger-button {
-        display: block;
-    }
-
-    /* Ховаємо нашу обгортку (разом з nav і user-menu)
-      і перетворюємо її на випадаюче меню.
-    */
-    .header-collapsible-content {
-        /* ЗАВЖДИ display: flex */
-        display: flex;
-
-        /* СТИЛІ ДЛЯ "ЗАКРИТОГО" СТАНУ */
-        max-height: 0;
-        opacity: 0;
-        visibility: hidden;
-        overflow: hidden;
-        padding-top: 0;
-        padding-bottom: 0;
-        gap: 0;
-
-        /* ПЛАВНИЙ ПЕРЕХІД */
-        transition: max-height 0.3s ease-out,
-        opacity 0.2s ease-in,
-        visibility 0.3s ease-out,
-        padding 0.3s ease-out,
-        gap 0.3s ease-out;
-
-        /* Решта ваших стилів залишається без змін */
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        width: 100%;
-        background: white;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-        border-top: 1px solid #e0e0e0;
-        flex-direction: column;
-        align-items: stretch;
-
-        /* Горизонтальні відступи залишаємо, а вертикальні анімуємо */
-        padding-left: 20px;
-        padding-right: 20px;
-
-        box-sizing: border-box;
-    }
-
-    /* Цей клас Vue додає, коли isMenuOpen = true
-      Він змушує меню з'явитися.
-    */
-    .header-collapsible-content.is-open {
-        /* Встановлюємо достатню висоту для розкриття */
-        max-height: 100vh;
-
-        /* Робимо видимим */
-        opacity: 1;
-        visibility: visible;
-
-        /* Повертаємо вертикальні відступи та проміжок */
-        padding-top: 20px;
-        padding-bottom: 20px;
-        gap: 20px;
-
-        /* Видаляємо text-align: left; звідси,
-           бо він вже є в .main-nav та .user-menu */
-    }
-
-    /* Перестилізуємо .main-nav та .user-menu всередині мобільного меню
-       (щоб вони теж стали вертикальними)
-    */
-    .main-nav {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-        width: 100%;
-        border-bottom: 1px solid #eee; /* Відокремлюємо посилання від кнопок */
-        padding-bottom: 20px;
-    }
-
-    .user-menu {
-        flex-direction: column;
-        gap: 20px;
-    }
-}
-
-/* ================================ */
-/* НОВИЙ КОД ДЛЯ АДАПТИВНОСТІ (END) */
-/* ================================ */
-/* 1. ВАЖЛИВО: БАТЬКІВСЬКИЙ КОНТЕЙНЕР */
-.nav-dropdown-container {
-    position: relative; /* <--- ЦЕ КЛЮЧОВИЙ МОМЕНТ. Без нього меню не знає, де воно. */
-    display: flex;
-    align-items: center;
-    height: 100%;
-    cursor: pointer;
-}
-
-/* 2. САМЕ МЕНЮ */
+/* ======================= */
+/* DROPDOWN MENU */
+/* ======================= */
+/* (Тут без змін, але переконайтесь, що воно є) */
+.nav-dropdown-container { position: relative; cursor: pointer; }
 .dropdown-menu {
     position: absolute;
-    top: 100%;  /* Рівно під хедером */
-    right: 0;   /* Притискаємо до ПРАВОГО краю слова "Маркет" */
-    left: auto; /* Скасовуємо ліве вирівнювання */
-
-    /* Розміри */
-    width: 600px; /* Ширина меню */
+    top: 100%; left: 50%;
+    transform: translateX(-50%) translateY(15px);
+    width: 600px;
     background-color: #fdfaf3;
-
-    /* Сітка 3 колонки */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px 20px;
-
-    /* Стилізація */
+    gap: 15px;
     padding: 25px;
-    box-shadow: 0 10px 25px rgba(74, 63, 53, 0.15);
-    border: 1px solid rgba(141, 110, 99, 0.2);
-    border-top: 3px solid #b08d57;
-    list-style: none;
-
-    /* Анімація */
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(15px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border: 1px solid #e0d0b0;
+    opacity: 0; visibility: hidden;
     transition: all 0.3s ease;
-
-    /* Щоб було поверх відео та слайдерів */
     z-index: 9999;
 }
-
-/* 3. ПОКАЗ ПРИ НАВЕДЕННІ */
-/* Коли наводимо на контейнер -> показуємо меню */
 .nav-dropdown-container:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+    opacity: 1; visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }
-
-/* 4. СТИЛІ ПОСИЛАНЬ ВСЕРЕДИНІ */
 .dropdown-menu li a {
-    display: block;
-    color: #4a3f35;
-    text-decoration: none;
-    font-family: 'Lato', sans-serif;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    transition: color 0.2s, transform 0.2s;
+    text-decoration: none; color: #4a3f35; display: block; text-transform: none;
 }
+.nav-link { text-decoration: none; color: #333; transition: color 0.2s; }
+.nav-link:hover { color: #b08d57; }
 
-.dropdown-menu li a:hover {
-    color: #b08d57;
-    transform: translateX(5px);
-}
 
-/* Приховуємо будь-які старі стрілочки, якщо вони лишились */
-.nav-dropdown-container .nav-link::after {
-    display: none !important;
-}
+/* ================================== */
+/* MOBILE STYLES (Max-width: 768px) */
+/* ================================== */
 
-/* ... ВАШІ СТАРІ СТИЛІ ... */
-
-/* ============================== */
-/* МОБІЛЬНА АДАПТАЦІЯ (ACCORDION) */
-/* ============================== */
 @media (max-width: 768px) {
-
-    /* 1. Робимо контейнер блочним, щоб він займав всю ширину */
-    .nav-dropdown-container {
-        display: block;
-        width: 100%;
-        text-align: center; /* Центруємо слово "Маркет" */
-        height: auto !important;
-        padding: 0; /* Скидаємо відступи */
+    .main-header {
+        justify-content: space-between;
+        padding: 1rem 5%; /* Трохи менші відступи */
     }
 
-    /* 2. Змінюємо стиль самого слова "Маркет" */
-    .nav-dropdown-container .nav-link {
+    .mobile-only { display: block; }
+    .desktop-only { display: none; } /* Слоган зникає тут */
+
+    /* Гамбургер з'являється ТІЛЬКИ тут */
+    .hamburger-button {
         display: block;
-        width: 100%;
-        padding: 0px 0; /* Робимо зону кліку більшою */
+        font-size: 1.6rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 10001; /* Поверх меню */
     }
 
-    /* 3. ПЕРЕТВОРЕННЯ ВИПАДАЮЧОГО МЕНЮ НА АКОРДЕОН */
-    .dropdown-menu {
-        /* Скасовуємо абсолютне позиціонування! */
-        position: static !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        transform: none !important;
-
-        /* Приховуємо за замовчуванням (display: none) */
-        display: none;
-
-        /* Стиль списку */
-        width: 100%;
-        box-shadow: none; /* Прибираємо тінь */
-        border: none;     /* Прибираємо рамки */
-        border-top: 1px solid rgba(141, 110, 99, 0.1); /* Легка лінія розділення */
-        background-color: transparent; /* Або трохи темніший фон */
+    /* Меню випадає */
+    .header-collapsible-content {
+        position: absolute;
+        top: 100%; left: 0; width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        background: #ffffff;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        flex-direction: column;
+        align-items: center;
+        transition: max-height 0.4s ease, opacity 0.3s ease;
         padding: 0;
     }
 
-    /* 4. КОЛИ МЕНЮ ВІДКРИТЕ (клас додається через Vue) */
-    .dropdown-menu.is-expanded {
-        display: flex; /* Вмикаємо Flex для вертикального списку */
-        flex-direction: column; /* Одна колонка! */
-        gap: 0; /* Прибираємо відступи сітки */
+    .header-collapsible-content.is-open {
+        max-height: 80vh;
+        opacity: 1;
+        padding-bottom: 20px;
+        border-top: 1px solid #f0f0f0;
     }
 
-    /* 5. Стилізація пунктів списку на мобільному */
-    .dropdown-menu li a {
-        padding: 12px 0;
-        font-size: 0.9rem;
-        color: #5f5f5f;
-        border-bottom: 1px solid rgba(0,0,0,0.03); /* Тонкі лінії між пунктами */
+    .centered-nav-group {
+        gap: 0;
+        width: 100%;
+        margin-top: 10px;
     }
 
-    /* Ефект при наведенні/кліку */
-    .dropdown-menu li a:hover {
-        background-color: rgba(0,0,0,0.02);
-        transform: none; /* Прибираємо зсув на мобільному */
-        padding-left: 0;
+    .main-nav {
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        width: 100%;
     }
 
-    /* Вимикаємо ховер-ефект десктопу на мобільному */
-    .nav-dropdown-container:hover .dropdown-menu {
-        /* На мобільному hover не має відкривати меню, тільки клік */
-        /* Але ми вже керуємо display через клас .is-expanded, тому тут ок */
+    .nav-link {
+        padding: 15px 0;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 1rem;
+    }
+
+    /* Підменю мобільне */
+    .nav-dropdown-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
+    .dropdown-menu {
+        position: static; width: 100%; display: none;
+        grid-template-columns: 1fr;
+        background: #fcfcfc;
+        box-shadow: none; border: none; padding: 0; transform: none;
+    }
+    .dropdown-menu.is-expanded { display: block; }
+    .dropdown-menu li a { padding: 12px 0; text-align: center; border-bottom: 1px solid #eee; color: #666; }
+
+    /* Кошик у мобільному меню */
+    .user-menu {
+        position: static;
+        transform: none;
+        margin-top: 20px;
     }
 }
