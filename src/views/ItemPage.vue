@@ -46,6 +46,10 @@
             <span class="label">Артикул:</span>
             <span class="value id-text">{{ product.product_id }}</span>
           </div>
+          <div class="spec-row">
+            <span class="label">Кількість на складі:</span>
+            <span class="value id-text">{{ product.quantity }}</span>
+          </div>
         </div>
 
         <div class="description-box">

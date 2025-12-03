@@ -49,6 +49,11 @@
             </div>
 
             <div class="form-group">
+              <label>Кількість (шт)</label>
+              <input v-model="form.quantity" type="number" min="0" required>
+            </div>
+
+            <div class="form-group">
               <label>Категорія</label>
               <select v-model="form.categoryId" required>
                 <option value="" disabled>Оберіть категорію</option>
@@ -161,6 +166,7 @@ const form = ref({
   name: '',
   description: '',
   price: 0,
+  quantity: 1,
   status: 'AVAILABLE',
   epoch: '',
   origin: '',
@@ -208,6 +214,7 @@ const handleSubmit = async () => {
       name: form.value.name,
       description: form.value.description,
       price: form.value.price,
+      quantity: form.value.quantity,
       status: form.value.status,
       epoch: form.value.epoch,
       origin: form.value.origin,
@@ -252,6 +259,7 @@ const editProduct = (item) => {
     name: item.name,
     description: item.description,
     price: item.price,
+    quantity: item.quantity,
     status: item.status,
     epoch: item.epoch,
     origin: item.origin,
