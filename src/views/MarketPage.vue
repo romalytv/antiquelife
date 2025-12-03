@@ -89,7 +89,8 @@ const loading = ref(true);
 const searchQuery = ref('');
 const selectedCategory = ref('');
 
-const API_URL = import.meta.env.VITE_API_URL  || 'http://localhost:8080'; // Краще винести в константу
+const API_URL = import.meta.env.VITE_API_URL;
+const API_URL_LOCAL = 'http://localhost:8080';
 
 // Отримання товарів
 const fetchProducts = async () => {

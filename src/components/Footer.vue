@@ -11,11 +11,10 @@
         </div>
 
         <div class="contact-info">
-          <p>123-456-7890</p>
-          <p>info@mysite.com</p>
+          <p>+33745708919</p>
           <br>
-          <p>500 Terry Francine St.</p>
-          <p>San Francisco, CA 94158</p>
+          <p>France</p>
+          <br>
         </div>
       </div>
 
@@ -47,14 +46,14 @@
             <a href="#">Refund Policy</a>
           </div>
           <div class="links-col">
-            <a href="#">Instagram</a>
-            <a href="#">TikTok</a>
-            <a href="#">Facebook</a>
+            <a href="https://www.instagram.com/france_antique_centre/">Instagram</a>
+            <a href="https://www.tiktok.com/@france_antique_centre">TikTok</a>
+            <a href="https://t.me/franceantique">Telegram</a>
           </div>
         </div>
 
         <div class="copyright">
-          <p>© 2035 by M.Klausen. Powered and secured by Wix</p>
+          <p>© 2025 by Antique Life.</p>
         </div>
 
       </div>

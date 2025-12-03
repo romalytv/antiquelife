@@ -61,7 +61,8 @@ import { ref, onMounted } from 'vue';
 import { useCartStore } from '../stores/cart';
 import axios from 'axios'; // Не забудь імпортувати axios
 
-const API_URL = import.meta.env.VITE_API_URL  || 'http://localhost:8080';
+const API_URL = "https://fit-nonie-roma-litwinyk-86219272.koyeb.app";
+const API_URL_LOCAL = 'http://localhost:8080';
 const cartStore = useCartStore();
 const isMenuOpen = ref(false);
 const isMarketExpanded = ref(false);

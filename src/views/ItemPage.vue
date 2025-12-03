@@ -84,7 +84,8 @@ const product = ref(null);
 onMounted(async () => {
   try {
     const id = route.params.id; // Отримуємо UUID з URL
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    const API_URL = import.meta.env.VITE_API_URL;
+    const API_URL_LOCAL = 'http://localhost:8080';
     const response = await axios.get(`${API_URL}/api/products/${id}`);
     product.value = response.data;
   } catch (error) {
