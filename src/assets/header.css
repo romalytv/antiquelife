@@ -224,8 +224,13 @@
 
 @media (max-width: 768px) {
     .main-header {
+        display: flex;
+        align-items: center;
+        /* Ця властивість розкидає елементи по краях:
+           Перший елемент (Лого) -> Вліво
+           Останній елемент (Кнопка) -> Вправо */
         justify-content: space-between;
-        padding: 1rem 5%; /* Трохи менші відступи */
+        padding: 1rem 5%;
     }
 
     .mobile-only { display: block; }
