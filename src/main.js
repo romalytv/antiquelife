@@ -14,7 +14,7 @@ import router from './router/index.js'; // <--- 1. Імпортуйте ваш �
 import './assets/main.css';
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 // МАГІЯ ТУТ:
 // Перехоплюємо кожен запит перед тим, як він полетить на сервер
