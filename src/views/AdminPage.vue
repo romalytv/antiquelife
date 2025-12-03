@@ -166,9 +166,6 @@ const categories = ref([]);
 const isLoading = ref(false);
 const isEditing = ref(false);
 
-const API_URL = import.meta.env.VITE_API_URL;
-const API_URL_LOCAL = 'http://localhost:8080';
-
 // Дані форми
 const form = ref({
   product_id: null, // Важливо для редагування
@@ -214,11 +211,11 @@ const previewImage = ref(null); // URL для показу картинки пр
 const loadData = async () => {
   try {
     // 1. Отримуємо товари
-    const prodRes = await axios.get(`${API_URL}/admin/products`);
+    const prodRes = await axios.get(`/admin/products`);
     products.value = prodRes.data;
 
     // 2. Отримуємо категорії (для випадаючого списку)
-    const catRes = await axios.get(`${API_URL}/api/categories`);
+    const catRes = await axios.get(`/api/categories`);
     categories.value = catRes.data;
   } catch (error) {
     console.error("Помилка завантаження даних:", error);

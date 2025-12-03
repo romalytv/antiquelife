@@ -26,10 +26,6 @@ const emit = defineEmits(['ai-data-loaded']);
 const loading = ref(false);
 const error = ref('');
 
-// Тепер нам не треба ключ на фронті!
-// const OPENAI_API_KEY = ... (видалити)
-// Адреса вашого бекенду
-const API_URL = import.meta.env.VITE_API_URL;
 
 const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
@@ -48,7 +44,7 @@ const analyzeImage = async () => {
     const base64Image = await fileToBase64(props.file);
 
     // 1. Запит на Java
-    const response = await axios.post(`${API_URL}/admin/ai/scan`, {
+    const response = await axios.post(`/admin/ai/scan`, {
       imageBase64: base64Image
     });
 

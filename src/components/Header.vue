@@ -64,8 +64,6 @@ import { ref, onMounted } from 'vue';
 import { useCartStore } from '../stores/cart';
 import axios from 'axios'; // Не забудь імпортувати axios
 
-const API_URL = "https://fit-nonie-roma-litwinyk-86219272.koyeb.app";
-const API_URL_LOCAL = 'http://localhost:8080';
 const cartStore = useCartStore();
 const isMenuOpen = ref(false);
 const isMarketExpanded = ref(false);
@@ -94,7 +92,7 @@ const toggleMarket = (event: Event) => {
 // Це гарантує, що назви в хедері будуть ідентичні тим, що в базі
 const fetchCategories = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/categories`);
+    const response = await axios.get(`/api/categories`);
     categoriesList.value = response.data;
   } catch (error) {
     console.error("Помилка завантаження категорій в меню", error);

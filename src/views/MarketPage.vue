@@ -89,14 +89,12 @@ const loading = ref(true);
 const searchQuery = ref('');
 const selectedCategory = ref('');
 
-const API_URL = import.meta.env.VITE_API_URL;
-const API_URL_LOCAL = 'http://localhost:8080';
 
 // Отримання товарів
 const fetchProducts = async () => {
   loading.value = true;
   try {
-    const response = await axios.get(`${API_URL}/api/products`);
+    const response = await axios.get(`/api/products`);
     products.value = response.data;
   } catch (error) {
     console.error("Помилка отримання товарів:", error);
@@ -108,7 +106,7 @@ const fetchProducts = async () => {
 // 2. Отримання категорій
 const fetchCategories = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/categories`);
+    const response = await axios.get(`/api/categories`);
     categoriesList.value = response.data;
   } catch (error) {
     console.error("Помилка отримання категорій:", error);
