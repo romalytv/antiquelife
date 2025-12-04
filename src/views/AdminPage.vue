@@ -44,11 +44,12 @@
             </div>
           </div>
 
-          <AiScanner
-              v-if="fileToUpload"
-              :file="fileToUpload"
-              @ai-data-loaded="handleAiData"
-          />
+          <div v-if="filesToUpload.length > 0" class="ai-wrapper">
+            <AiScanner
+                :files="filesToUpload"
+                @ai-data-loaded="handleAiData"
+            />
+          </div>
 
           <div class="form-grid">
             <div class="form-group">
@@ -98,7 +99,13 @@
 
           <div class="form-group full-width">
             <label>Опис</label>
-            <textarea v-model="form.description" rows="5"></textarea>
+            <textarea
+                ref="textareaRef"
+                v-model="form.description"
+                @input="autoResize"
+                class="auto-expand-textarea"
+                placeholder="Введіть опис товару..."
+            ></textarea>
           </div>
 
           <div class="form-actions">
@@ -166,7 +173,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import AiScanner from '../components/AIScanner.vue';
@@ -178,6 +185,7 @@ const products = ref([]);
 const categories = ref([]);
 const isLoading = ref(false);
 const isEditing = ref(false);
+const textareaRef = ref(null);
 
 // Дані форми
 const form = ref({
@@ -195,6 +203,23 @@ const form = ref({
 // Стан для файлів
 const filesToUpload = ref([]); // Нові файли (File[])
 const previewImages = ref([]); // Всі посилання для показу (String[])
+
+const autoResize = () => {
+  const element = textareaRef.value;
+  if (!element) return;
+
+  // 1. Скидаємо висоту, щоб правильно перерахувати зменшення
+  element.style.height = 'auto';
+
+  // 2. Ставимо висоту рівну контенту (scrollHeight)
+  element.style.height = element.scrollHeight + 'px';
+};
+
+// Слідкуємо за зміною опису (це спрацює, коли AI заповнить поле)
+watch(() => form.value.description, async () => {
+  await nextTick(); // Чекаємо, поки текст з'явиться в DOM
+  autoResize();
+});
 
 // --- AI ---
 const handleAiData = (aiData) => {
@@ -218,22 +243,34 @@ const handleAiData = (aiData) => {
 
 // --- РОБОТА З ФАЙЛАМИ (ГАЛЕРЕЯ) ---
 const handleFileSelect = (event) => {
+  // 1. Отримуємо файли з input (це FileList, перетворюємо в Array)
   const newFiles = Array.from(event.target.files);
+
+  // Якщо файлів немає (наприклад, натиснули Cancel), виходимо
+  if (!newFiles.length) return;
+
   const totalCount = previewImages.value.length + newFiles.length;
 
   if (totalCount > 10) {
-    alert(`Ліміт 10 фото. Ви намагаєтесь додати ще ${newFiles.length}, а вже є ${previewImages.value.length}.`);
+    alert(`Ліміт 10 фото. Ви вже маєте ${previewImages.value.length}.`);
     event.target.value = '';
     return;
   }
 
+  // 2. Додаємо файли в масиви
   newFiles.forEach(file => {
+    // filesToUpload - це масив об'єктів File (для відправки на сервер)
     filesToUpload.value.push(file);
-    // Створюємо тимчасове посилання для прев'ю
+
+    // previewImages - це масив рядків URL (для показу на екрані)
     previewImages.value.push(URL.createObjectURL(file));
   });
 
-  event.target.value = ''; // Очищаємо інпут
+  // 3. Скидаємо input, щоб можна було додати ті самі файли ще раз
+  event.target.value = '';
+
+  // ДЕБАГ: Виводимо в консоль, щоб перевірити
+  console.log("Files uploaded:", filesToUpload.value);
 };
 
 const removeImage = (index) => {
@@ -447,6 +484,27 @@ onMounted(loadData);
   overflow-x: auto; /* На випадок якщо таблиця все ж широка */
 }
 
+.auto-expand-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+
+  /* Магія для авто-розширення */
+  resize: none; /* Забороняємо ручне розтягування */
+  overflow-y: hidden; /* Ховаємо скролбар */
+  min-height: 100px; /* Початкова висота */
+  transition: border-color 0.2s;
+}
+
+.auto-expand-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
 .image-upload-container {
   width: 100%; min-height: 160px; /* Трохи менша висота */
   border: 2px dashed #cbd5e0; border-radius: 8px;
@@ -540,6 +598,12 @@ input, select, textarea {
     width: 100%;
     min-width: auto;
     position: static;
+  }
+
+  .auto-expand-textarea {
+    /* 16px - це стандарт для iOS/Android, щоб браузер не робив зум при натисканні */
+    font-size: 16px;
+    padding: 15px; /* Більші відступи для пальців */
   }
 
   /* 2. Поля форми в одну колонку */
