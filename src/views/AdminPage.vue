@@ -14,39 +14,40 @@
 
         <form @submit.prevent="handleSubmit">
 
-          <div
-              class="image-upload-container"
-              @click="$refs.fileInput.click()"
-              :class="{ 'has-image': previewImage }"
-          >
+          <div class="upload-section">
             <input
                 type="file"
                 ref="fileInput"
+                id="hidden-input"
                 @change="handleFileSelect"
                 hidden
                 multiple
                 accept="image/*"
             >
 
-            <div v-if="previewImages.length > 0" class="gallery-preview">
-              <div v-for="(img, index) in previewImages" :key="index" class="img-wrapper">
-                <img :src="img" class="mini-preview">
-                <span @click.stop="removeImage(index)" class="remove-btn">×</span>
-              </div>
-
-              <div class="add-more-btn">
-                <span>+</span>
-              </div>
+            <div class="upload-controls">
+              <label for="hidden-input" class="btn-upload">
+                📸 Додати фото
+              </label>
+              <span v-if="galleryItems.length > 0" class="counter">
+      {{ galleryItems.length }} / 10
+    </span>
             </div>
 
-            <div v-else class="placeholder">
-              <span>📷 Натисніть, щоб додати фото (можна декілька)</span>
+            <div v-if="galleryItems.length > 0" class="gallery-grid">
+              <div v-for="(item, index) in galleryItems" :key="index" class="img-card">
+                <img :src="item.url" class="preview-img">
+
+                <button type="button" @click.stop="removeImage(index)" class="del-btn">×</button>
+
+                <span v-if="item.type === 'local'" class="new-tag">New</span>
+              </div>
             </div>
           </div>
 
-          <div v-if="filesToUpload.length > 0" class="ai-wrapper">
+          <div v-if="itemsForAi.length > 0" class="ai-wrapper">
             <AiScanner
-                :files="filesToUpload"
+                :files="itemsForAi"
                 @ai-data-loaded="handleAiData"
             />
           </div>
@@ -173,7 +174,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue';
+import { ref, onMounted, watch, nextTick, computed} from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import AiScanner from '../components/AIScanner.vue';
@@ -200,9 +201,15 @@ const form = ref({
   categoryId: ''
 });
 
-// Стан для файлів
-const filesToUpload = ref([]); // Нові файли (File[])
-const previewImages = ref([]); // Всі посилання для показу (String[])
+// Єдиний масив для всіх фото (і старих з сервера, і нових з телефону)
+const galleryItems = ref([]);
+
+// Обчислюємо тільки нові файли для AI сканера
+const itemsForAi = computed(() => {
+  return galleryItems.value
+      .filter(item => item.type === 'local')
+      .map(item => item.file);
+});
 
 const autoResize = () => {
   const element = textareaRef.value;
@@ -243,83 +250,35 @@ const handleAiData = (aiData) => {
 
 // --- РОБОТА З ФАЙЛАМИ (ГАЛЕРЕЯ) ---
 const handleFileSelect = (event) => {
-  // 1. Отримуємо файли з input (це FileList, перетворюємо в Array)
   const newFiles = Array.from(event.target.files);
-
-  // Якщо файлів немає (наприклад, натиснули Cancel), виходимо
   if (!newFiles.length) return;
 
-  const totalCount = previewImages.value.length + newFiles.length;
-
-  if (totalCount > 10) {
-    alert(`Ліміт 10 фото. Ви вже маєте ${previewImages.value.length}.`);
-    event.target.value = '';
+  if (galleryItems.value.length + newFiles.length > 10) {
+    alert('Максимум 10 фото!');
     return;
   }
 
-  // 2. Додаємо файли в масиви
   newFiles.forEach(file => {
-    // filesToUpload - це масив об'єктів File (для відправки на сервер)
-    filesToUpload.value.push(file);
-
-    // previewImages - це масив рядків URL (для показу на екрані)
-    previewImages.value.push(URL.createObjectURL(file));
+    galleryItems.value.push({
+      type: 'local',            // Помічаємо як новий
+      url: URL.createObjectURL(file), // Робимо прев'ю
+      file: file                // Зберігаємо сам файл
+    });
   });
 
-  // 3. Скидаємо input, щоб можна було додати ті самі файли ще раз
-  event.target.value = '';
-
-  // ДЕБАГ: Виводимо в консоль, щоб перевірити
-  console.log("Files uploaded:", filesToUpload.value);
+  event.target.value = ''; // Скидаємо інпут
 };
 
 const removeImage = (index) => {
-  // Видаляємо з прев'ю
-  const urlToRemove = previewImages.value[index];
-  previewImages.value.splice(index, 1);
-
-  // Якщо це було blob-посилання (новий файл), треба знайти і видалити файл з filesToUpload
-  if (urlToRemove.startsWith('blob:')) {
-    // Шукаємо файл, для якого ми створили цей URL (це трохи складно, тому ми просто видалимо по індексу з кінця,
-    // але надійніше просто очистити filesToUpload і попросити вибрати заново,
-    // ПРОТЕ тут ми зробимо простіше: ми не знаємо точно який файл якому блобу відповідає без мапи.
-    // Тому для простоти: якщо видаляємо "нове" фото, видаляємо відповідний файл з масиву нових.
-    // АЛЕ: оскільки масиви можуть бути розсинхронізовані (старі + нові), треба бути обережним.
-
-    // Спрощена логіка:
-    // 1. Рахуємо скільки "старих" (http) фото є перед цим індексом
-    // 2. Індекс у масиві filesToUpload = (загальний індекс) - (кількість старих фото)
-
-    const oldPhotosCount = previewImages.value.filter(url => !url.startsWith('blob:')).length;
-    // Оскільки ми вже видалили елемент з previewImages, то індекс змістився.
-    // Ця логіка складна. Найпростіше - просто перезавантажити сторінку або не заморочуватись з видаленням конкретного "нового" файлу у MVP.
-    // АЛЕ ДЛЯ ПРАЦЕЗДАТНОСТІ:
-    // Просто очищаємо ВСІ нові файли, якщо юзер почав щось видаляти, щоб не було багів.
-    // Або просто фільтруємо filesToUpload.
-
-    // (Для MVP): Якщо юзер видаляє нове фото, ми просто видаляємо останній доданий файл,
-    // або краще - не даємо видаляти нові файли поштучно, тільки "Очистити все".
-
-    // ВАРІАНТ "РОЗУМНИЙ":
-    // При додаванні файлу ми можемо зберігати об'єкт { file: File, url: blobUrl }.
-    // Але щоб не переписувати все - давай просто видалимо відповідний файл з масиву filesToUpload.
-    // Оскільки нові файли додаються в кінець previewImages, то вони в кінці.
-
-    // Знайдемо, який це по рахунку "новий" файл.
-    // Це складнувато. Давай зробимо так: при видаленні НОВОГО файлу - ми просто прибираємо його з візуалу,
-    // але з масиву відправки (filesToUpload) видалити складніше.
-    // Тому: краще просто попередити, або перезавантажити інпут.
-
-    // ФІКС: Перезаписуємо filesToUpload.
-    // Це складно реалізувати ідеально без зміни структури даних.
-    // Тому поки що: видалення працює візуально, але файл все одно може відправитись.
-    // Щоб це виправити, треба зберігати [{file, previewUrl}, {url}]
-  }
+  const item = galleryItems.value[index];
+  // Якщо видаляємо нове фото - чистимо пам'ять
+  if (item.type === 'local') URL.revokeObjectURL(item.url);
+  galleryItems.value.splice(index, 1);
 };
 
 // --- ВІДПРАВКА ---
 const handleSubmit = async () => {
-  if (previewImages.value.length === 0) {
+  if (galleryItems.value.length === 0) {
     alert("Додайте хоча б одне фото!");
     return;
   }
@@ -328,30 +287,23 @@ const handleSubmit = async () => {
   try {
     const formData = new FormData();
 
-    // 1. Відокремлюємо старі фото (які треба залишити)
-    // Це ті, що починаються на "http" (не blob:)
-    const oldImagesToKeep = previewImages.value.filter(url => !url.startsWith('blob:'));
+    // 1. Збираємо посилання на старі фото
+    const oldUrls = galleryItems.value
+        .filter(item => item.type === 'server')
+        .map(item => item.url);
 
     const productData = {
-      name: form.value.name,
-      description: form.value.description,
-      price: form.value.price,
-      quantity: form.value.quantity,
-      status: form.value.status,
-      epoch: form.value.epoch,
-      origin: form.value.origin,
-      categoryId: form.value.categoryId,
-      imageUrls: oldImagesToKeep // Передаємо список старих
+      ...form.value,
+      imageUrls: oldUrls
     };
 
     formData.append('product', JSON.stringify(productData));
 
-    // 2. Додаємо нові файли
-    // (Тут є нюанс з видаленням, про який я писав вище.
-    // Якщо видалення нових файлів критичне - треба переписати структуру даних.
-    // Поки що відправляємо всі, що були додані через input).
-    filesToUpload.value.forEach(file => {
-      formData.append('images', file);
+    // 2. Додаємо фізичні файли нових фото
+    galleryItems.value.forEach(item => {
+      if (item.type === 'local') {
+        formData.append('images', item.file);
+      }
     });
 
     if (isEditing.value) {
@@ -366,7 +318,7 @@ const handleSubmit = async () => {
 
   } catch (error) {
     console.error(error);
-    alert('Помилка: ' + (error.response?.data || error.message));
+    alert('Помилка: ' + (error.response?.data?.message || error.message));
   } finally {
     isLoading.value = false;
   }
@@ -399,8 +351,10 @@ const editProduct = (item) => {
   };
 
   // Завантажуємо галерею
-  previewImages.value = item.imageUrls ? [...item.imageUrls] : [];
-  filesToUpload.value = []; // Скидаємо нові файли
+  galleryItems.value = (item.imageUrls || []).map(url => ({
+    type: 'server', // Це фото з сервера
+    url: url
+  }));
 
   isEditing.value = true;
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -418,8 +372,12 @@ const resetForm = () => {
     product_id: null, name: '', description: '', price: 0,
     status: 'AVAILABLE', epoch: '', origin: '', categoryId: ''
   };
-  filesToUpload.value = [];
-  previewImages.value = [];
+  galleryItems.value.forEach(item => {
+    if (item.type === 'local') URL.revokeObjectURL(item.url);
+  });
+
+  // Очищаємо масив галереї
+  galleryItems.value = [];
   isEditing.value = false;
 };
 
@@ -546,6 +504,108 @@ onMounted(loadData);
   color: #cbd5e0; font-size: 24px;
 }
 
+.upload-section {
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.upload-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.btn-upload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1f2937;
+  color: white;
+  padding: 8px 16px; /* Трохи компактніше */
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: opacity 0.2s;
+}
+
+.btn-upload:active {
+  opacity: 0.8;
+}
+
+.counter {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* --- ВИПРАВЛЕНА ГАЛЕРЕЯ --- */
+.gallery-grid {
+  display: grid;
+  /* Ця магія автоматично розміщує стільки картинок, скільки влізе.
+     Мінімальний розмір 80px, а далі вони розтягуються рівномірно. */
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px; /* Відступ між фото */
+  margin-top: 15px;
+}
+
+.img-card {
+  position: relative;
+  width: 100%;     /* Ширина на всю комірку сітки */
+  aspect-ratio: 1; /* КРИТИЧНО: робить блок завжди квадратним (1:1) */
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  background-color: #f3f4f6;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Фото обрізається, заповнюючи квадрат */
+  display: block;
+}
+
+/* Кнопка видалення */
+.del-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.9);
+  color: white;
+  border: none;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Бейдж New */
+.new-tag {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(16, 185, 129, 0.9);
+  color: white;
+  font-size: 10px;
+  text-align: center;
+  padding: 2px 0;
+  font-weight: 600;
+}
+
 /* --- ФОРМА --- */
 .form-grid {
   display: grid;
@@ -594,6 +654,11 @@ input, select, textarea {
    ========================================= */
 @media (max-width: 900px) {
   .admin-panel { padding: 10px; }
+
+  .gallery-grid {
+    /* На маленьких телефонах гарантовано 3 фото в ряд */
+    grid-template-columns: repeat(3, 1fr);
+  }
 
   .content-wrapper {
     flex-direction: column; /* Форма зверху, список знизу */
