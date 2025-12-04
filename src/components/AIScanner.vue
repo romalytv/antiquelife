@@ -11,7 +11,14 @@
       <span v-else>✨ Розпізнати {{ files.length }} фото через AI</span>
     </button>
 
-    <div v-if="error" class="error-msg">{{ error }}</div>
+    <div v-if="humanError" class="error-alert">
+      <div class="error-icon">⚠️</div>
+      <div class="error-content">
+        <strong>Упс! Не вдалося розпізнати:</strong>
+        <p>{{ humanError }}</p>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -19,7 +26,6 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-// 👇 Приймаємо масив файлів
 const props = defineProps({
   files: {
     type: Array,
@@ -28,9 +34,10 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['ai-data-loaded']);
+const emit = defineEmits(['ai-data-loaded', 'ai-error']);
+
 const loading = ref(false);
-const error = ref('');
+const humanError = ref(''); // Тут буде текст для користувача
 
 const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
@@ -45,32 +52,73 @@ const analyzeImage = async () => {
   if (!props.files || props.files.length === 0) return;
 
   loading.value = true;
-  error.value = '';
+  humanError.value = ''; // Очищаємо попередні помилки
 
   try {
-    // 1. Конвертуємо всі фото в Base64
     const promises = props.files.map(file => fileToBase64(file));
     const base64Images = await Promise.all(promises);
 
-    // 2. Відправляємо масив на сервер
-    // (Шлях axios вже налаштований у main.js, тому просто /admin/ai/scan)
     const response = await axios.post('/admin/ai/scan', {
       images: base64Images
     });
 
-    // 3. Парсимо відповідь
+    // Перевірка на пусту відповідь
     const rawContent = response.data.output?.[0]?.content?.[0]?.text;
-    if (!rawContent) throw new Error("Пуста відповідь від AI");
+    if (!rawContent) throw new Error("EMPTY_RESPONSE");
 
     const cleanJson = rawContent.replace(/```json|```/g, '').trim();
-    console.log("AI RAW RESPONSE:", response.data);
-    const parsedData = JSON.parse(cleanJson);
+
+    let parsedData;
+    try {
+      parsedData = JSON.parse(cleanJson);
+    } catch (e) {
+      throw new Error("JSON_PARSE_ERROR");
+    }
 
     emit('ai-data-loaded', parsedData);
 
   } catch (err) {
-    console.error(err);
-    error.value = 'Помилка аналізу. Перевірте консоль.';
+    console.error("AI Error:", err);
+
+    // --- ГОЛОВНА ЛОГІКА РОЗШИФРОВКИ ПОМИЛОК ---
+
+    if (axios.isAxiosError(err) && err.response) {
+      // Помилки, які прийшли від сервера (OpenAI або ваш бекенд)
+      const status = err.response.status;
+
+      switch (status) {
+        case 429:
+          humanError.value = "⏳ Забагато запитів. Ліміт AI вичерпано. Будь ласка, зачекайте хвилину і спробуйте знову.";
+          break;
+        case 413:
+          humanError.value = "🐘 Фотографії занадто важкі. Спробуйте завантажити менше фото або зменшити їх розмір.";
+          break;
+        case 500:
+        case 502:
+        case 503:
+          humanError.value = "🔥 Сервер AI зараз перевантажений або не відповідає. Спробуйте ще раз пізніше.";
+          break;
+        case 401:
+        case 403:
+          humanError.value = "🔑 Проблема з доступом (API Key). Скажіть розробнику, що ключ не працює.";
+          break;
+        default:
+          humanError.value = `❌ Невідома помилка сервера (Код: ${status}).`;
+      }
+    } else if (err.code === "ERR_NETWORK") {
+      // Немає інтернету
+      humanError.value = "📡 Немає зв'язку з інтернетом. Перевірте з'єднання.";
+    } else if (err.message === "JSON_PARSE_ERROR") {
+      humanError.value = "🥴 AI відповів щось незрозуміле. Спробуйте ще раз (іноді він помиляється у форматі).";
+    } else if (err.message === "EMPTY_RESPONSE") {
+      humanError.value = "📭 AI нічого не відповів. Можливо, фото поганої якості?";
+    } else {
+      // Інші помилки
+      humanError.value = "Щось пішло не так: " + err.message;
+    }
+
+    // Все одно передаємо нагору, якщо батьківському компоненту це треба
+    emit('ai-error', err);
   } finally {
     loading.value = false;
   }
