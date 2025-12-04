@@ -34,14 +34,19 @@
           class="product-card"
       >
         <div class="image-container">
-          <router-link :to="{ name: 'Item', params: { id: product.productId || product.product_id }}">
-            <img :src="product.image_path" :alt="product.name" loading="lazy" />
+          <router-link :to="{ name: 'Item', params: { id: product.product_id || product.product_id }}">
+
+            <img
+                :src="(product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : '/placeholder.png'"
+                :alt="product.name"
+                loading="lazy"
+            />
+
           </router-link>
 
           <span v-if="product.status === 'sold'" class="status-badge sold">Продано</span>
           <span v-else-if="product.status === 'reserved'" class="status-badge reserved">Резерв</span>
         </div>
-
         <div class="card-info">
       <span class="category-label">
         {{ product.category ? product.category.category_name : 'Інше' }}

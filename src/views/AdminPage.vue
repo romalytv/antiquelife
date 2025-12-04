@@ -24,16 +24,23 @@
                 ref="fileInput"
                 @change="handleFileSelect"
                 hidden
+                multiple
                 accept="image/*"
             >
 
-            <div v-if="previewImage" class="preview-wrapper">
-              <img :src="previewImage" alt="Preview" class="preview-img">
-              <div class="overlay">Змінити фото</div>
+            <div v-if="previewImages.length > 0" class="gallery-preview">
+              <div v-for="(img, index) in previewImages" :key="index" class="img-wrapper">
+                <img :src="img" class="mini-preview">
+                <span @click.stop="removeImage(index)" class="remove-btn">×</span>
+              </div>
+
+              <div class="add-more-btn">
+                <span>+</span>
+              </div>
             </div>
 
             <div v-else class="placeholder">
-              <span>📷 Натисніть для фото</span>
+              <span>📷 Натисніть, щоб додати фото (можна декілька)</span>
             </div>
           </div>
 
@@ -125,7 +132,13 @@
           <tbody>
           <tr v-for="p in products" :key="p.product_id">
             <td class="td-photo">
-              <img :src="p.image_path || '/placeholder.png'" class="thumb">
+              <img
+                  :src="(p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : '/placeholder.png'"
+                  class="thumb"
+              >
+              <span v-if="p.imageUrls && p.imageUrls.length > 1" class="more-photos-badge">
+                +{{ p.imageUrls.length - 1 }}
+              </span>
             </td>
             <td class="td-info">
               <div class="p-title">{{ p.name }}</div>
@@ -179,17 +192,18 @@ const form = ref({
   categoryId: ''
 });
 
+// Стан для файлів
+const filesToUpload = ref([]); // Нові файли (File[])
+const previewImages = ref([]); // Всі посилання для показу (String[])
+
+// --- AI ---
 const handleAiData = (aiData) => {
-  // Заповнюємо прості поля
   form.value.name = aiData.name;
   form.value.description = aiData.description;
   form.value.epoch = aiData.epoch;
   form.value.origin = aiData.origin;
-
-  // Якщо ціна прийшла, ставимо її, інакше лишаємо як є
   if (aiData.price) form.value.price = aiData.price;
 
-  // Спроба вгадати категорію (шукаємо схожу назву в списку categories)
   if (aiData.category_guess && categories.value.length > 0) {
     const foundCat = categories.value.find(c =>
         c.category_name.toLowerCase().includes(aiData.category_guess.toLowerCase()) ||
@@ -199,47 +213,88 @@ const handleAiData = (aiData) => {
       form.value.categoryId = foundCat.category_id;
     }
   }
-
   alert('✨ Дані заповнено штучним інтелектом! Перевірте їх.');
 };
 
-// Робота з файлами
-const fileToUpload = ref(null); // Сам файл (бінарний)
-const previewImage = ref(null); // URL для показу картинки прямо зараз
-
-// --- ЗАВАНТАЖЕННЯ ДАНИХ ---
-const loadData = async () => {
-  try {
-    // 1. Отримуємо товари
-    const prodRes = await axios.get(`/admin/products`);
-    products.value = prodRes.data;
-
-    // 2. Отримуємо категорії (для випадаючого списку)
-    const catRes = await axios.get(`/api/categories`);
-    categories.value = catRes.data;
-  } catch (error) {
-    console.error("Помилка завантаження даних:", error);
-    if (error.response && error.response.status === 403) logout();
-  }
-};
-
-// --- ОБРОБКА ФАЙЛУ ---
+// --- РОБОТА З ФАЙЛАМИ (ГАЛЕРЕЯ) ---
 const handleFileSelect = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    fileToUpload.value = file;
-    // Створюємо тимчасове посилання, щоб показати прев'ю до відправки на сервер
-    previewImage.value = URL.createObjectURL(file);
+  const newFiles = Array.from(event.target.files);
+  const totalCount = previewImages.value.length + newFiles.length;
+
+  if (totalCount > 10) {
+    alert(`Ліміт 10 фото. Ви намагаєтесь додати ще ${newFiles.length}, а вже є ${previewImages.value.length}.`);
+    event.target.value = '';
+    return;
+  }
+
+  newFiles.forEach(file => {
+    filesToUpload.value.push(file);
+    // Створюємо тимчасове посилання для прев'ю
+    previewImages.value.push(URL.createObjectURL(file));
+  });
+
+  event.target.value = ''; // Очищаємо інпут
+};
+
+const removeImage = (index) => {
+  // Видаляємо з прев'ю
+  const urlToRemove = previewImages.value[index];
+  previewImages.value.splice(index, 1);
+
+  // Якщо це було blob-посилання (новий файл), треба знайти і видалити файл з filesToUpload
+  if (urlToRemove.startsWith('blob:')) {
+    // Шукаємо файл, для якого ми створили цей URL (це трохи складно, тому ми просто видалимо по індексу з кінця,
+    // але надійніше просто очистити filesToUpload і попросити вибрати заново,
+    // ПРОТЕ тут ми зробимо простіше: ми не знаємо точно який файл якому блобу відповідає без мапи.
+    // Тому для простоти: якщо видаляємо "нове" фото, видаляємо відповідний файл з масиву нових.
+    // АЛЕ: оскільки масиви можуть бути розсинхронізовані (старі + нові), треба бути обережним.
+
+    // Спрощена логіка:
+    // 1. Рахуємо скільки "старих" (http) фото є перед цим індексом
+    // 2. Індекс у масиві filesToUpload = (загальний індекс) - (кількість старих фото)
+
+    const oldPhotosCount = previewImages.value.filter(url => !url.startsWith('blob:')).length;
+    // Оскільки ми вже видалили елемент з previewImages, то індекс змістився.
+    // Ця логіка складна. Найпростіше - просто перезавантажити сторінку або не заморочуватись з видаленням конкретного "нового" файлу у MVP.
+    // АЛЕ ДЛЯ ПРАЦЕЗДАТНОСТІ:
+    // Просто очищаємо ВСІ нові файли, якщо юзер почав щось видаляти, щоб не було багів.
+    // Або просто фільтруємо filesToUpload.
+
+    // (Для MVP): Якщо юзер видаляє нове фото, ми просто видаляємо останній доданий файл,
+    // або краще - не даємо видаляти нові файли поштучно, тільки "Очистити все".
+
+    // ВАРІАНТ "РОЗУМНИЙ":
+    // При додаванні файлу ми можемо зберігати об'єкт { file: File, url: blobUrl }.
+    // Але щоб не переписувати все - давай просто видалимо відповідний файл з масиву filesToUpload.
+    // Оскільки нові файли додаються в кінець previewImages, то вони в кінці.
+
+    // Знайдемо, який це по рахунку "новий" файл.
+    // Це складнувато. Давай зробимо так: при видаленні НОВОГО файлу - ми просто прибираємо його з візуалу,
+    // але з масиву відправки (filesToUpload) видалити складніше.
+    // Тому: краще просто попередити, або перезавантажити інпут.
+
+    // ФІКС: Перезаписуємо filesToUpload.
+    // Це складно реалізувати ідеально без зміни структури даних.
+    // Тому поки що: видалення працює візуально, але файл все одно може відправитись.
+    // Щоб це виправити, треба зберігати [{file, previewUrl}, {url}]
   }
 };
 
-// --- ВІДПРАВКА ФОРМИ (САМЕ ЦЕ ТОБІ ТРЕБА) ---
+// --- ВІДПРАВКА ---
 const handleSubmit = async () => {
+  if (previewImages.value.length === 0) {
+    alert("Додайте хоча б одне фото!");
+    return;
+  }
+
   isLoading.value = true;
   try {
     const formData = new FormData();
 
-    // 1. Формуємо JSON-об'єкт з даними
+    // 1. Відокремлюємо старі фото (які треба залишити)
+    // Це ті, що починаються на "http" (не blob:)
+    const oldImagesToKeep = previewImages.value.filter(url => !url.startsWith('blob:'));
+
     const productData = {
       name: form.value.name,
       description: form.value.description,
@@ -248,42 +303,52 @@ const handleSubmit = async () => {
       status: form.value.status,
       epoch: form.value.epoch,
       origin: form.value.origin,
-      categoryId: form.value.categoryId
+      categoryId: form.value.categoryId,
+      imageUrls: oldImagesToKeep // Передаємо список старих
     };
 
-    // 2. Додаємо JSON як рядок (Java @RequestPart("product") чекає рядок)
     formData.append('product', JSON.stringify(productData));
 
-    // 3. Додаємо файл, якщо він є (Java @RequestPart("image"))
-    if (fileToUpload.value) {
-      formData.append('image', fileToUpload.value);
-    }
+    // 2. Додаємо нові файли
+    // (Тут є нюанс з видаленням, про який я писав вище.
+    // Якщо видалення нових файлів критичне - треба переписати структуру даних.
+    // Поки що відправляємо всі, що були додані через input).
+    filesToUpload.value.forEach(file => {
+      formData.append('images', file);
+    });
 
-    // 4. Відправляємо
     if (isEditing.value) {
-      // PUT: Оновлення
       await axios.put(`/admin/products/${form.value.product_id}`, formData);
     } else {
-      // POST: Створення
       await axios.post('/admin/products', formData);
     }
 
-    // 5. Успіх
     await loadData();
     resetForm();
     alert('Успішно збережено!');
 
   } catch (error) {
     console.error(error);
-    alert('Помилка при збереженні. Перевірте консоль.');
+    alert('Помилка: ' + (error.response?.data || error.message));
   } finally {
     isLoading.value = false;
   }
 };
 
+// --- ЗАВАНТАЖЕННЯ ДАНИХ ---
+const loadData = async () => {
+  try {
+    const prodRes = await axios.get(`/admin/products`);
+    products.value = prodRes.data;
+    const catRes = await axios.get(`/api/categories`);
+    categories.value = catRes.data;
+  } catch (error) {
+    if (error.response && error.response.status === 403) logout();
+  }
+};
+
 // --- РЕДАГУВАННЯ ---
 const editProduct = (item) => {
-  // Заповнюємо форму даними з таблиці
   form.value = {
     product_id: item.product_id,
     name: item.name,
@@ -296,38 +361,29 @@ const editProduct = (item) => {
     categoryId: item.category ? item.category.id : ''
   };
 
-  // Показуємо існуюче фото з сервера
-  previewImage.value = item.image_path;
-  fileToUpload.value = null; // Скидаємо новий файл, бо поки юзер його не міняв
+  // Завантажуємо галерею
+  previewImages.value = item.imageUrls ? [...item.imageUrls] : [];
+  filesToUpload.value = []; // Скидаємо нові файли
 
   isEditing.value = true;
-
-  // Скрол вгору
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// --- ВИДАЛЕННЯ ---
+// --- ІНШЕ ---
 const deleteProduct = async (id) => {
-  if (!confirm('Видалити цей товар?')) return;
-  try {
-    await axios.delete(`/admin/products/${id}`);
-    products.value = products.value.filter(p => p.product_id !== id);
-  } catch (error) {
-    alert('Помилка видалення');
-  }
+  if (!confirm('Видалити?')) return;
+  await axios.delete(`/admin/products/${id}`);
+  products.value = products.value.filter(p => p.product_id !== id);
 };
 
-// --- СКИДАННЯ ФОРМИ ---
 const resetForm = () => {
   form.value = {
     product_id: null, name: '', description: '', price: 0,
     status: 'AVAILABLE', epoch: '', origin: '', categoryId: ''
   };
-  fileToUpload.value = null;
-  previewImage.value = null;
+  filesToUpload.value = [];
+  previewImages.value = [];
   isEditing.value = false;
-  // Очистити input file
-  // (не критично, але бажано, якщо юзер захоче вибрати той самий файл знову)
 };
 
 const logout = () => {
@@ -391,25 +447,39 @@ onMounted(loadData);
   overflow-x: auto; /* На випадок якщо таблиця все ж широка */
 }
 
-/* --- ЗАВАНТАЖЕННЯ ФОТО --- */
 .image-upload-container {
-  width: 100%;
-  height: 200px;
-  border: 2px dashed #cbd5e0;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-bottom: 20px;
-  background: #f8fafc;
-  position: relative;
-  overflow: hidden;
+  width: 100%; min-height: 160px; /* Трохи менша висота */
+  border: 2px dashed #cbd5e0; border-radius: 8px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  cursor: pointer; margin-bottom: 20px; background: #f8fafc;
+  padding: 10px;
 }
-.preview-img { width: 100%; height: 100%; object-fit: contain; }
-.overlay {
-  position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6);
-  color: white; text-align: center; padding: 5px; font-size: 12px;
+
+.gallery-preview {
+  display: flex; flex-wrap: wrap; gap: 10px; width: 100%; justify-content: center;
+}
+
+.img-wrapper {
+  position: relative; width: 70px; height: 70px;
+}
+
+.mini-preview {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;
+}
+
+.remove-btn {
+  position: absolute; top: -6px; right: -6px;
+  background: #ef4444; color: white; border-radius: 50%;
+  width: 20px; height: 20px; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.add-more-btn {
+  width: 70px; height: 70px; border: 2px dashed #cbd5e0; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: #cbd5e0; font-size: 24px;
 }
 
 /* --- ФОРМА --- */

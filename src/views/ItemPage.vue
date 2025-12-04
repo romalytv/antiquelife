@@ -9,7 +9,22 @@
 
       <div class="image-section">
         <div class="image-frame">
-          <img :src="product.image_path" :alt="product.name" />
+          <img
+              :src="selectedImage || '/placeholder.png'"
+              :alt="product.name"
+              class="main-img"
+          />
+        </div>
+
+        <div v-if="product.imageUrls && product.imageUrls.length > 1" class="thumbnails">
+          <img
+              v-for="(img, index) in product.imageUrls"
+              :key="index"
+              :src="img"
+              class="thumb"
+              :class="{ active: selectedImage === img }"
+              @click="selectedImage = img"
+          />
         </div>
       </div>
 
@@ -83,6 +98,7 @@ import axios from 'axios';
 const route = useRoute();
 const router = useRouter();
 const product = ref(null);
+const selectedImage = ref('');
 
 // 1. Завантаження даних
 onMounted(async () => {
@@ -90,6 +106,9 @@ onMounted(async () => {
     const id = route.params.id; // Отримуємо UUID з URL
     const response = await axios.get(`/api/products/${id}`);
     product.value = response.data;
+    if (product.value.imageUrls && product.value.imageUrls.length > 0) {
+      selectedImage.value = product.value.imageUrls[0];
+    }
   } catch (error) {
     console.error("Помилка завантаження:", error);
     alert("Не вдалося знайти цей товар.");
@@ -145,6 +164,54 @@ const addToCart = () => {
   display: grid;
   grid-template-columns: 1fr 1fr; /* Дві рівні колонки */
   gap: 60px;
+}
+
+.image-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.image-frame {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Квадрат */
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+}
+
+.main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Щоб фото не обрізалось */
+}
+
+/* Мініатюри */
+.thumbnails {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto; /* Скрол, якщо багато фото */
+  padding-bottom: 5px;
+}
+
+.thumb {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: 0.7;
+  transition: all 0.2s;
+}
+
+.thumb:hover { opacity: 1; }
+
+.thumb.active {
+  border-color: #3b82f6; /* Синя рамка для активного */
+  opacity: 1;
 }
 
 /* Фото */
