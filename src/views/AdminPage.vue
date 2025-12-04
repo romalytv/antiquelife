@@ -486,16 +486,22 @@ onMounted(loadData);
 
 .auto-expand-textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   font-size: 14px;
+  line-height: 1.5;
   box-sizing: border-box;
+  background-color: #fff;
+  color: #1f2937;
 
-  /* Магія для авто-розширення */
-  resize: none; /* Забороняємо ручне розтягування */
-  overflow-y: hidden; /* Ховаємо скролбар */
-  min-height: 100px; /* Початкова висота */
+  /* 👇 МАГІЯ ТУТ */
+  resize: vertical;      /* Дозволяємо юзеру тягнути, якщо хоче */
+  overflow-y: auto;      /* Вмикаємо скрол, якщо вперлися в ліміт */
+
+  min-height: 100px;     /* Початкова висота */
+  max-height: 400px;     /* 🔥 ЛІМІТ: після цього з'явиться скрол */
+
   transition: border-color 0.2s;
 }
 
@@ -601,9 +607,12 @@ input, select, textarea {
   }
 
   .auto-expand-textarea {
-    /* 16px - це стандарт для iOS/Android, щоб браузер не робив зум при натисканні */
-    font-size: 16px;
-    padding: 15px; /* Більші відступи для пальців */
+    font-size: 16px; /* Щоб айфон не зумив */
+    padding: 15px;
+
+    /* На мобільному робимо ліміт трохи меншим,
+       щоб клавіатура не перекривала кнопку "Зберегти" */
+    max-height: 250px;
   }
 
   /* 2. Поля форми в одну колонку */
@@ -614,7 +623,7 @@ input, select, textarea {
 
   /* 3. МАГІЯ ТАБЛИЦІ: Перетворюємо рядки на "Картки" */
   .product-table thead {
-    display: none; /* Ховаємо шапку таблиці */
+    display: none;
   }
 
   .product-table, .product-table tbody, .product-table tr, .product-table td {
@@ -627,7 +636,7 @@ input, select, textarea {
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
-    margin-bottom: 15px; /* Відступ між "картками" */
+    margin-bottom: 15px;
     padding: 15px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
@@ -642,10 +651,10 @@ input, select, textarea {
     text-align: right;
   }
 
-  /* Робимо фото великим зліва */
   .product-table td.td-photo {
     justify-content: center;
     margin-bottom: 10px;
+    width: 100%;
   }
   .thumb { width: 80px; height: 80px; }
 
@@ -662,7 +671,6 @@ input, select, textarea {
   .product-table td.td-price::before { content: "Ціна:"; font-size: 13px; color: #6b7280; }
   .product-table td.td-status::before { content: "Статус:"; font-size: 13px; color: #6b7280; }
 
-  /* Кнопки дій на всю ширину */
   .product-table td.td-actions {
     margin-top: 10px;
     justify-content: center;
