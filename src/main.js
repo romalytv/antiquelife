@@ -29,6 +29,8 @@ axios.interceptors.request.use(config => {
     return config;
 });
 
+console.log("Мій API URL:", import.meta.env.VITE_API_URL);
+
 const app = createApp(App);
 
 app.use(router); // <--- 2. "Підключіть" роутер до додатка
