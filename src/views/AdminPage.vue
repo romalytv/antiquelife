@@ -328,7 +328,7 @@ const handleSubmit = async () => {
 const loadData = async () => {
   try {
     const prodRes = await axios.get(`/admin/products`);
-    products.value = prodRes.data;
+    products.value = prodRes.data.reverse();
     const catRes = await axios.get(`/api/categories`);
     categories.value = catRes.data;
   } catch (error) {
