@@ -566,8 +566,7 @@ onMounted(loadData);
 }
 
 .preview-img {
-  width: 100%;
-  height: 100%;
+  height: 250px;
   object-fit: cover; /* Фото обрізається, заповнюючи квадрат */
   display: block;
 }
@@ -720,8 +719,13 @@ input, select, textarea {
     justify-content: center;
     margin-bottom: 10px;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Забираємо scale тут, щоб не конфліктувало з перемиканням,
+       але можна залишити якщо подобається */
+    transition: opacity 0.3s ease-in-out;
   }
-  .thumb { width: 80px; height: 80px; }
+  .thumb { width: 250px; height: 250px; }
 
   /* Інформація про товар */
   .product-table td.td-info {

@@ -41,7 +41,7 @@
         </div>
 
         <div class="status-block">
-          <span :class="['status-tag', product.status === 'active' ? 'status-green' : 'status-gray']">
+          <span :class="['status-tag', product.status === 'AVAILABLE' ? 'status-green' : 'status-gray']">
             {{ translateStatus(product.status) }}
           </span>
         </div>
@@ -74,10 +74,10 @@
 
         <button
             class="btn-buy"
-            :disabled="product.status !== 'active'"
+            :disabled="product.status !== 'AVAILABLE'"
             @click="addToCart"
         >
-          {{ product.status === 'active' ? 'Додати в кошик' : 'Немає в наявності' }}
+          {{ product.status === 'AVAILABLE' ? 'Додати в кошик' : 'Немає в наявності' }}
         </button>
 
       </div>
@@ -93,12 +93,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useCartStore } from '../stores/cart';
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
 const product = ref(null);
 const selectedImage = ref('');
+const cartStore = useCartStore();
 
 // 1. Завантаження даних
 onMounted(async () => {
@@ -126,16 +128,18 @@ const formatPrice = (price) => {
 
 const translateStatus = (status) => {
   const map = {
-    'active': 'В наявності',
-    'sold': 'Продано',
-    'reserved': 'В резерві'
+    'AVAILABLE': 'В наявності',
+    'SOLD': 'Продано',
+    'RESERVED': 'В резерві'
   };
   return map[status] || status;
 };
 
 const addToCart = () => {
-  alert(`Товар "${product.value.name}" додано в кошик!`);
-  // Тут пізніше підключимо реальний кошик
+  if (product.value) {
+    cartStore.addToCart(product.value); // Додаємо в Pinia
+    alert(`Товар "${product.value.name}" успішно додано в кошик!`);
+  }
 };
 </script>
 

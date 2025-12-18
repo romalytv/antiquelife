@@ -1,54 +1,74 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import axios from 'axios';
 
 export const useCartStore = defineStore('cart', () => {
-
-    // 1. Стан (State) - завантажуємо з localStorage або створюємо пустий масив
+    // Стан: завантажуємо з localStorage або створюємо пустий масив
     const items = ref(JSON.parse(localStorage.getItem('cart_items')) || []);
 
-    // 2. Обчислення (Getters)
+    // Гетери
     const totalPrice = computed(() => {
-        return items.value.reduce((sum, item) => sum + item.price, 0);
+        return items.value.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     });
 
-    const itemsCount = computed(() => items.value.length);
+    const totalItems = computed(() => {
+        return items.value.reduce((sum, item) => sum + item.quantity, 0);
+    });
 
-    // 3. Дії (Actions)
-
-    // Додати товар
+    // Дії
     const addToCart = (product) => {
-        // Перевірка, чи товар вже є в кошику (для антикваріату це важливо, бо він унікальний)
-        const exists = items.value.find(item =>
-            (item.productId || item.product_id) === (product.productId || product.product_id)
-        );
+        const existingItem = items.value.find(item => item.product_id === product.product_id);
 
-        if (!exists) {
-            items.value.push(product);
-            saveToLocalStorage();
-            alert('Товар додано в кошик!');
+        if (existingItem) {
+            existingItem.quantity++;
         } else {
-            alert('Цей предмет вже у кошику.');
+            items.value.push({
+                product_id: product.product_id || product.id, // Підстраховка ID
+                name: product.name,
+                price: product.price,
+                image_url: product.imageUrls ? product.imageUrls[0] : null,
+                category: product.category,
+                quantity: 1
+            });
         }
     };
 
-    // Видалити товар
     const removeFromCart = (productId) => {
-        items.value = items.value.filter(item =>
-            (item.productId || item.product_id) !== productId
-        );
-        saveToLocalStorage();
+        items.value = items.value.filter(item => item.product_id !== productId);
     };
 
-    // Очистити кошик (після покупки)
     const clearCart = () => {
         items.value = [];
-        saveToLocalStorage();
     };
 
-    // Функція збереження
-    const saveToLocalStorage = () => {
-        localStorage.setItem('cart_items', JSON.stringify(items.value));
+    // Метод відправки на сервер
+    const submitOrder = async (customerData) => {
+        // Формуємо JSON згідно з Java DTO
+        const payload = {
+            customer: customerData,
+            items: items.value.map(item => ({
+                productId: item.product_id,
+                quantity: item.quantity
+            }))
+        };
+
+        // Відправка
+        await axios.post('http://localhost:8080/api/orders', payload);
+        clearCart(); // Очищаємо кошик після успіху
     };
 
-    return { items, totalPrice, itemsCount, addToCart, removeFromCart, clearCart };
+    // Слідкуємо за змінами і зберігаємо в localStorage
+    watch(items, (newItems) => {
+        localStorage.setItem('cart_items', JSON.stringify(newItems));
+    }, { deep: true });
+
+    return {
+        items,
+        totalPrice,
+        totalItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        submitOrder
+    };
 });

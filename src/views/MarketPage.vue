@@ -30,30 +30,41 @@
     <div class="products-grid" v-if="products.length > 0">
       <div
           v-for="product in filteredProducts"
-          :key="product.productId || product.product_id"
+          :key="product.product_id"
           class="product-card"
+          @mouseleave="resetImage(product.product_id)"
       >
         <div class="image-container">
-          <router-link :to="{ name: 'Item', params: { id: product.product_id || product.product_id }}">
+          <router-link :to="{ name: 'Item', params: { id: product.product_id }}">
 
             <img
-                :src="(product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : '/placeholder.png'"
+                :src="getCurrentImage(product)"
                 :alt="product.name"
                 loading="lazy"
             />
 
           </router-link>
 
+          <div v-if="hasMultipleImages(product)" class="slider-controls">
+            <button class="nav-btn prev" @click.prevent="prevImage(product)">❮</button>
+            <button class="nav-btn next" @click.prevent="nextImage(product)">❯</button>
+
+            <span class="img-counter">
+              {{ (imageIndices[product.product_id] || 0) + 1 }} / {{ product.imageUrls.length }}
+            </span>
+          </div>
+
           <span v-if="product.status === 'sold'" class="status-badge sold">Продано</span>
           <span v-else-if="product.status === 'reserved'" class="status-badge reserved">Резерв</span>
         </div>
+
         <div class="card-info">
-      <span class="category-label">
-        {{ product.category ? product.category.category_name : 'Інше' }}
-      </span>
+          <span class="category-label">
+            {{ product.category ? product.category.category_name : 'Інше' }}
+          </span>
 
           <h3 class="product-name">
-            <router-link :to="{ name: 'Item', params: { id: product.productId || product.product_id }}">
+            <router-link :to="{ name: 'Item', params: { id: product.product_id }}">
               {{ product.name }}
             </router-link>
           </h3>
@@ -85,17 +96,56 @@ import { useCartStore } from '../stores/cart'
 import axios from 'axios';
 import {useRoute} from "vue-router";
 
-const route = useRoute(); // Отримуємо доступ до URL
+const route = useRoute();
 const cartStore = useCartStore();
 const products = ref([]);
-// 1. Нова змінна для категорій
 const categoriesList = ref([]);
 const loading = ref(true);
 const searchQuery = ref('');
 const selectedCategory = ref('');
 
+// --- ЛОГІКА СЛАЙДЕРА ---
+const imageIndices = ref({}); // Зберігає стан: { 'id_товару': поточний_індекс }
 
-// Отримання товарів
+const hasMultipleImages = (product) => {
+  return product.imageUrls && product.imageUrls.length > 1;
+};
+
+const getCurrentImage = (product) => {
+  // Якщо немає картинок взагалі
+  if (!product.imageUrls || product.imageUrls.length === 0) return '/placeholder.png';
+
+  // Беремо збережений індекс або 0
+  const index = imageIndices.value[product.product_id] || 0;
+  return product.imageUrls[index];
+};
+
+const nextImage = (product) => {
+  const currentIndex = imageIndices.value[product.product_id] || 0;
+  const total = product.imageUrls.length;
+  // (0 + 1) % 3 -> 1 ... (2 + 1) % 3 -> 0 (зациклення)
+  imageIndices.value[product.product_id] = (currentIndex + 1) % total;
+};
+
+const prevImage = (product) => {
+  const currentIndex = imageIndices.value[product.product_id] || 0;
+  const total = product.imageUrls.length;
+  // Якщо 0 -> йдемо в кінець (total - 1)
+  if (currentIndex === 0) {
+    imageIndices.value[product.product_id] = total - 1;
+  } else {
+    imageIndices.value[product.product_id] = currentIndex - 1;
+  }
+};
+
+// Скидаємо на перше фото, коли мишка йде з картки (опціонально, але красиво)
+const resetImage = (productId) => {
+  if (imageIndices.value[productId]) {
+    imageIndices.value[productId] = 0;
+  }
+};
+// -----------------------
+
 const fetchProducts = async () => {
   loading.value = true;
   try {
@@ -108,7 +158,6 @@ const fetchProducts = async () => {
   }
 };
 
-// 2. Отримання категорій
 const fetchCategories = async () => {
   try {
     const response = await axios.get(`/api/categories`);
@@ -120,39 +169,30 @@ const fetchCategories = async () => {
 
 onMounted(async () => {
   await fetchProducts();
-  await fetchCategories(); // Запускаємо при завантаженні
+  await fetchCategories();
   checkUrlForCategory();
 });
 
 const checkUrlForCategory = () => {
   if (route.query.category) {
-    // Беремо значення з ?category=... і ставимо в селект
     selectedCategory.value = route.query.category;
   } else {
-    selectedCategory.value = ''; // Якщо параметру немає - "Всі категорії"
+    selectedCategory.value = '';
   }
 };
 
-// Фільтрація (залишається майже такою ж, бо ми в select передали categoryName)
 const filteredProducts = computed(() => {
   return products.value.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.value.toLowerCase());
-
     const categoryName = product.category ? product.category.category_name : 'Інше';
-
-    // Якщо вибрано "Всі категорії" (порожній рядок) АБО назва співпадає
     const matchesCategory = selectedCategory.value === '' || categoryName === selectedCategory.value;
-
     return matchesSearch && matchesCategory;
   });
 });
 
-watch(
-    () => route.query.category,
-    (newCategory) => {
-      selectedCategory.value = newCategory || '';
-    }
-);
+watch(() => route.query.category, (newCategory) => {
+  selectedCategory.value = newCategory || '';
+});
 
 const formatPrice = (price) => {
   return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -190,7 +230,7 @@ const addToCart = (product) => {
   display: block;
   width: 60px;
   height: 3px;
-  background-color: #d4af37; /* Золото */
+  background-color: #d4af37;
   margin: 15px auto 0;
 }
 
@@ -204,7 +244,7 @@ const addToCart = (product) => {
 .search-input, .category-select {
   padding: 12px 20px;
   border: 1px solid #ddd;
-  border-radius: 0; /* Квадратні кути для вінтажного стилю */
+  border-radius: 0;
   font-size: 16px;
   font-family: 'Georgia', serif;
   min-width: 250px;
@@ -249,13 +289,64 @@ const addToCart = (product) => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s;
+  /* Забираємо scale тут, щоб не конфліктувало з перемиканням,
+     але можна залишити якщо подобається */
+  transition: opacity 0.3s ease-in-out;
 }
 
-.product-card:hover .image-container img {
-  transform: scale(1.05);
+/* --- Слайдер / Навігація --- */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  color: #2c3e50;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 2;
+  font-weight: bold;
+  opacity: 0; /* Приховані за замовчуванням */
+  transition: opacity 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Круглі кнопки */
 }
 
+.product-card:hover .nav-btn {
+  opacity: 1; /* Показуємо при наведенні на картку */
+}
+
+.nav-btn:hover {
+  background: #d4af37;
+  color: white;
+}
+
+.prev { left: 10px; }
+.next { right: 10px; }
+
+.img-counter {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.product-card:hover .img-counter {
+  opacity: 1;
+}
+
+/* --- Статуси --- */
 .status-badge {
   position: absolute;
   top: 10px;
@@ -265,6 +356,7 @@ const addToCart = (product) => {
   text-transform: uppercase;
   color: white;
   font-weight: bold;
+  z-index: 3; /* Поверх стрілок */
 }
 .sold { background-color: #c0392b; }
 .reserved { background-color: #f39c12; }
