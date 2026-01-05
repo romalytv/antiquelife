@@ -13,7 +13,7 @@
 
         <nav class="main-nav">
           <div class="nav-dropdown-container">
-            <a href="/market" class="nav-link" @click.prevent="toggleMarket">
+            <a href="/market" class="nav-link" @click.passive="toggleMarket">
               МАРКЕТ
             </a>
 

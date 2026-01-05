@@ -595,104 +595,172 @@ input, select, textarea {
 .delete { background: #fee2e2; color: #991b1b; }
 
 /* =========================================
-   МОБІЛЬНА АДАПТАЦІЯ (Найважливіше)
+   МОБІЛЬНА АДАПТАЦІЯ (ФІНАЛ)
    ========================================= */
 @media (max-width: 900px) {
-  .admin-panel { padding: 10px; }
-
-  .gallery-grid {
-    /* На маленьких телефонах гарантовано 3 фото в ряд */
-    grid-template-columns: repeat(3, 1fr);
+  /* 1. Загальні налаштування контейнера */
+  .admin-panel {
+    padding: 10px;
+    overflow-x: hidden; /* Забороняємо горизонтальний скрол всій сторінці */
   }
 
   .content-wrapper {
-    flex-direction: column; /* Форма зверху, список знизу */
+    display: flex;
+    flex-direction: column; /* Жорстко ставимо колонку */
+    gap: 20px;
+    width: 100%; /* Контейнер на всю ширину */
   }
 
-  /* 1. Форма більше не Sticky, бо на телефоні це заважає */
+  /* 2. ЛІКУЄМО ФОРМУ (щоб не виїжджала) */
   .form-card {
-    width: 100%;
-    min-width: auto;
-    position: static;
+    position: static !important; /* Вимикаємо sticky */
+    width: 100% !important; /* Ширина на весь екран */
+    min-width: 0 !important; /* Flex-фікс, щоб не розпирало */
+    margin: 0 !important;
+    box-sizing: border-box; /* Щоб паддінги не ламали ширину */
   }
 
-  .auto-expand-textarea {
-    font-size: 16px; /* Щоб айфон не зумив */
-    padding: 15px;
-
-    /* На мобільному робимо ліміт трохи меншим,
-       щоб клавіатура не перекривала кнопку "Зберегти" */
-    max-height: 250px;
-  }
-
-  /* 2. Поля форми в одну колонку */
   .form-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Поля в одну колонку */
   }
-  .full-width { grid-column: span 1; }
 
-  /* 3. МАГІЯ ТАБЛИЦІ: Перетворюємо рядки на "Картки" */
+  .full-width {
+    grid-column: span 1;
+  }
+
+  /* 3. СПИСОК ТОВАРІВ (Картки з великим фото) */
+  .list-card {
+    width: 100%;
+    min-width: 0;
+    padding: 15px; /* Трохи менші відступи всередині */
+    box-sizing: border-box;
+  }
+
   .product-table thead {
     display: none;
   }
 
-  .product-table, .product-table tbody, .product-table tr, .product-table td {
+  .product-table, .product-table tbody {
     display: block;
     width: 100%;
-    box-sizing: border-box;
   }
 
   .product-table tr {
+    display: flex;
+    flex-direction: column; /* Елементи один під одним */
+    align-items: center; /* ЦЕНТРУВАННЯ ВСЬОГО */
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    padding: 15px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Тінь для краси */
   }
 
-  /* Вирівнювання всередині картки товару */
-  .product-table td {
-    padding: 5px 0;
-    border: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-align: right;
-  }
-
+  /* --- ФОТО (150x150 по центру) --- */
   .product-table td.td-photo {
-    justify-content: center;
-    margin-bottom: 10px;
     width: 100%;
-    height: 100%;
+    display: flex;
+    justify-content: center; /* Центруємо фото горизонтально */
+    padding: 0;
+    margin-bottom: 15px;
+    border: none;
+  }
+
+  .thumb {
+    width: 150px; /* Як ти просив */
+    height: 150px;
     object-fit: cover;
-    /* Забираємо scale тут, щоб не конфліктувало з перемиканням,
-       але можна залишити якщо подобається */
-    transition: opacity 0.3s ease-in-out;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
-  .thumb { width: 250px; height: 250px; }
 
-  /* Інформація про товар */
+  .more-photos-badge {
+    /* Ховаємо або підлаштовуємо бейдж */
+    display: none;
+  }
+
+  /* --- ІНФО (Назва) --- */
   .product-table td.td-info {
-    text-align: center;
-    flex-direction: column;
-    align-items: center;
+    width: 100%;
+    text-align: center; /* Текст по центру */
+    padding: 0;
     margin-bottom: 10px;
+    border: none;
   }
-  .p-title { font-size: 16px; margin-bottom: 4px; }
 
-  /* Ціна та статус - додаємо підписи */
-  .product-table td.td-price::before { content: "Ціна:"; font-size: 13px; color: #6b7280; }
-  .product-table td.td-status::before { content: "Статус:"; font-size: 13px; color: #6b7280; }
+  .p-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 5px;
+  }
 
+  .p-meta {
+    display: none;
+  }
+
+  /* Прибрали сірий текст */
+  .p-cat {
+    display: inline-block;
+    margin-top: 5px;
+  }
+
+  /* --- ЦІНА --- */
+  .product-table td.td-price {
+    width: 100%;
+    text-align: center;
+    font-size: 20px; /* Велика ціна */
+    font-weight: 800;
+    color: #1f2937;
+    border: none;
+    padding: 5px 0;
+    display: block;
+  }
+
+  /* Додаємо слово "Ціна" маленьким шрифтом */
+  .product-table td.td-price::before {
+    content: "Ціна: ";
+    font-weight: 400;
+    font-size: 14px;
+    color: #6b7280;
+    vertical-align: middle;
+  }
+
+  /* --- СТАТУС --- */
+  .product-table td.td-status {
+    width: 100%;
+    text-align: center;
+    border: none;
+    padding: 5px 0;
+    display: block;
+  }
+
+  .product-table td.td-status::before {
+    content: none;
+  }
+
+  /* --- КНОПКИ --- */
   .product-table td.td-actions {
-    margin-top: 10px;
-    justify-content: center;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
+    width: 100%;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #e5e7eb;
+    display: block;
   }
-  .actions { width: 100%; justify-content: space-around; }
-  .icon-btn { width: 45%; height: 40px; }
+
+  .actions {
+    display: flex;
+    justify-content: center; /* Кнопки по центру */
+    gap: 15px;
+    width: 100%;
+  }
+
+  .icon-btn {
+    flex: 1;
+    max-width: 120px; /* Щоб кнопки не були надто довгими на планшетах */
+    height: 44px;
+    border-radius: 8px;
+  }
 }
 </style>

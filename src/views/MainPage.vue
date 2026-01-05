@@ -48,6 +48,7 @@
 import InstagramFeed from "@/components/InstagramFeed.vue";
 import TikTokFeed from '@/components/TikTokFeed.vue';
 import LatestProducts from '@/components/LatestProducts.vue';
+import axios from 'axios';
 
 export default {
   name: "MainPage",
@@ -70,7 +71,25 @@ export default {
       }
     }
   },
+  methods: {
+    // Метод для отримання актуального відео
+    async fetchCurrentVideo() {
+      try {
+        // Заміни URL на свій, якщо він відрізняється
+        const response = await axios.get('/api/youtube/current');
+        if (response.data && response.data.videoId) {
+          this.videoId = response.data.videoId;
+        }
+      } catch (error) {
+        console.error("Не вдалося завантажити YouTube відео, показуємо дефолтне", error);
+      }
+    }
+  },
   mounted() {
+    // 1. Запускаємо отримання відео
+    this.fetchCurrentVideo();
+
+    // 2. Твій старий код для Autoplay при скролі
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting && !this.isPlaying) {

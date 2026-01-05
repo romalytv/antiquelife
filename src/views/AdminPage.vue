@@ -16,6 +16,12 @@
           >
             🛒 Замовлення
           </button>
+          <button
+              :class="['nav-btn', { active: currentTab === 'messages' }]"
+              @click="currentTab = 'messages'"
+          >
+            📩 Повідомлення
+          </button>
         </nav>
       </div>
 
@@ -32,6 +38,9 @@
       <OrdersManager
           v-if="currentTab === 'orders'"
       />
+      <ContactManager
+          v-if="currentTab === 'messages'"
+      />
     </div>
 
   </div>
@@ -43,6 +52,7 @@ import { useRouter } from 'vue-router';
 // Імпортуємо наш новий компонент
 import ProductsManager from '../components/ProductManager.vue';
 import OrdersManager from '../components/OrderManager.vue';
+import ContactManager from '../components/ContactManager.vue';
 
 const router = useRouter();
 const currentTab = ref('products'); // 'products' або 'orders'
@@ -82,6 +92,7 @@ h1 {
   margin: 0;
   font-size: 20px;
   color: #1f2937;
+  white-space: nowrap; /* Щоб заголовок не ламався дивно */
 }
 
 /* Навігація вкладок */
@@ -100,6 +111,11 @@ h1 {
   color: #6b7280;
   border-radius: 6px;
   transition: all 0.2s;
+  white-space: nowrap; /* Текст кнопок в один рядок */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .nav-btn:hover {
@@ -108,8 +124,8 @@ h1 {
 }
 
 .nav-btn.active {
-  background: #e0e7ff; /* Світло-синій */
-  color: #4338ca;     /* Темно-синій */
+  background: #e0e7ff;
+  color: #4338ca;
 }
 
 .logout-btn {
@@ -126,32 +142,48 @@ h1 {
   background: #fee2e2;
 }
 
-/* Placeholder для замовлень */
-.placeholder-orders {
-  text-align: center;
-  padding: 50px;
-  background: white;
-  border-radius: 12px;
-  color: #6b7280;
-}
-
+/* --- АДАПТИВ ДЛЯ ТЕЛЕФОНУ --- */
 @media (max-width: 600px) {
+  .admin-panel {
+    padding: 10px; /* Менші відступи від країв екрану */
+  }
+
   .admin-header {
     flex-direction: column;
     gap: 15px;
-    align-items: flex-start;
+    padding: 15px; /* Менше внутрішніх відступів */
   }
+
   .header-left {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center; /* Центруємо заголовок і меню */
     gap: 15px;
     width: 100%;
   }
+
   .admin-nav {
     width: 100%;
-    justify-content: space-between;
+    flex-wrap: wrap; /* Дозволяємо кнопкам переноситися */
+    justify-content: center;
   }
-  .nav-btn { flex: 1; }
-  .user-info { width: 100%; text-align: right; }
+
+  .nav-btn {
+    flex: 1 1 auto; /* Кнопки займають доступне місце, але не менше контенту */
+    min-width: 120px; /* Мінімальна ширина, щоб зручно натискати */
+    padding: 10px; /* Трохи більше поле для пальця */
+  }
+
+  .user-info {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #f3f4f6; /* Лінія-розділювач для краси */
+    padding-top: 15px;
+  }
+
+  .logout-btn {
+    width: 100%; /* Кнопка виходу на всю ширину */
+    text-align: center;
+  }
 }
 </style>

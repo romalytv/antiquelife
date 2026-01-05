@@ -6,6 +6,10 @@ import CartPage from "@/views/CartPage.vue";
 import Login from "@/views/Login.vue";
 import AdminPage from "@/views/AdminPage.vue";
 import OrderSuccessPage from "@/views/OrderSuccessPage.vue";
+import ContactPage from "@/views/ContactPage.vue";
+import ContactSuccessPage from "@/views/ContactSuccessPage.vue";
+import AIPage from "@/views/AIPage.vue";
+import NewsPage from "@/views/NewsPage.vue";
 
 // 1. Визначте ваші маршрути (routes)
 const routes = [
@@ -45,6 +49,26 @@ const routes = [
         component: OrderSuccessPage,
         props: true // Дозволяє передавати id як prop, хоча ми беремо через route.params
     },
+    {
+        path: '/contacts',       // Це буде в адресному рядку: your-site.com/contacts
+        name: 'contacts',
+        component: ContactPage
+    },
+    {
+        path: '/contact/success', // URL сторінки успіху
+        name: 'ContactSuccess',
+        component: ContactSuccessPage
+    },
+    {
+        path: '/ai', // URL сторінки успіху
+        name: 'AIPage',
+        component: AIPage
+    },
+    {
+        path: '/news', // URL сторінки успіху
+        name: 'NewsPage',
+        component: NewsPage
+    }
 ];
 
 // 2. Створіть екземпляр роутера
