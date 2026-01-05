@@ -57,13 +57,12 @@ const loading = ref(true);
 
 // URL твого бекенду (налаштуй під себе, якщо він інший)
 // Краще винести це в .env файл, але поки хардкодимо для тесту
-const API_URL = 'http://localhost:8080/api/products';
 
 const fetchLatestProducts = async () => {
   try {
     loading.value = true;
     // Звертаємось до нашого нового ендпоінту
-    const response = await axios.get(`${API_URL}/latest`);
+    const response = await axios.get(`/api/products/latest`);
 
     // Мапимо дані з бекенду під структуру фронтенду
     products.value = response.data.map(item => ({

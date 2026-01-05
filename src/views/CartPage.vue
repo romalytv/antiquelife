@@ -241,7 +241,7 @@ const onCitySearchInput = () => {
 
   searchTimeout = setTimeout(async () => {
     try {
-      const response = await publicAxios.get(`http://localhost:8080/api/delivery/nova-poshta/cities?query=${citySearchQuery.value}`);
+      const response = await publicAxios.get(`/api/delivery/nova-poshta/cities?query=${citySearchQuery.value}`);
       cities.value = response.data;
     } catch (e) { console.error(e); }
   }, 500);
@@ -259,7 +259,7 @@ const selectCity = (cityObj) => {
 
 const loadWarehouses = async (cityRef) => {
   try {
-    const response = await publicAxios.get(`http://localhost:8080/api/delivery/nova-poshta/warehouses?cityRef=${cityRef}`);
+    const response = await publicAxios.get(`/api/delivery/nova-poshta/warehouses?cityRef=${cityRef}`);
     warehouses.value = response.data;
   } catch (e) { console.error(e); }
 };

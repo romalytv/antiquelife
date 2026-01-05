@@ -60,7 +60,7 @@ export const useCartStore = defineStore('cart', () => {
 
         // Використовуємо чистий axios без заголовків авторизації
         const publicAxios = axios.create();
-        const response = await publicAxios.post('http://localhost:8080/api/orders', payload);
+        const response = await publicAxios.post('/api/orders', payload);
 
         clearCart();
         return response.data;
