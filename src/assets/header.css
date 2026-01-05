@@ -1,13 +1,12 @@
-/* ======================= */
-/* DESKTOP STYLES */
-/* ======================= */
-
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
 
+/* ======================= */
+/* ОСНОВНІ НАЛАШТУВАННЯ */
+/* ======================= */
 .main-header {
     display: flex;
     align-items: center;
-    justify-content: center; /* Центр */
+    justify-content: center;
     padding: 1.5rem 4%;
     border-bottom: 1px solid #e0e0e0;
     background: #ffffff;
@@ -15,81 +14,24 @@
     top: 0;
     width: 100%;
     z-index: 9999;
+    position: relative;
 }
 
-/* Приховуємо гамбургер на десктопі! */
-.hamburger-button {
-    display: none;
-}
-
-/* Центрований блок */
 .header-collapsible-content {
     display: flex;
-    align-items: center;
-    width: 100%;
     justify-content: center;
+    width: 100%;
 }
 
 .centered-nav-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Відступ між меню і логотипом */
     gap: 1.2rem;
+    position: static;
 }
 
-.main-nav {
-    display: flex;
-    gap: 2.5rem;
-    font-size: 0.95rem; /* Трохи акуратніше меню */
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Брендинг (Лого + Слоган) */
-.desktop-branding {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.desktop-slogan {
-    font-family: var(--font-serif), serif;
-    font-style: italic;
-    font-size: 0.9rem;
-    color: #888;
-    margin: 5px 0 0 0; /* Відступ від лого до слогану */
-    letter-spacing: 0.5px;
-}
-
-/* Логотип */
-.logo-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: inherit;
-    justify-content: center;
-}
-
-.logo-text {
-    font-family: var(--font-serif);
-    font-size: 1.6rem;
-    font-weight: 700;
-}
-
-.logo-icon img {
-    width: 32px;
-    height: auto;
-    margin-right: 8px;
-}
-
-.logo-text-lite {
-    color: #D8C390;
-    font-weight: 300;
-}
-
-/* User Menu (Кошик) - Абсолютно праворуч */
+/* Кошик на десктопі */
 .user-menu {
     position: absolute;
     right: 4%;
@@ -97,233 +39,264 @@
     transform: translateY(-50%);
 }
 
-.cart-icon img {
-    width: 26px; /* Трохи менший, акуратніший кошик */
+.cart-icon img { width: 26px; transition: transform 0.2s; }
+.cart-icon:hover img { transform: scale(1.1); }
+
+.badge {
+    position: absolute;
+    top: -8px; right: -8px;
+    background: #d32f2f; color: #fff;
+    border-radius: 50%; padding: 2px 6px;
+    font-size: 0.75rem;
 }
 
-/* Видимість */
 .mobile-only { display: none; }
-.desktop-only { display: block; }
-
+.desktop-only { display: flex; }
 
 /* ======================= */
-/* BRANDING BLOCK (NEW)    */
+/* DESKTOP MENU (FIXED)    */
 /* ======================= */
-
-/* Контейнер для Лого + Лінія + Слоган */
-.desktop-branding {
-    display: flex;
-    flex-direction: row; /* Горизонтальне розташування */
-    align-items: center; /* Центрування по вертикалі */
-    gap: 25px; /* Відстань між логотипом і лінією */
-    margin-top: 10px;
-}
-
-/* 1. Логотип */
-.logo-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.logo-text {
-    font-family: 'Cinzel', serif; /* Римський, жирний шрифт */
-    font-size: 2.5rem; /* Великий розмір */
-    font-weight: 700;
-    color: #1a1a1a; /* Чорний колір */
-    letter-spacing: 1px;
-    line-height: 1;
-}
-
-.logo-text-lite {
-    /* Робимо слово LIFE таким же шрифтом, але можна змінити колір */
-    font-weight: 700;
-    color: #D8C390; /* Або #D8C390 якщо хочеш золотим */
-}
-
-/* 2. Роздільна лінія */
-.brand-divider {
-    width: 1px;       /* Товщина лінії */
-    height: 45px;     /* Висота лінії */
-    background-color: #D8C390; /* Золотий колір роздільника */
-    opacity: 0.7;
-}
-
-/* 3. Слоган */
-.desktop-slogan-block {
-    display: flex;
-    flex-direction: column; /* Текст у два рядки */
-    align-items: flex-start; /* Вирівнювання по лівому краю */
-    gap: 4px; /* Відстань між рядками */
-}
-
-.slogan-line {
-    font-family: 'Playfair Display', serif; /* Елегантний шрифт */
-    font-size: 1rem;
-    color: #4a4a4a;
-    line-height: 1.2;
-    letter-spacing: 0.3px;
-}
-
-/* --- Інші стилі (Навігація, Кошик) залишаються без змін --- */
-
 .main-nav {
     display: flex;
     gap: 3rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #888; /* Трохи світліший колір для меню, як на фото */
+    letter-spacing: 1px;
+    align-items: center; /* Вирівнювання по центру висоти */
+    height: 100%; /* Важливо для ховер зони */
 }
 
-.logo-icon img {
-    /* Якщо десь ще використовується іконка, залишаємо стиль */
-    width: 32px;
-    height: auto;
+.nav-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+    position: relative;
+    padding: 10px 0; /* Збільшуємо зону кліку */
 }
-
-/* Видимість */
-.mobile-only { display: none; }
-.desktop-only { display: flex; } /* Важливо: flex, щоб працював row layout */
-
-/* ======================= */
-/* DROPDOWN MENU */
-/* ======================= */
-/* (Тут без змін, але переконайтесь, що воно є) */
-.nav-dropdown-container { position: relative; cursor: pointer; }
-.dropdown-menu {
-    position: absolute;
-    top: 100%; left: 50%;
-    transform: translateX(-50%) translateY(15px);
-    width: 600px;
-    background-color: #fdfaf3;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    padding: 25px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    border: 1px solid #e0d0b0;
-    opacity: 0; visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 9999;
-}
-.nav-dropdown-container:hover .dropdown-menu {
-    opacity: 1; visibility: visible;
-    transform: translateX(-50%) translateY(0);
-}
-.dropdown-menu li a {
-    text-decoration: none; color: #4a3f35; display: block; text-transform: none;
-}
-.nav-link { text-decoration: none; color: #333; transition: color 0.2s; }
 .nav-link:hover { color: #b08d57; }
 
+/* --- DROPDOWN CONTAINER --- */
+.nav-dropdown-container {
+    position: relative;
+    cursor: pointer;
+    height: 100%; /* Щоб контейнер займав висоту */
+    display: flex;
+    align-items: center;
+}
 
-/* ================================== */
-/* MOBILE STYLES (Max-width: 768px) */
-/* ================================== */
+/* --- MEGA MENU (DESKTOP) --- */
+.dropdown-menu {
+    position: absolute;
+    /* Починаємо відразу під хедером */
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
 
+    /* ФІКС ЗНИКАННЯ: Додаємо прозорий відступ зверху,
+       щоб мишка не губила фокус при переході */
+    padding-top: 20px;
+    margin-top: -5px; /* Трохи підтягуємо вгору для накладання */
+
+    display: none;
+    z-index: 100;
+}
+
+/* Сам "білий блок" меню.
+   Ми відділяємо його від dropdown-menu, щоб padding-top був прозорим */
+.dropdown-menu::after {
+    content: ''; /* Це прозорий міст, якщо треба, але padding-top працює краще */
+}
+
+/* Стилізація списку всередині */
+.dropdown-menu {
+    /* Робимо список ГРІДОМ (Сіткою) */
+    background: transparent; /* Фон прозорий, бо фон даємо елементам або внутрішньому блоку */
+}
+
+/* Оскільки ul це і є dropdown-menu, дамо стилі прямо йому,
+   але з background-clip, щоб padding був прозорим?
+   Ні, краще зробимо box-shadow на самому елементі і padding всередині.
+*/
+
+.dropdown-menu {
+    background-color: transparent; /* Важливо */
+    min-width: 500px; /* Широке меню */
+}
+
+/* Стилізуємо LI елементи як сітку всередині білого блоку */
+.dropdown-menu {
+    display: none; /* Сховано */
+}
+
+/* Коли наводимо на контейнер - показуємо */
+@media (min-width: 769px) {
+    .nav-dropdown-container:hover .dropdown-menu {
+        display: grid; /* Grid замість Block */
+        grid-template-columns: 1fr 1fr; /* 2 колонки */
+        gap: 15px 40px; /* Відступи: рядок стовпець */
+
+        /* Стилі білої плашки */
+        background-color: #fff;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+        padding: 30px; /* Внутрішні відступи */
+
+        /* Компенсуємо padding-top, щоб фон був тільки на меню */
+        background-clip: padding-box;
+    }
+}
+
+.dropdown-menu li {
+    list-style: none;
+}
+
+.dropdown-menu li a {
+    text-decoration: none;
+    color: #555;
+    display: block;
+    text-transform: capitalize; /* Перша буква велика, решта малі - читається легше */
+    font-size: 0.95rem;
+    padding: 5px 0;
+    transition: all 0.2s;
+    border-bottom: 1px solid transparent; /* Щоб не скакало при ховері */
+}
+
+.dropdown-menu li a:hover {
+    color: #b08d57;
+    padding-left: 5px; /* Ефект зсуву вправо */
+    border-bottom: 1px solid #f0e6d2;
+}
+
+/* --- BRANDING --- */
+.desktop-branding { flex-direction: row; align-items: center; gap: 25px; margin-top: 10px; }
+.logo-link { text-decoration: none; color: inherit; }
+.logo-text { font-family: 'Cinzel', serif; font-size: 2.5rem; font-weight: 700; color: #1a1a1a; letter-spacing: 1px; line-height: 1; }
+.logo-text-lite { font-weight: 700; color: #D8C390; }
+.brand-divider { width: 1px; height: 45px; background-color: #D8C390; opacity: 0.7; }
+.desktop-slogan-block { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.slogan-line { font-family: 'Playfair Display', serif; font-size: 1rem; color: #4a4a4a; line-height: 1.2; letter-spacing: 0.3px; }
+
+/* ======================= */
+/* MOBILE FIXES (Max 768px) */
+/* ======================= */
 @media (max-width: 768px) {
     .main-header {
-        display: flex;
-        align-items: center;
-        /* Ця властивість розкидає елементи по краях:
-           Перший елемент (Лого) -> Вліво
-           Останній елемент (Кнопка) -> Вправо */
         justify-content: space-between;
         padding: 1rem 5%;
+        position: relative;
+        background: #fff;
     }
 
     .mobile-only { display: block; }
-    .desktop-only { display: none; } /* Слоган зникає тут */
+    .desktop-only { display: none; }
+    .mobile-branding .logo-text { font-size: 1.5rem; }
+    .hamburger-button { background: none; border: none; font-size: 1.5rem; cursor: pointer; z-index: 10001; }
 
-    .mobile-only .logo-text {
-        font-size: 1.4rem; /* Було 2.5rem, ставимо 1.4rem (або 1.2rem для ще меншого) */
-        display: flex;
-        align-items: center;
-        gap: 5px; /* Відстань між ANTIQUE та LIFE */
-        white-space: nowrap; /* Забороняємо переносити слова на новий рядок */
-    }
-
-    .mobile-only .logo-text-lite {
-        font-size: 1.4rem; /* Такий самий розмір для LIFE */
-        /* Якщо LIFE має бути меншим/тоншим, можна залишити font-weight: 300 */
-    }
-
-    /* Також трохи зменшимо ключик */
-    .mobile-only .logo-icon img {
-        width: 24px; /* Оптимальний розмір для мобільного */
-        margin-right: 8px;
-    }
-
-    /* Гамбургер з'являється ТІЛЬКИ тут */
-    .hamburger-button {
-        display: block;
-        font-size: 1.6rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-        z-index: 10001; /* Поверх меню */
-    }
-
-    /* Меню випадає */
+    /* Контейнер меню */
     .header-collapsible-content {
         position: absolute;
         top: 100%; left: 0; width: 100%;
-        max-height: 0;
+        background: #fff;
+        height: 0;
         overflow: hidden;
-        opacity: 0;
-        background: #ffffff;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-        flex-direction: column;
-        align-items: center;
-        transition: max-height 0.4s ease, opacity 0.3s ease;
-        padding: 0;
+        transition: all 0.4s ease-in-out; /* Більш плавна анімація */
+        display: block;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
     }
 
     .header-collapsible-content.is-open {
-        max-height: 80vh;
-        opacity: 1;
-        padding-bottom: 20px;
+        height: 100vh;
+        overflow-y: auto;
         border-top: 1px solid #f0f0f0;
+        padding-bottom: 80px; /* Місце для скролу знизу */
     }
 
     .centered-nav-group {
-        gap: 0;
         width: 100%;
-        margin-top: 10px;
+        padding-top: 10px;
+        position: static;
     }
 
     .main-nav {
         flex-direction: column;
-        align-items: center;
-        gap: 0;
         width: 100%;
+        gap: 0;
     }
 
+    /* Стилі головних посилань меню */
     .nav-link {
-        padding: 15px 0;
         width: 100%;
         text-align: center;
+        padding: 16px 0; /* Трохи зменшив для компактності */
         border-bottom: 1px solid #f5f5f5;
-        font-size: 1rem;
+        display: block;
+        font-weight: 500;
+        font-size: 1.05rem;
+        color: #333;
     }
 
-    /* Підменю мобільне */
+    /* --- MOBILE DROPDOWN (ПРЕМІУМ ВИГЛЯД) --- */
     .nav-dropdown-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
-    .dropdown-menu {
-        position: static; width: 100%; display: none;
-        grid-template-columns: 1fr;
-        background: #fcfcfc;
-        box-shadow: none; border: none; padding: 0; transform: none;
-    }
-    .dropdown-menu.is-expanded { display: block; }
-    .dropdown-menu li a { padding: 12px 0; text-align: center; border-bottom: 1px solid #eee; color: #666; }
 
-    /* Кошик у мобільному меню */
+    .dropdown-menu {
+        position: static;
+        transform: none;
+        width: 100%;
+        box-shadow: none;
+        border: none;
+
+        /* Новий фон - теплий, світлий, замість мертвого сірого */
+        background: #fcfaf7;
+        display: none;
+        padding: 5px 0; /* Мінімальні відступи зверху/знизу блоку */
+        margin: 0;
+
+        /* Скидаємо десктопні налаштування */
+        min-width: unset;
+        grid-template-columns: 1fr !important;
+        /* Додаємо внутрішню тінь для глибини */
+        box-shadow: inset 0 4px 8px -4px rgba(0,0,0,0.08);
+    }
+
+    .dropdown-menu.is-expanded { display: block !important; }
+
+    .dropdown-menu li a {
+        padding: 14px 30px; /* Зручна зона для тапу */
+        text-align: left; /* Вирівнювання зліва */
+        /* Прибираємо жорсткі бордюри між елементами для чистоти */
+        border-bottom: none;
+        color: #555;
+        font-size: 0.95rem;
+        /* Використовуємо ту саму капіталізацію, що й на десктопі */
+        text-transform: capitalize;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent; /* Підготовка для акценту зліва */
+    }
+
+    /* Ефект при натисканні (Active) та наведенні */
+    .dropdown-menu li a:hover,
+    .dropdown-menu li a:active {
+        background-color: #f4ece2; /* Дуже легкий золотисто-бежевий фон */
+        color: #4a3f35; /* Темніший, насичений колір тексту */
+        padding-left: 35px; /* Легкий зсув вправо */
+        border-left-color: #b08d57; /* Золотий акцент зліва, як на десктопі */
+    }
+
+    /* --- КОШИК МОБІЛЬНИЙ (ВИПРАВЛЕНО ВІДСТУП) --- */
     .user-menu {
         position: static;
         transform: none;
-        margin-top: 20px;
+        /* Зменшено з 30px до 15px, щоб відповідати відступам меню */
+        margin-top: 15px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding-bottom: 20px; /* Додаткове повітря знизу */
+    }
+
+    .cart-icon img {
+        width: 28px; /* Трохи більша іконка для зручності на мобільному */
     }
 }

@@ -17,16 +17,24 @@ export const useCartStore = defineStore('cart', () => {
 
     // Дії
     const addToCart = (product) => {
-        const existingItem = items.value.find(item => item.product_id === product.product_id);
+        const prodId = product.product_id || product.id;
+        const existingItem = items.value.find(item => item.product_id === prodId);
 
         if (existingItem) {
             existingItem.quantity++;
         } else {
+            let imageUrl = null;
+            if (product.imageUrls && product.imageUrls.length > 0) {
+                imageUrl = product.imageUrls[0];
+            } else if (product.image_url) {
+                imageUrl = product.image_url;
+            }
+
             items.value.push({
-                product_id: product.product_id || product.id, // Підстраховка ID
+                product_id: prodId,
                 name: product.name,
                 price: product.price,
-                image_url: product.imageUrls ? product.imageUrls[0] : null,
+                image_url: imageUrl,
                 category: product.category,
                 quantity: 1
             });
@@ -41,20 +49,21 @@ export const useCartStore = defineStore('cart', () => {
         items.value = [];
     };
 
-    // Метод відправки на сервер
-    const submitOrder = async (customerData) => {
-        // Формуємо JSON згідно з Java DTO
+    const submitOrder = async (orderForm) => {
         const payload = {
-            customer: customerData,
+            ...orderForm,
             items: items.value.map(item => ({
                 productId: item.product_id,
                 quantity: item.quantity
             }))
         };
 
-        // Відправка
-        await axios.post('http://localhost:8080/api/orders', payload);
-        clearCart(); // Очищаємо кошик після успіху
+        // Використовуємо чистий axios без заголовків авторизації
+        const publicAxios = axios.create();
+        const response = await publicAxios.post('http://localhost:8080/api/orders', payload);
+
+        clearCart();
+        return response.data;
     };
 
     // Слідкуємо за змінами і зберігаємо в localStorage

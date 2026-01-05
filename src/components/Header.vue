@@ -8,25 +8,29 @@
     </div>
 
     <div class="header-collapsible-content" :class="{ 'is-open': isMenuOpen }">
+
       <div class="centered-nav-group">
+
         <nav class="main-nav">
           <div class="nav-dropdown-container">
-            <router-link to="/market" class="nav-link" @click="toggleMarket">
-              Маркет
-            </router-link>
+            <a href="/market" class="nav-link" @click.prevent="toggleMarket">
+              МАРКЕТ
+            </a>
+
             <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
-              <li v-for="cat in categoriesList" :key="cat.category_id">
+              <li v-for="cat in categoriesList" :key="cat.category_id || cat.id">
                 <router-link
-                    :to="{ path: '/market', query: { category: cat.category_name } }"
+                    :to="{ path: '/market', query: { category: cat.category_name || cat.name } }"
                     @click="closeMenu"
                 >
-                  {{ cat.category_name }}
+                  {{ cat.category_name || cat.name }}
                 </router-link>
               </li>
             </ul>
           </div>
-          <router-link to="/news" class="nav-link" @click="closeMenu">Новини</router-link>
-          <router-link to="/contacts" class="nav-link" @click="closeMenu">Контакти</router-link>
+
+          <router-link to="/news" class="nav-link" @click="closeMenu">НОВИНИ</router-link>
+          <router-link to="/contacts" class="nav-link" @click="closeMenu">КОНТАКТИ</router-link>
           <router-link to="/ai" class="nav-link" @click="closeMenu">AI</router-link>
         </nav>
 
@@ -40,20 +44,21 @@
             <span class="slogan-line">ДЛЯ ВАШОГО ДОМУ ТА КОЛЕКЦІЇ</span>
           </div>
         </div>
-      </div>
 
-      <div class="user-menu">
-        <router-link to="/cart" class="cart-icon" @click="closeMenu">
-          <img src="/src/public/buy-icon.png" alt="Кошик">
-          <span v-if="cartStore.itemsCount > 0" class="badge">
-            {{ cartStore.itemsCount }}
-          </span>
-        </router-link>
-      </div>
-    </div>
+        <div class="user-menu">
+          <router-link to="/cart" class="cart-icon" @click="closeMenu">
+            <img src="/src/public/buy-icon.png" alt="Кошик">
+            <span v-if="cartStore.itemsCount > 0" class="badge">
+              {{ cartStore.itemsCount }}
+            </span>
+          </router-link>
+        </div>
+
+      </div> </div>
 
     <button class="hamburger-button mobile-only" @click="toggleMenu">
-      ☰
+      <span v-if="isMenuOpen">✕</span>
+      <span v-else>☰</span>
     </button>
 
   </header>

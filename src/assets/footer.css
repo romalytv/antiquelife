@@ -1,163 +1,133 @@
-/* Основні кольори та шрифти */
-:root {
-    --bg-color: #FDFBF7; /* Кремовий фон */
-    --text-color: #5E4B45; /* Темно-коричневий текст */
-    --border-color: #5E4B45;
-}
-
+/* --- Загальні налаштування --- */
 .antique-footer {
-    background-color: #FDFBF7;
-    color: #5E4B45;
-    font-family: 'Garamond', 'Times New Roman', serif; /* Serif шрифт як на фото */
-    border-top: 1px solid #5E4B45; /* Тонка лінія зверху */
-    border-bottom: 1px solid #5E4B45; /* Тонка лінія знизу, якщо треба */
-    padding: 40px 5%; /* Зменшені відступи для "тоншого" вигляду */
-    font-size: 14px;
+    width: 100%;
+    background-color: var(--color-bg-light);
+    color: var(--color-text-dark);
+    border-top: 1px solid rgba(141, 110, 99, 0.2);
+    padding-top: 2rem; /* Менше повітря зверху */
+    font-size: 13px; /* Базовий шрифт зменшено */
 }
 
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 40px;
-    max-width: 1200px;
+/* --- СІТКА (Grid Layout) --- */
+.footer-main {
+    padding-bottom: 0px;
+}
+
+.grid-layout {
+    display: grid;
+    /* Колонки тепер ближче за рахунок max-width */
+    grid-template-columns: 1.2fr 0.8fr 0.8fr 1fr;
+    gap: 20px; /* Відстань між колонками мінімальна */
+    max-width: 1000px; /* !ВАЖЛИВО: Це зробить футер "кучнішим" по центру */
     margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* ЛІВА КОЛОНКА */
-.left-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-width: 200px;
+/* --- Стилізація колонок --- */
+.footer-col h4 {
+    font-family: 'Aboreto', serif;
+    font-size: 0.9rem; /* Компактний заголовок */
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 15px; /* Менший відступ під заголовком */
+    color: var(--color-text-dark);
+    letter-spacing: 0.5px;
 }
 
-.brand {
-    font-size: 24px;
+/* Логотип */
+.logo-text {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
     font-weight: bold;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    color: var(--color-text-dark);
+    display: block;
+    margin-bottom: 10px;
+    white-space: nowrap;
 }
 
-.logo-icon img {
-    width: 32px;
-    height: auto;
+.logo-text .highlight {
+    color: var(--color-highlight);
 }
 
-.highlight {
-    color: #CDBA96; /* Золотистий відтінок для LIFE */
-}
-
-.contact-info p {
-    margin: 2px 0;
+.brand-desc {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: 10px;
     line-height: 1.4;
 }
 
-/* ПРАВА КОЛОНКА */
-.right-column {
-    flex: 1;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.location-row {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-dark);
 }
 
-/* Форма підписки */
-.subscribe-section h3 {
-    font-weight: normal;
-    font-size: 18px;
-    margin-bottom: 15px;
+/* --- Посилання та списки --- */
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.subscribe-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.footer-links li {
+    margin-bottom: 8px; /* !ВАЖЛИВО: Менший відступ між рядками */
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem; /* Акуратний дрібний шрифт */
+    line-height: 1.4;
+    color: var(--color-text-light);
 }
 
-.input-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.input-group label {
-    font-size: 12px;
-    margin-bottom: 5px;
-}
-
-.input-group input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #5E4B45;
-    padding: 5px 0;
-    outline: none;
-    color: #5E4B45;
-    width: 100%;
-}
-
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    margin: 5px 0;
-}
-
-.submit-btn {
-    background-color: #5E4B45;
-    color: #FDFBF7;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px; /* Округлена кнопка як на фото */
-    cursor: pointer;
-    align-self: flex-start;
-    width: 100%;
-    transition: background 0.3s;
-}
-
-.submit-btn:hover {
-    opacity: 0.9;
-}
-
-/* Посилання */
-.links-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.links-col {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.links-col a {
-    color: #5E4B45;
+.footer-links a {
     text-decoration: none;
-    transition: opacity 0.2s;
+    color: var(--color-text-light);
+    transition: all 0.3s ease;
+    display: inline-block;
 }
 
-.links-col a:hover {
-    opacity: 0.7;
+.footer-links a:hover {
+    color: var(--color-primary-brown);
+    padding-left: 3px;
 }
 
-.copyright {
-    margin-top: 20px;
-    font-size: 11px;
-    opacity: 0.8;
+/* Контакти */
+.contact-list .label {
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-right: 5px;
 }
 
-/* Адаптивність для мобільних */
-@media (max-width: 768px) {
-    .footer-content {
-        flex-direction: column;
+.contact-list a {
+    color: var(--color-text-dark);
+    font-weight: 500;
+}
+
+/* --- НИЖНІЙ КОПІРАЙТ --- */
+.footer-bottom {
+    padding: 5px 0; /* Тонша смуга внизу */
+    text-align: center;
+}
+
+.footer-bottom p {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.75rem; /* Дуже дрібний шрифт для копірайту */
+    color: #888; /* Трохи світліший */
+    margin: 0;
+}
+
+/* --- Мобільна адаптація --- */
+@media (max-width: 900px) {
+    .grid-layout {
+        max-width: 100%;
+        grid-template-columns: 1fr 1fr; /* Дві колонки */
+        padding: 0 30px;
+        gap: 30px;
     }
+}
 
-    .left-column {
-        margin-bottom: 20px;
+@media (max-width: 500px) {
+    .grid-layout {
+        grid-template-columns: 1fr; /* Одна колонка */
+        text-align: left;
     }
 }

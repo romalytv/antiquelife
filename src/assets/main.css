@@ -108,6 +108,44 @@ a:hover {
     border-color: var(--color-text-dark);
 }
 
+.tiktok-showcase {
+    padding: 60px 20px;
+    background-color: var(--color-bg-light); /* Твій кремовий фон #fdfaf3 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Тонка лінія зверху, щоб відділити від попереднього блоку (якщо треба) */
+    border-top: 1px solid rgba(141, 110, 99, 0.2);
+}
+
+/* 2. Обгортка віджета (Саме це виправить розтягнутість) */
+.tiktok-widget-wrapper {
+    width: 100%;
+    /* ГАЛЬМО ДЛЯ ШИРИНИ: Не даємо розлазитись ширше 1200px */
+    max-width: 1200px;
+    margin: 0 auto; /* Центруємо блок */
+
+
+    /* Опціонально: якщо хочеш, щоб слайдер виглядав як "блок" */
+    /* border-radius: 8px; */
+    /* overflow: hidden; */
+}
+
+.tiktok-header {
+    text-align: center;
+}
+
+.tiktok-header h2 {
+    font-family: var(--font-serif); /* Шрифт Aboreto/Serif */
+    color: var(--color-text-dark);
+    font-size: 2rem;
+    font-weight: normal;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
 /* Анімація появи */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
@@ -134,6 +172,17 @@ a:hover {
         width: 100%; /* Кнопка на всю ширину для зручності пальця */
         padding: 15px 0;
     }
+
+    .tiktok-showcase {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    /* На мобільному дозволяємо зайняти всю ширину */
+    .tiktok-widget-wrapper {
+        max-width: 100%;
+        padding: 0 10px; /* Невеликі відступи збоку */
+    }
 }
 
 /* ======================= */
@@ -154,7 +203,7 @@ a:hover {
 .video-header,
 .instagram-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .video-header h2 ,

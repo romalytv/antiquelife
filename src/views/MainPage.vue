@@ -29,15 +29,26 @@
       </div>
     </section>
 
+    <section class="tiktok-showcase">
+      <div class="tiktok-header"> <h2>Ми в TikTok</h2>
+        <span class="decorative-line"></span>
+      </div>
+
+      <div class="tiktok-widget-wrapper">
+        <TikTokFeed />
+      </div>
+    </section>
+
   </div>
 </template>
 
 <script>
 import InstagramFeed from "@/components/InstagramFeed.vue";
+import TikTokFeed from '@/components/TikTokFeed.vue';
 
 export default {
   name: "MainPage",
-  components: {InstagramFeed},
+  components: {TikTokFeed, InstagramFeed},
   data() {
     return {
       videoId: "cKiV0p6MhKk",

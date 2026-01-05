@@ -5,6 +5,7 @@ import ItemPage from "@/views/ItemPage.vue";
 import CartPage from "@/views/CartPage.vue";
 import Login from "@/views/Login.vue";
 import AdminPage from "@/views/AdminPage.vue";
+import OrderSuccessPage from "@/views/OrderSuccessPage.vue";
 
 // 1. Визначте ваші маршрути (routes)
 const routes = [
@@ -37,7 +38,13 @@ const routes = [
         path: '/admin',
         component: AdminPage,
         meta: { requiresAuth: true } // <--- МІТКА: "Тільки для своїх"
-    }
+    },
+    {
+        path: '/order-success/:id',
+        name: 'OrderSuccess',
+        component: OrderSuccessPage,
+        props: true // Дозволяє передавати id як prop, хоча ми беремо через route.params
+    },
 ];
 
 // 2. Створіть екземпляр роутера
