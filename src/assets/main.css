@@ -190,7 +190,8 @@ a:hover {
 /* ======================= */
 
 .video-showcase,
-.instagram-showcase {
+.instagram-showcase,
+.products-showcase {
     padding: 60px 20px;
     background-color: var(--color-bg-light); /* Той самий кремовий фон */
     display: flex;
@@ -201,13 +202,15 @@ a:hover {
 }
 
 .video-header,
-.instagram-header {
+.instagram-header,
+.product-header {
     text-align: center;
     margin-bottom: 30px;
 }
 
 .video-header h2 ,
-.instagram-header h2 {
+.instagram-header h2,
+.product-header h2 {
     font-family: var(--font-serif); /* Шрифт Aboreto/Serif */
     color: var(--color-text-dark);
     font-size: 2rem;
@@ -226,36 +229,43 @@ a:hover {
     margin: 0 auto;
 }
 
-/* АДАПТИВНИЙ КОНТЕЙНЕР ДЛЯ ВІДЕО (16:9) */
 .video-wrapper {
     position: relative;
+    width: 100%;
+    max-width: 900px; /* Оптимальна ширина */
+    margin: 0 auto;
 
-    /* 1. Прибираємо старий хак з padding-bottom */
-    padding-bottom: 0;
-    height: auto;
-
-    /* 2. Вмикаємо сучасний режим пропорцій */
+    /* 1. Жорстко задаємо пропорцію 16:9 (стандарт YouTube) */
     aspect-ratio: 16 / 9;
 
-    /* 3. Логіка розмірів: */
-    width: 100%;        /* Намагайся зайняти всю ширину */
-    max-height: 450px;  /* АЛЕ! Якщо висота досягла 450px - зупинись.
-                           Через aspect-ratio ширина теж перестане рости. */
+    /* 2. Стиль "Подвійна рама" */
+    /* Внутрішній золотий кант */
+    border: 3px solid var(--color-highlight);
 
-    margin: 0 auto;     /* Центруємо блок, коли він стане вужчим за екран */
+    /* Зовнішнє біле паспарту (не впливає на розмір відео) */
+    outline: 12px solid #fff;
 
-    /* Декор */
-    box-shadow: 0 10px 30px rgba(74, 63, 53, 0.15);
-    border: 1px solid #e0dcd3;
-    background: #000;
+    /* 3. Тіні для об'єму */
+    box-shadow:
+        /* Тонка лінія навколо білого паспарту */
+            0 0 0 13px #e0dcd3,
+                /* Глибока тінь під рамкою */
+            0 20px 40px rgba(74, 63, 53, 0.25);
+
+    background: #000; /* Чорний фон, щоб не було білих спалахів */
+    overflow: hidden; /* Обрізаємо все зайве */
 }
 
+/* Примушуємо відео розтягуватись на весь контейнер */
 .video-wrapper iframe {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    border: none;
+    display: block;
+    object-fit: cover; /* Гарантує, що відео заповнить рамку */
 }
 
 /* Примусові стилі для Behold Widget */
@@ -270,6 +280,133 @@ behold-widget {
 .instagram-widget-wrapper {
     width: 100%;
     display: block
+}
+
+/* Обмежувач ширини такий самий, як у віджета ТікТок (max-width: 1200px) */
+.products-widget-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.products-grid {
+    display: grid;
+    /* 4 колонки, як у класичній сітці */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.product-card {
+    background: #fff;
+    /* Легка рамка, щоб було акуратно */
+    border: 1px solid #e0dcd3;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    /* Трішки заокруглення, якщо хочеш м'якше */
+    /* border-radius: 4px; */
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    /* Пропорція 4:5 (як в Інстаграм/ТікТок фото) для стилю */
+    padding-top: 120%;
+    overflow: hidden;
+}
+
+.image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.product-card:hover .image-wrapper img {
+    transform: scale(1.05);
+}
+
+/* Бейдж NEW */
+.new-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--color-text-dark); /* Темний фон */
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.product-info {
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--color-text-dark);
+    margin-bottom: 8px;
+}
+
+.product-price {
+    font-family: var(--font-sans);
+    color: var(--color-highlight); /* Золотий акцент */
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.btn-details {
+    background: transparent;
+    border: 1px solid var(--color-text-dark);
+    color: var(--color-text-dark);
+    padding: 10px 0;
+    width: 100%;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.product-card:hover .btn-details {
+    background: var(--color-text-dark);
+    color: #fff;
+}
+
+.view-all-container {
+    text-align: center;
+}
+
+/* Адаптив під мобілку */
+@media (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .products-showcase {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+    .product-info {
+        padding: 10px;
+    }
 }
 
 /* Адаптивність для мобільних */
@@ -297,6 +434,14 @@ behold-widget {
     behold-widget {
         margin-bottom: 0 !important;
         padding-bottom: 0 !important;
+    }
+
+    .video-wrapper {
+        /* На телефоні зменшуємо товщину рамки */
+        outline: 6px solid #fff;
+        box-shadow:
+                0 0 0 7px #e0dcd3,
+                0 10px 20px rgba(0,0,0,0.2);
     }
 
 

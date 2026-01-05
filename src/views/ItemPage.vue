@@ -179,7 +179,7 @@ const addToCart = () => {
 
 .image-frame {
   width: 100%;
-  aspect-ratio: 1 / 1; /* Квадрат */
+
   border-radius: 8px;
   overflow: hidden;
   background: #f9f9f9;

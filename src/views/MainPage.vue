@@ -39,19 +39,22 @@
       </div>
     </section>
 
+    <LatestProducts />
+
   </div>
 </template>
 
 <script>
 import InstagramFeed from "@/components/InstagramFeed.vue";
 import TikTokFeed from '@/components/TikTokFeed.vue';
+import LatestProducts from '@/components/LatestProducts.vue';
 
 export default {
   name: "MainPage",
-  components: {TikTokFeed, InstagramFeed},
+  components: {TikTokFeed, InstagramFeed, LatestProducts},
   data() {
     return {
-      videoId: "cKiV0p6MhKk",
+      videoId: "NC4XTu3Ap98",
       isPlaying: false
     };
   },
