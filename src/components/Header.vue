@@ -14,7 +14,7 @@
         <nav class="main-nav">
           <div class="nav-dropdown-container">
             <a href="/market" class="nav-link" @click.passive="toggleMarket">
-              МАРКЕТ
+              КАТАЛОГ
             </a>
 
             <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">

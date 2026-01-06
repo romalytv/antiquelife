@@ -86,6 +86,11 @@
             <label>Походження</label>
             <input v-model="form.origin" placeholder="Напр. Франція">
           </div>
+
+          <div class="form-group">
+            <label>Розміри</label>
+            <input v-model="form.dimensions" placeholder="Напр. 20x30 см, Ø 15 см">
+          </div>
         </div>
 
         <div class="form-group full-width">
@@ -181,7 +186,7 @@ const textareaRef = ref(null);
 const form = ref({
   product_id: null,
   name: '', description: '', price: 0, quantity: 1,
-  status: 'AVAILABLE', epoch: '', origin: '', categoryId: ''
+  status: 'AVAILABLE', epoch: '', origin: '', dimensions: '', categoryId: ''
 });
 
 const galleryItems = ref([]);
@@ -211,6 +216,7 @@ const handleAiData = (aiData) => {
   form.value.description = aiData.description;
   form.value.epoch = aiData.epoch;
   form.value.origin = aiData.origin;
+  //if (aiData.dimensions) form.value.dimensions = aiData.dimensions;
   if (aiData.price) form.value.price = aiData.price;
 
   if (aiData.category_guess && categories.value.length > 0) {
@@ -292,6 +298,8 @@ const loadData = async () => {
 };
 
 const editProduct = (item) => {
+  console.log('Повний об\'єкт item:', item); // <--- Подивіться сюди в консолі браузера
+  console.log('Значення dimensions:', item.dimensions);
   form.value = {
     product_id: item.product_id,
     name: item.name,
@@ -301,6 +309,7 @@ const editProduct = (item) => {
     status: item.status,
     epoch: item.epoch,
     origin: item.origin,
+    dimensions: item.dimensions,
     categoryId: item.category ? item.category.category_id : ''
   };
   galleryItems.value = (item.imageUrls || []).map(url => ({ type: 'server', url: url }));
@@ -323,7 +332,7 @@ const deleteProduct = async (id) => {
 const resetForm = () => {
   form.value = {
     product_id: null, name: '', description: '', price: 0,
-    status: 'AVAILABLE', epoch: '', origin: '', categoryId: ''
+    status: 'AVAILABLE', epoch: '', origin: '', dimensions: '', categoryId: ''
   };
   galleryItems.value.forEach(item => {
     if (item.type === 'local') URL.revokeObjectURL(item.url);

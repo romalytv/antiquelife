@@ -61,8 +61,8 @@
             <span class="value">{{ product.origin }}</span>
           </div>
           <div class="spec-row">
-            <span class="label">Артикул:</span>
-            <span class="value id-text">{{ product.product_id }}</span>
+            <span class="label">Розміри:</span>
+            <span class="value">{{ product.dimensions }}</span>
           </div>
         </div>
 
