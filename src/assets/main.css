@@ -25,6 +25,11 @@
     --font-sans: 'Lato', 'Arial', sans-serif;
 }
 
+body {
+    margin: 0 !important;
+    padding: 0;
+}
+
 a {
     text-decoration: none;
     color: inherit;
@@ -115,8 +120,6 @@ a:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* Тонка лінія зверху, щоб відділити від попереднього блоку (якщо треба) */
-    border-top: 1px solid rgba(141, 110, 99, 0.2);
 }
 
 /* 2. Обгортка віджета (Саме це виправить розтягнутість) */
@@ -198,7 +201,6 @@ a:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-top: 1px solid rgba(141, 110, 99, 0.2); /* Дуже легка лінія розділення */
 }
 
 .video-header,

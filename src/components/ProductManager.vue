@@ -212,20 +212,37 @@ watch(() => form.value.description, async () => {
 });
 
 const handleAiData = (aiData) => {
-  form.value.name = aiData.name;
-  form.value.description = aiData.description;
-  form.value.epoch = aiData.epoch;
-  form.value.origin = aiData.origin;
-  //if (aiData.dimensions) form.value.dimensions = aiData.dimensions;
-  if (aiData.price) form.value.price = aiData.price;
+  if (!aiData) return;
 
-  if (aiData.category_guess && categories.value.length > 0) {
-    const foundCat = categories.value.find(c =>
-        c.category_name.toLowerCase().includes(aiData.category_guess.toLowerCase()) ||
-        aiData.category_guess.toLowerCase().includes(c.category_name.toLowerCase())
-    );
-    if (foundCat) form.value.categoryId = foundCat.category_id;
+  // 1. Текстові поля
+  // Якщо ШІ повернув "", поле просто залишиться пустим (або очиститься)
+  form.value.name = aiData.name || '';
+  form.value.description = aiData.description || '';
+  form.value.epoch = aiData.epoch || '';
+  form.value.origin = aiData.origin || '';
+
+  // 2. Ціна (ШІ повертає число, тому перевіряємо чи воно є)
+  if (aiData.price) {
+    form.value.price = aiData.price;
   }
+
+  // 3. Розумний підбір категорії
+  if (aiData.category_guess && categories.value.length > 0) {
+    // Прибираємо зайві пробіли і приводимо до нижнього регістру
+    const aiCategory = aiData.category_guess.trim().toLowerCase();
+
+    const foundCat = categories.value.find(c => {
+      const dbCategory = c.category_name.toLowerCase();
+      // Перевіряємо входження в обидві сторони:
+      // "Меблі" знайде "Вінтажні меблі" і навпаки
+      return dbCategory.includes(aiCategory) || aiCategory.includes(dbCategory);
+    });
+
+    if (foundCat) {
+      form.value.categoryId = foundCat.category_id;
+    }
+  }
+
   alert('✨ Дані заповнено штучним інтелектом!');
 };
 
