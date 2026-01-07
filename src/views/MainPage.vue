@@ -18,16 +18,16 @@
       </div>
     </section>
 
-    <section class="instagram-showcase">
-      <div class="instagram-header">
-        <h2>Ми в Instagram</h2>
-        <span class="decorative-line"></span>
-      </div>
+<!--    <section class="instagram-showcase">-->
+<!--      <div class="instagram-header">-->
+<!--        <h2>Ми в Instagram</h2>-->
+<!--        <span class="decorative-line"></span>-->
+<!--      </div>-->
 
-      <div class="instagram-widget-wrapper">
-        <InstagramFeed />
-      </div>
-    </section>
+<!--      <div class="instagram-widget-wrapper">-->
+<!--        <InstagramFeed />-->
+<!--      </div>-->
+<!--    </section>-->
 
     <section class="tiktok-showcase">
       <div class="tiktok-header"> <h2>Ми в TikTok</h2>
