@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x] # Версія Node.js, яку ви використовуєте
+        node-version: [23.x] # Версія Node.js, яку ви використовуєте
 
     steps:
       # 1. Завантажуємо ваш код
