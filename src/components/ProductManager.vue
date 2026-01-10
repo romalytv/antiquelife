@@ -5,27 +5,12 @@
       <h3>{{ isEditing ? 'Редагувати товар' : 'Додати новий товар' }}</h3>
 
       <form @submit.prevent="handleSubmit">
-
         <div class="upload-section">
-          <input
-              type="file"
-              ref="fileInput"
-              id="hidden-input"
-              @change="handleFileSelect"
-              hidden
-              multiple
-              accept="image/*"
-          >
-
+          <input type="file" ref="fileInput" id="hidden-input" @change="handleFileSelect" hidden multiple accept="image/*">
           <div class="upload-controls">
-            <label for="hidden-input" class="btn-upload">
-              📸 Додати фото
-            </label>
-            <span v-if="galleryItems.length > 0" class="counter">
-              {{ galleryItems.length }} / 10
-            </span>
+            <label for="hidden-input" class="btn-upload">📸 Додати фото</label>
+            <span v-if="galleryItems.length > 0" class="counter">{{ galleryItems.length }} / 10</span>
           </div>
-
           <div v-if="galleryItems.length > 0" class="gallery-grid">
             <div v-for="(item, index) in galleryItems" :key="index" class="img-card">
               <img :src="item.url" class="preview-img">
@@ -36,10 +21,7 @@
         </div>
 
         <div v-if="itemsForAi.length > 0" class="ai-wrapper">
-          <AiScanner
-              :files="itemsForAi"
-              @ai-data-loaded="handleAiData"
-          />
+          <AiScanner :files="itemsForAi" @ai-data-loaded="handleAiData"/>
         </div>
 
         <div class="form-grid">
@@ -62,12 +44,30 @@
             <label>Категорія</label>
             <select v-model="form.categoryId" required>
               <option value="" disabled>Оберіть категорію</option>
-              <option v-for="cat in categories" :key="cat.category_id" :value="cat.category_id">
+              <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">
                 {{ cat.category_name }}
               </option>
             </select>
           </div>
 
+          <div class="form-group">
+            <label>Підкатегорія (Тип)</label>
+            <input
+                v-model="form.subCategory"
+                list="dynamic-subcats"
+
+                :disabled="filteredSubCategories.length === 0"
+                :placeholder="filteredSubCategories.length > 0 ? 'Оберіть зі списку або введіть' : 'Для цієї категорії немає підкатегорій'"
+                class="form-control"
+            >
+
+            <datalist id="dynamic-subcats">
+              <option
+                  v-for="sub in filteredSubCategories"
+                  :key="sub.subCategoryId"  :value="sub.name"
+              />
+            </datalist>
+          </div>
           <div class="form-group">
             <label>Статус</label>
             <select v-model="form.status">
@@ -89,7 +89,22 @@
 
           <div class="form-group">
             <label>Розміри</label>
-            <input v-model="form.dimensions" placeholder="Напр. 20x30 см, Ø 15 см">
+            <input v-model="form.dimensions" placeholder="Напр. 20x30 см">
+          </div>
+        </div>
+
+        <div class="form-grid-row">
+          <div class="form-group">
+            <label>Бренд</label>
+            <input v-model="form.brand" placeholder="Limoges">
+          </div>
+          <div class="form-group">
+            <label>Колір</label>
+            <input v-model="form.color" placeholder="Білий">
+          </div>
+          <div class="form-group">
+            <label>Матеріал</label>
+            <input v-model="form.material" placeholder="Порцеляна">
           </div>
         </div>
 
@@ -108,9 +123,7 @@
           <button type="submit" class="save-btn" :disabled="isLoading">
             {{ isLoading ? 'Збереження...' : (isEditing ? 'Оновити' : 'Створити') }}
           </button>
-          <button v-if="isEditing" type="button" @click="resetForm" class="cancel-btn">
-            Відмінити
-          </button>
+          <button v-if="isEditing" type="button" @click="resetForm" class="cancel-btn">Відмінити</button>
         </div>
       </form>
     </div>
@@ -135,25 +148,14 @@
         <tbody>
         <tr v-for="p in products" :key="p.product_id">
           <td class="td-photo">
-            <img
-                :src="(p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : '/placeholder.png'"
-                class="thumb"
-            >
-            <span v-if="p.imageUrls && p.imageUrls.length > 1" class="more-photos-badge">
-                +{{ p.imageUrls.length - 1 }}
-              </span>
+            <img :src="(p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : '/placeholder.png'" class="thumb">
           </td>
           <td class="td-info">
             <div class="p-title">{{ p.name }}</div>
-            <div class="p-meta">{{ p.epoch }} {{ p.origin ? '• ' + p.origin : '' }}</div>
-            <div class="p-cat" v-if="p.category">{{ p.category.categoryName }}</div>
+            <div class="p-meta">{{ p.epoch }} {{ p.origin ? '• ' + p.origin : '' }} {{ p.category ? '• ' + p.category.category_name : '' }} {{ p.subCategory ? '/ ' + p.subCategory.name : '' }}</div>
           </td>
-          <td class="td-price" data-label="Ціна">
-            {{ p.price }} ₴
-          </td>
-          <td class="td-status" data-label="Статус">
-            <span :class="['badge', p.status]">{{ p.status }}</span>
-          </td>
+          <td class="td-price">{{ p.price }} ₴</td>
+          <td class="td-status"><span :class="['badge', p.status]">{{ p.status }}</span></td>
           <td class="td-actions">
             <div class="actions">
               <button @click="editProduct(p)" class="icon-btn edit">✎</button>
@@ -171,33 +173,42 @@
 <script setup>
 import { ref, onMounted, watch, nextTick, computed } from 'vue';
 import axios from 'axios';
-import AiScanner from './AIScanner.vue'; // Перевір шлях імпорту!
+import AiScanner from './AIScanner.vue';
 
-// Еміти для комунікації з батьком (якщо треба, наприклад, помилка авторизації)
 const emit = defineEmits(['auth-error']);
 
-// --- СТАН ---
 const products = ref([]);
 const categories = ref([]);
 const isLoading = ref(false);
 const isEditing = ref(false);
 const textareaRef = ref(null);
 
+// 👇 ОНОВЛЕНИЙ ОБ'ЄКТ ФОРМИ
 const form = ref({
   product_id: null,
   name: '', description: '', price: 0, quantity: 1,
-  status: 'AVAILABLE', epoch: '', origin: '', dimensions: '', categoryId: ''
+  status: 'AVAILABLE', epoch: '', origin: '', dimensions: '', categoryId: '',
+  subCategory: '', brand: '', color: '', material: '' // <-- Нові поля
 });
 
 const galleryItems = ref([]);
 
-const itemsForAi = computed(() => {
-  return galleryItems.value
-      .filter(item => item.type === 'local')
-      .map(item => item.file);
+const isTablewareSelected = computed(() => {
+  // Перевіряємо, чи обрана категорія є посудом (ID 9 з твого скріншоту)
+  return form.value.categoryId === 9;
 });
 
-// --- МЕТОДИ ---
+// Список підкатегорій тільки для посуду
+const tablewareSubCategories = [
+  "Тарілки", "Бокали, чарки, склянки", "Чайні та кавові пари, чашки",
+  "Чайники та кавники", "Блюда", "Підноси", "Супниці та салатники",
+  "Кувшини та графини", "Соусники, цукерниці, молочники",
+  "Сервірування", "Столові прибори", "Різне"
+];
+
+const itemsForAi = computed(() => {
+  return galleryItems.value.filter(item => item.type === 'local').map(item => item.file);
+});
 
 const autoResize = () => {
   const element = textareaRef.value;
@@ -211,35 +222,72 @@ watch(() => form.value.description, async () => {
   autoResize();
 });
 
+const filteredSubCategories = computed(() => {
+  const selectedId = form.value.categoryId;
+  console.log("🔎 DEBUG: Обраний ID категорії (з форми):", selectedId, typeof selectedId);
+
+  if (!selectedId) {
+    console.log("❌ DEBUG: ID не обрано, вихід.");
+    return [];
+  }
+
+  // Виводимо весь список категорій, щоб перевірити, чи вони взагалі завантажились
+  // console.log("📂 DEBUG: Всі категорії:", categories.value);
+
+  // Шукаємо категорію (використовуємо ==, щоб "1" дорівнювало 1)
+  const currentCat = categories.value.find(c => c.categoryId === selectedId);
+  console.log("🎯 DEBUG: Знайдена категорія:", currentCat);
+
+  if (!currentCat) {
+    console.log("❌ DEBUG: Категорію з таким ID не знайдено у списку!");
+    return [];
+  }
+
+  // Перевіряємо поле subCategories
+  const subs = currentCat.subCategories;
+  console.log("📦 DEBUG: Внутрішній масив підкатегорій (subCategories):", subs);
+
+  if (subs && subs.length > 0) {
+    console.log("✅ DEBUG: Успіх! Повертаємо", subs.length, "підкатегорій.");
+    return subs;
+  }
+
+  console.log("⚠️ DEBUG: Масив підкатегорій пустий або відсутній.");
+  return [];
+});
+
+watch(() => form.value.categoryId, (newVal, oldVal) => {
+  // Якщо користувач змінив категорію (і це не перше завантаження сторінки)
+  if (newVal !== oldVal) {
+    form.value.subCategory = ''; // Очищаємо, щоб не лишилось сміття
+  }
+});
+
+// 👇 ОНОВЛЕНА ОБРОБКА ШІ
 const handleAiData = (aiData) => {
   if (!aiData) return;
 
-  // 1. Текстові поля
-  // Якщо ШІ повернув "", поле просто залишиться пустим (або очиститься)
   form.value.name = aiData.name || '';
   form.value.description = aiData.description || '';
   form.value.epoch = aiData.epoch || '';
   form.value.origin = aiData.origin || '';
+  if (aiData.price) form.value.price = aiData.price;
 
-  // 2. Ціна (ШІ повертає число, тому перевіряємо чи воно є)
-  if (aiData.price) {
-    form.value.price = aiData.price;
-  }
+  // Нові поля з JSON (зверни увагу на ключі, вони мають співпадати з AIController)
+  form.value.subCategory = aiData.sub_category || '';
+  form.value.brand = aiData.brand || '';
+  form.value.color = aiData.color || '';
+  form.value.material = aiData.material || '';
 
-  // 3. Розумний підбір категорії
   if (aiData.category_guess && categories.value.length > 0) {
-    // Прибираємо зайві пробіли і приводимо до нижнього регістру
     const aiCategory = aiData.category_guess.trim().toLowerCase();
-
     const foundCat = categories.value.find(c => {
       const dbCategory = c.category_name.toLowerCase();
-      // Перевіряємо входження в обидві сторони:
-      // "Меблі" знайде "Вінтажні меблі" і навпаки
       return dbCategory.includes(aiCategory) || aiCategory.includes(dbCategory);
     });
 
     if (foundCat) {
-      form.value.categoryId = foundCat.category_id;
+      form.value.categoryId = foundCat.categoryId;
     }
   }
 
@@ -249,16 +297,9 @@ const handleAiData = (aiData) => {
 const handleFileSelect = (event) => {
   const newFiles = Array.from(event.target.files);
   if (!newFiles.length) return;
-  if (galleryItems.value.length + newFiles.length > 10) {
-    alert('Максимум 10 фото!');
-    return;
-  }
+  if (galleryItems.value.length + newFiles.length > 10) { alert('Максимум 10 фото!'); return; }
   newFiles.forEach(file => {
-    galleryItems.value.push({
-      type: 'local',
-      url: URL.createObjectURL(file),
-      file: file
-    });
+    galleryItems.value.push({ type: 'local', url: URL.createObjectURL(file), file: file });
   });
   event.target.value = '';
 };
@@ -278,7 +319,6 @@ const handleSubmit = async () => {
   try {
     const formData = new FormData();
     const oldUrls = galleryItems.value.filter(item => item.type === 'server').map(item => item.url);
-
     const productData = { ...form.value, imageUrls: oldUrls };
     formData.append('product', JSON.stringify(productData));
 
@@ -306,6 +346,7 @@ const handleSubmit = async () => {
 const loadData = async () => {
   try {
     const prodRes = await axios.get(`/admin/products`);
+    console.log("ОСТАННІЙ ТОВАР:", prodRes.data.at(-1));
     products.value = prodRes.data.reverse();
     const catRes = await axios.get(`/api/categories`);
     categories.value = catRes.data;
@@ -314,9 +355,8 @@ const loadData = async () => {
   }
 };
 
+// 👇 ОНОВЛЕНЕ РЕДАГУВАННЯ
 const editProduct = (item) => {
-  console.log('Повний об\'єкт item:', item); // <--- Подивіться сюди в консолі браузера
-  console.log('Значення dimensions:', item.dimensions);
   form.value = {
     product_id: item.product_id,
     name: item.name,
@@ -327,12 +367,17 @@ const editProduct = (item) => {
     epoch: item.epoch,
     origin: item.origin,
     dimensions: item.dimensions,
-    categoryId: item.category ? item.category.category_id : ''
+    categoryId: item.category ? item.category.categoryId: null,
+
+    // 👇 ПІДКАТЕГОРІЯ: беремо .name (щоб в інпуті був текст, а не [object Object])
+    subCategory: item.subCategory ? item.subCategory.name : '',
+
+    brand: item.brand || '',
+    color: item.color || '',
+    material: item.material || ''
   };
   galleryItems.value = (item.imageUrls || []).map(url => ({ type: 'server', url: url }));
   isEditing.value = true;
-
-  // Знаходимо батьківський скрол (window або контейнер)
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -341,19 +386,16 @@ const deleteProduct = async (id) => {
   try {
     await axios.delete(`/admin/products/${id}`);
     products.value = products.value.filter(p => p.product_id !== id);
-  } catch (error) {
-    if (error.response?.status === 403) emit('auth-error');
-  }
+  } catch (error) { if (error.response?.status === 403) emit('auth-error'); }
 };
 
 const resetForm = () => {
   form.value = {
     product_id: null, name: '', description: '', price: 0,
-    status: 'AVAILABLE', epoch: '', origin: '', dimensions: '', categoryId: ''
+    status: 'AVAILABLE', epoch: '', origin: '', dimensions: '', categoryId: '',
+    subCategory: '', brand: '', color: '', material: ''
   };
-  galleryItems.value.forEach(item => {
-    if (item.type === 'local') URL.revokeObjectURL(item.url);
-  });
+  galleryItems.value.forEach(item => { if (item.type === 'local') URL.revokeObjectURL(item.url); });
   galleryItems.value = [];
   isEditing.value = false;
 };
@@ -787,6 +829,20 @@ input, select, textarea {
     max-width: 120px; /* Щоб кнопки не були надто довгими на планшетах */
     height: 44px;
     border-radius: 8px;
+  }
+}
+
+.form-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+/* На мобільному робимо їх в стовпчик */
+@media (max-width: 600px) {
+  .form-grid-row {
+    grid-template-columns: 1fr;
   }
 }
 </style>

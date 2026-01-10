@@ -64,43 +64,41 @@
   </header>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted } from 'vue';
 import { useCartStore } from '../stores/cart';
-import axios from 'axios'; // Не забудь імпортувати axios
+import axios from 'axios';
 
 const cartStore = useCartStore();
 const isMenuOpen = ref(false);
 const isMarketExpanded = ref(false);
 
-// Список категорій (тепер динамічний)
 const categoriesList = ref([]);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
-// Функція щоб закривати меню після кліку (для мобілок зручно)
 const closeMenu = () => {
   isMenuOpen.value = false;
   isMarketExpanded.value = false;
 };
 
-const toggleMarket = (event: Event) => {
+const toggleMarket = (event) => {
   if (window.innerWidth <= 768) {
     event.preventDefault();
     isMarketExpanded.value = !isMarketExpanded.value;
   }
 };
 
-// ЗАВАНТАЖУЄМО КАТЕГОРІЇ З БЕКЕНДУ
-// Це гарантує, що назви в хедері будуть ідентичні тим, що в базі
 const fetchCategories = async () => {
   try {
     const response = await axios.get(`/api/categories`);
-    categoriesList.value = response.data;
+
+    categoriesList.value = response.data.sort((a, b) => a.category_id - b.category_id);
+
   } catch (error) {
-    console.error("Помилка завантаження категорій в меню", error);
+    console.error("Помилка завантаження категорій", error);
   }
 };
 
