@@ -177,39 +177,62 @@ import AiScanner from './AIScanner.vue';
 
 const emit = defineEmits(['auth-error']);
 
+// Дані
 const products = ref([]);
 const categories = ref([]);
 const isLoading = ref(false);
 const isEditing = ref(false);
 const textareaRef = ref(null);
 
-// 👇 ОНОВЛЕНИЙ ОБ'ЄКТ ФОРМИ
+// Форма
 const form = ref({
   product_id: null,
-  name: '', description: '', price: 0, quantity: 1,
-  status: 'AVAILABLE', epoch: '', origin: '', dimensions: '', categoryId: '',
-  subCategory: '', brand: '', color: '', material: '' // <-- Нові поля
+  name: '',
+  description: '',
+  price: 0,
+  quantity: 1,
+  status: 'AVAILABLE',
+  epoch: '',
+  origin: '',
+  dimensions: '',
+  categoryId: '', // ID категорії (Number)
+  subCategory: '', // Назва підкатегорії (String)
+  brand: '',
+  color: '',
+  material: ''
 });
 
 const galleryItems = ref([]);
 
-const isTablewareSelected = computed(() => {
-  // Перевіряємо, чи обрана категорія є посудом (ID 9 з твого скріншоту)
-  return form.value.categoryId === 9;
-});
-
-// Список підкатегорій тільки для посуду
-const tablewareSubCategories = [
-  "Тарілки", "Бокали, чарки, склянки", "Чайні та кавові пари, чашки",
-  "Чайники та кавники", "Блюда", "Підноси", "Супниці та салатники",
-  "Кувшини та графини", "Соусники, цукерниці, молочники",
-  "Сервірування", "Столові прибори", "Різне"
-];
+// --- ОБЧИСЛЮВАНІ ВЛАСТИВОСТІ (COMPUTED) ---
 
 const itemsForAi = computed(() => {
   return galleryItems.value.filter(item => item.type === 'local').map(item => item.file);
 });
 
+// Динамічний список підкатегорій на основі обраної категорії
+const filteredSubCategories = computed(() => {
+  const selectedId = form.value.categoryId;
+  if (!selectedId) return [];
+
+  // Шукаємо категорію (порівняння == для безпеки типів)
+  const currentCat = categories.value.find(c => c.categoryId == selectedId);
+
+  if (currentCat && currentCat.subCategories && currentCat.subCategories.length > 0) {
+    return currentCat.subCategories;
+  }
+  return [];
+});
+
+const subCategoryPlaceholder = computed(() => {
+  if (!form.value.categoryId) return 'Спочатку оберіть категорію';
+  if (filteredSubCategories.value.length === 0) return 'Для цієї категорії немає підкатегорій';
+  return 'Оберіть зі списку або введіть';
+});
+
+// --- WATCHERS ---
+
+// Авто-висота для опису
 const autoResize = () => {
   const element = textareaRef.value;
   if (!element) return;
@@ -222,77 +245,74 @@ watch(() => form.value.description, async () => {
   autoResize();
 });
 
-const filteredSubCategories = computed(() => {
-  const selectedId = form.value.categoryId;
-  console.log("🔎 DEBUG: Обраний ID категорії (з форми):", selectedId, typeof selectedId);
-
-  if (!selectedId) {
-    console.log("❌ DEBUG: ID не обрано, вихід.");
-    return [];
-  }
-
-  // Виводимо весь список категорій, щоб перевірити, чи вони взагалі завантажились
-  // console.log("📂 DEBUG: Всі категорії:", categories.value);
-
-  // Шукаємо категорію (використовуємо ==, щоб "1" дорівнювало 1)
-  const currentCat = categories.value.find(c => c.categoryId === selectedId);
-  console.log("🎯 DEBUG: Знайдена категорія:", currentCat);
-
-  if (!currentCat) {
-    console.log("❌ DEBUG: Категорію з таким ID не знайдено у списку!");
-    return [];
-  }
-
-  // Перевіряємо поле subCategories
-  const subs = currentCat.subCategories;
-  console.log("📦 DEBUG: Внутрішній масив підкатегорій (subCategories):", subs);
-
-  if (subs && subs.length > 0) {
-    console.log("✅ DEBUG: Успіх! Повертаємо", subs.length, "підкатегорій.");
-    return subs;
-  }
-
-  console.log("⚠️ DEBUG: Масив підкатегорій пустий або відсутній.");
-  return [];
-});
-
+// Очищаємо підкатегорію, якщо змінили головну категорію (і це не режим редагування)
 watch(() => form.value.categoryId, (newVal, oldVal) => {
-  // Якщо користувач змінив категорію (і це не перше завантаження сторінки)
-  if (newVal !== oldVal) {
-    form.value.subCategory = ''; // Очищаємо, щоб не лишилось сміття
+  if (newVal !== oldVal && !isEditing.value) {
+    form.value.subCategory = '';
   }
 });
 
-// 👇 ОНОВЛЕНА ОБРОБКА ШІ
+// --- AI LOGIC ---
+
 const handleAiData = (aiData) => {
   if (!aiData) return;
 
+  // 1. Заповнюємо прості поля
   form.value.name = aiData.name || '';
   form.value.description = aiData.description || '';
   form.value.epoch = aiData.epoch || '';
   form.value.origin = aiData.origin || '';
   if (aiData.price) form.value.price = aiData.price;
 
-  // Нові поля з JSON (зверни увагу на ключі, вони мають співпадати з AIController)
-  form.value.subCategory = aiData.sub_category || '';
   form.value.brand = aiData.brand || '';
   form.value.color = aiData.color || '';
   form.value.material = aiData.material || '';
 
-  if (aiData.category_guess && categories.value.length > 0) {
-    const aiCategory = aiData.category_guess.trim().toLowerCase();
-    const foundCat = categories.value.find(c => {
-      const dbCategory = c.category_name.toLowerCase();
-      return dbCategory.includes(aiCategory) || aiCategory.includes(dbCategory);
-    });
+  // 2. ЛОГІКА "РОЗУМНОГО" ВИБОРУ КАТЕГОРІЇ
+  let foundCategoryId = null;
+  const aiSub = aiData.sub_category;
+  const aiCatName = aiData.category_guess;
 
-    if (foundCat) {
-      form.value.categoryId = foundCat.categoryId;
+  // ЕТАП 1: Зворотний пошук (Найнадійніший)
+  // Якщо ШІ дав підкатегорію, шукаємо, до якої ГЛАВНОЇ категорії вона належить у нас в базі
+  if (aiSub && categories.value.length > 0) {
+    for (const cat of categories.value) {
+      // Перевіряємо, чи є в цієї категорії така підкатегорія
+      if (cat.subCategories && cat.subCategories.some(sub => sub.name === aiSub)) {
+        console.log(`🤖 AI FIX: Знайдено батьківську категорію "${cat.categoryName}" для підкатегорії "${aiSub}"`);
+        foundCategoryId = cat.categoryId;
+        break; // Знайшли - виходимо
+      }
+    }
+  }
+
+  // ЕТАП 2: Якщо зворотний пошук не дав результату (або підкатегорії немає),
+  // пробуємо шукати за назвою категорії, яку дав ШІ
+  if (!foundCategoryId && aiCatName) {
+    const searchName = aiCatName.trim().toLowerCase();
+    const foundCat = categories.value.find(c => {
+      const dbName = (c.categoryName || '').toLowerCase();
+      return dbName.includes(searchName) || searchName.includes(dbName);
+    });
+    if (foundCat) foundCategoryId = foundCat.categoryId;
+  }
+
+  // 3. Застосовуємо знайдене
+  if (foundCategoryId) {
+    form.value.categoryId = foundCategoryId;
+
+    // Ставимо підкатегорію (якщо вона була)
+    if (aiSub) {
+      nextTick(() => {
+        form.value.subCategory = aiSub;
+      });
     }
   }
 
   alert('✨ Дані заповнено штучним інтелектом!');
 };
+
+// --- ФАЙЛИ ---
 
 const handleFileSelect = (event) => {
   const newFiles = Array.from(event.target.files);
@@ -310,6 +330,21 @@ const removeImage = (index) => {
   galleryItems.value.splice(index, 1);
 };
 
+// --- CRUD ОПЕРАЦІЇ ---
+
+const loadData = async () => {
+  try {
+    const prodRes = await axios.get(`/admin/products`);
+    products.value = prodRes.data.reverse();
+
+    const catRes = await axios.get(`/api/categories`);
+    console.log("Категорії завантажено:", catRes.data);
+    categories.value = catRes.data;
+  } catch (error) {
+    if (error.response?.status === 403) emit('auth-error');
+  }
+};
+
 const handleSubmit = async () => {
   if (galleryItems.value.length === 0) {
     alert("Додайте хоча б одне фото!");
@@ -319,8 +354,16 @@ const handleSubmit = async () => {
   try {
     const formData = new FormData();
     const oldUrls = galleryItems.value.filter(item => item.type === 'server').map(item => item.url);
-    const productData = { ...form.value, imageUrls: oldUrls };
-    formData.append('product', JSON.stringify(productData));
+
+    // ✅ ВІДПРАВЛЯЄМО РЯДОК (String)
+    // Бекенд сам перевірить: якщо така підкатегорія є - прив'яже, якщо ні - змінить категорію на "Різне".
+    const productPayload = {
+      ...form.value,
+      imageUrls: oldUrls
+      // subCategory тут лежить як String (наприклад "Тарілки"), цього достатньо
+    };
+
+    formData.append('product', JSON.stringify(productPayload));
 
     galleryItems.value.forEach(item => {
       if (item.type === 'local') formData.append('images', item.file);
@@ -343,20 +386,10 @@ const handleSubmit = async () => {
   }
 };
 
-const loadData = async () => {
-  try {
-    const prodRes = await axios.get(`/admin/products`);
-    console.log("ОСТАННІЙ ТОВАР:", prodRes.data.at(-1));
-    products.value = prodRes.data.reverse();
-    const catRes = await axios.get(`/api/categories`);
-    categories.value = catRes.data;
-  } catch (error) {
-    if (error.response?.status === 403) emit('auth-error');
-  }
-};
-
-// 👇 ОНОВЛЕНЕ РЕДАГУВАННЯ
 const editProduct = (item) => {
+  // Визначаємо ID категорії безпечно
+  const catId = item.category ? item.category.categoryId : '';
+
   form.value = {
     product_id: item.product_id,
     name: item.name,
@@ -367,15 +400,17 @@ const editProduct = (item) => {
     epoch: item.epoch,
     origin: item.origin,
     dimensions: item.dimensions,
-    categoryId: item.category ? item.category.categoryId: null,
 
-    // 👇 ПІДКАТЕГОРІЯ: беремо .name (щоб в інпуті був текст, а не [object Object])
+    categoryId: catId,
+
+    // Беремо .name, бо форма працює з рядком
     subCategory: item.subCategory ? item.subCategory.name : '',
 
     brand: item.brand || '',
     color: item.color || '',
     material: item.material || ''
   };
+
   galleryItems.value = (item.imageUrls || []).map(url => ({ type: 'server', url: url }));
   isEditing.value = true;
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -391,9 +426,9 @@ const deleteProduct = async (id) => {
 
 const resetForm = () => {
   form.value = {
-    product_id: null, name: '', description: '', price: 0,
-    status: 'AVAILABLE', epoch: '', origin: '', dimensions: '', categoryId: '',
-    subCategory: '', brand: '', color: '', material: ''
+    product_id: null, name: '', description: '', price: 0, quantity: 1,
+    status: 'AVAILABLE', epoch: '', origin: '', dimensions: '',
+    categoryId: '', subCategory: '', brand: '', color: '', material: ''
   };
   galleryItems.value.forEach(item => { if (item.type === 'local') URL.revokeObjectURL(item.url); });
   galleryItems.value = [];
