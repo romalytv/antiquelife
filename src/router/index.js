@@ -10,6 +10,8 @@ import ContactPage from "@/views/ContactPage.vue";
 import ContactSuccessPage from "@/views/ContactSuccessPage.vue";
 import AIPage from "@/views/AIPage.vue";
 import NewsPage from "@/views/NewsPage.vue";
+import JournalPost from "@/views/JournalPost.vue";
+import JournalPage from "@/views/JournalPage.vue";
 
 // 1. Визначте ваші маршрути (routes)
 const routes = [
@@ -68,6 +70,19 @@ const routes = [
         path: '/news', // URL сторінки успіху
         name: 'NewsPage',
         component: NewsPage
+    },
+    {
+        path: '/journal',
+        name: 'JournalList',
+        component: JournalPage
+    },
+
+    // Сторінка однієї новини
+    {
+        path: '/journal/:id',
+        name: 'JournalPost',
+        component: JournalPost,
+        props: true
     }
 ];
 

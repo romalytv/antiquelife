@@ -22,6 +22,12 @@
           >
             📩 Повідомлення
           </button>
+          <button
+              :class="['nav-btn', { active: currentTab === 'journal' }]"
+              @click="currentTab = 'journal'"
+          >
+            Журнал
+          </button>
         </nav>
       </div>
 
@@ -41,6 +47,9 @@
       <ContactManager
           v-if="currentTab === 'messages'"
       />
+      <JournalManager
+          v-if="currentTab === 'journal'"
+      />
     </div>
 
   </div>
@@ -53,6 +62,7 @@ import { useRouter } from 'vue-router';
 import ProductsManager from '../components/ProductManager.vue';
 import OrdersManager from '../components/OrderManager.vue';
 import ContactManager from '../components/ContactManager.vue';
+import JournalManager from "../components/JournalManager.vue";
 
 const router = useRouter();
 const currentTab = ref('products'); // 'products' або 'orders'

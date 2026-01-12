@@ -1,6 +1,5 @@
 <template>
   <div class="page-wrapper">
-
     <div v-if="!product" class="loading-screen">
       <div class="loader"></div>
       <p>Завантаження експонату...</p>

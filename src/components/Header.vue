@@ -29,6 +29,7 @@
             </ul>
           </div>
 
+          <router-link to="/journal" class="nav-link" @click="closeMenu">ЖУРНАЛ</router-link>
           <router-link to="/news" class="nav-link" @click="closeMenu">НОВИНИ</router-link>
           <router-link to="/contacts" class="nav-link" @click="closeMenu">КОНТАКТИ</router-link>
           <router-link to="/ai" class="nav-link" @click="closeMenu">AI</router-link>
