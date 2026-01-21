@@ -7,55 +7,50 @@
       </router-link>
     </div>
 
-    <div class="header-collapsible-content" :class="{ 'is-open': isMenuOpen }">
+    <div class="header-inner">
+      <div class="desktop-branding desktop-only">
+        <router-link to="/" class="logo-link">
+          <span class="logo-text">ANTIQUE <span class="logo-text-lite">LIFE</span></span>
+        </router-link>
+      </div>
 
-      <div class="centered-nav-group">
+      <div class="header-collapsible-content" :class="{ 'is-open': isMenuOpen }">
+        <div class="centered-nav-group">
+          <nav class="main-nav">
+            <div class="nav-dropdown-container">
+              <a href="/market" class="nav-link" @click.passive="toggleMarket">
+                КАТАЛОГ
+              </a>
 
-        <nav class="main-nav">
-          <div class="nav-dropdown-container">
-            <a href="/market" class="nav-link" @click.passive="toggleMarket">
-              КАТАЛОГ
-            </a>
+              <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
+                <li v-for="cat in categoriesList" :key="cat.category_id || cat.id">
+                  <router-link
+                      :to="{ path: '/market', query: { category: cat.category_name || cat.name } }"
+                      @click="closeMenu"
+                  >
+                    {{ cat.category_name || cat.name }}
+                  </router-link>
+                </li>
+              </ul>
+            </div>
 
-            <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
-              <li v-for="cat in categoriesList" :key="cat.category_id || cat.id">
-                <router-link
-                    :to="{ path: '/market', query: { category: cat.category_name || cat.name } }"
-                    @click="closeMenu"
-                >
-                  {{ cat.category_name || cat.name }}
-                </router-link>
-              </li>
-            </ul>
-          </div>
-
-          <router-link to="/journal" class="nav-link" @click="closeMenu">ЖУРНАЛ</router-link>
-          <router-link to="/news" class="nav-link" @click="closeMenu">НОВИНИ</router-link>
-          <router-link to="/contacts" class="nav-link" @click="closeMenu">КОНТАКТИ</router-link>
-          <router-link to="/ai" class="nav-link" @click="closeMenu">AI</router-link>
-        </nav>
-
-        <div class="desktop-branding desktop-only">
-          <router-link to="/" class="logo-link">
-            <span class="logo-text">ANTIQUE <span class="logo-text-lite">LIFE</span></span>
-          </router-link>
-          <div class="brand-divider"></div>
-          <div class="desktop-slogan-block">
-            <span class="slogan-line">ВІНТАЖ ТА СТАРОВИНА</span>
-            <span class="slogan-line">ДЛЯ ВАШОГО ДОМУ ТА КОЛЕКЦІЇ</span>
-          </div>
+            <router-link to="/journal" class="nav-link" @click="closeMenu">Головна</router-link>
+            <router-link to="/news" class="nav-link" @click="closeMenu">Каталог</router-link>
+            <router-link to="/contacts" class="nav-link" @click="closeMenu">Новини</router-link>
+            <router-link to="/ai" class="nav-link" @click="closeMenu">Експертиза антикваріату</router-link>
+          </nav>
         </div>
+      </div>
 
-        <div class="user-menu">
-          <router-link to="/cart" class="cart-icon" @click="closeMenu">
-            <img src="/src/public/buy-icon.png" alt="Кошик">
-            <span v-if="cartStore.itemsCount > 0" class="badge">
-              {{ cartStore.itemsCount }}
-            </span>
-          </router-link>
-        </div>
-
-      </div> </div>
+      <div class="user-menu">
+        <router-link to="/cart" class="cart-icon" @click="closeMenu">
+          <img src="/src/public/buy-icon.png" alt="Кошик">
+          <span v-if="cartStore.itemsCount > 0" class="badge">
+            {{ cartStore.itemsCount }}
+          </span>
+        </router-link>
+      </div>
+    </div>
 
     <button class="hamburger-button mobile-only" @click="toggleMenu">
       <span v-if="isMenuOpen">✕</span>

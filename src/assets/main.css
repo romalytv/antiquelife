@@ -3,41 +3,44 @@
 /* ======================= */
 /* GLOBAL & FONTS      */
 /* ======================= */
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Aboreto&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Aboreto&display=swap");
 
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 :root {
-    /* Приблизні кольори з вашого дизайну */
-    --color-text-dark: #4a3f35;
-    --color-text-light: #5f5f5f;
-    --color-primary-brown: #8d6e63; /* Для основного тексту */
-    --color-highlight: #b08d57; /* Для "Lives" */
-    --color-bg-light: #fdfaf3; /* Ліва частина */
-    --color-bg-dark: #3a4b4b; /* Права частина (темно-зелений) */
-    --color-notification: #d32f2f; /* Червоний для сповіщення */
-    --font-serif: 'Merriweather', 'Times New Roman', 'Aboreto', serif;
-    --font-sans: 'Lato', 'Arial', sans-serif;
+  /* Приблизні кольори з вашого дизайну */
+  --color-text-dark: #4a3f35;
+  --color-text-light: #5f5f5f;
+  --color-primary-brown: #8d6e63; /* Для основного тексту */
+  --color-highlight: #b08d57; /* Для "Lives" */
+  --color-bg-light: #fdfaf3; /* Ліва частина */
+  --color-bg-dark: #3a4b4b; /* Права частина (темно-зелений) */
+  --color-notification: #d32f2f; /* Червоний для сповіщення */
+  --font-sans: "Montserrat", "Lato", "Arial", sans-serif;
+  --font-serif: "Merriweather", "Times New Roman", "Aboreto", serif;
+  --font-sans: "Montserrat", "Lato", "Arial", sans-serif;
 }
 
 body {
-    margin: 0 !important;
-    padding: 0;
+  margin: 0 !important;
+  padding: 0;
 }
 
 a {
-    text-decoration: none;
-    color: inherit;
-    transition: color 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
 }
 
 a:hover {
-    color: var(--color-highlight);
+  color: var(--color-highlight);
 }
 
 /* ======================= */
@@ -45,147 +48,153 @@ a:hover {
 /* ======================= */
 
 .hero-section {
-    /* Займає мінімум 70% висоти екрану для ефекту "обкладинки" */
-    min-height: 70vh;
-    background-color: var(--color-bg-light); /* Ваш кремовий фон */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 20px;
-    position: relative;
+  /* Займає мінімум 70% висоти екрану для ефекту "обкладинки" */
+  min-height: 70vh;
+  background-color: var(--color-bg-light); /* Ваш кремовий фон */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 20px;
+  position: relative;
 }
 
 .hero-text-content {
-    max-width: 900px; /* Обмежуємо ширину, щоб текст не розпливався */
-    margin: 0 auto;
-    animation: fadeIn 1s ease-out; /* Плавна поява */
+  max-width: 900px; /* Обмежуємо ширину, щоб текст не розпливався */
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out; /* Плавна поява */
 }
 
 /* Заголовок */
 .hero-text-content h1 {
-    font-family: var(--font-serif); /* Aboreto */
-    font-size: 3.5rem; /* Великий розмір */
-    font-weight: 400;  /* Aboreto гарний, коли не жирний */
-    color: var(--color-text-dark);
-    line-height: 1.2;
-    margin-bottom: 25px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  font-family: var(--font-serif); /* Aboreto */
+  font-size: 3.5rem; /* Великий розмір */
+  font-weight: 400; /* Aboreto гарний, коли не жирний */
+  color: var(--color-text-dark);
+  line-height: 1.2;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Виділене слово "Lives" */
 .highlight-text {
-    color: var(--color-highlight); /* Золотистий */
-    font-style: italic; /* Трохи акценту */
-    font-family: 'Merriweather', serif; /* Можна використати інший шрифт для контрасту */
+  color: var(--color-highlight); /* Золотистий */
+  font-style: italic; /* Трохи акценту */
+  font-family:
+    "Merriweather", serif; /* Можна використати інший шрифт для контрасту */
 }
 
 /* Опис (параграф) */
 .hero-description {
-    font-family: var(--font-sans); /* Lato */
-    font-size: 1.25rem; /* Більший за звичайний текст */
-    color: var(--color-text-light);
-    line-height: 1.8; /* Повітря між рядками */
-    max-width: 700px; /* Вужчий за заголовок для естетики */
-    margin: 0 auto 40px auto; /* Центруємо і даємо відступ знизу */
-    font-weight: 300;
+  font-family: var(--font-sans); /* Lato */
+  font-size: 1.25rem; /* Більший за звичайний текст */
+  color: var(--color-text-light);
+  line-height: 1.8; /* Повітря між рядками */
+  max-width: 700px; /* Вужчий за заголовок для естетики */
+  margin: 0 auto 40px auto; /* Центруємо і даємо відступ знизу */
+  font-weight: 300;
 }
 
 /* Кнопка (CTA) */
 .btn-primary {
-    display: inline-block;
-    padding: 15px 40px;
-    border: 1px solid var(--color-text-dark);
-    color: var(--color-text-dark);
-    font-family: var(--font-serif);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 0.9rem;
-    background: transparent;
-    transition: all 0.3s ease;
-    cursor: pointer;
+  display: inline-block;
+  padding: 15px 40px;
+  border: 1px solid var(--color-text-dark);
+  color: var(--color-text-dark);
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  background: transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
-    background-color: var(--color-text-dark);
-    color: #fff;
-    border-color: var(--color-text-dark);
+  background-color: var(--color-text-dark);
+  color: #fff;
+  border-color: var(--color-text-dark);
 }
 
 .tiktok-showcase {
-    padding: 60px 20px;
-    background-color: var(--color-bg-light); /* Твій кремовий фон #fdfaf3 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  padding: 60px 20px;
+  background-color: var(--color-bg-light); /* Твій кремовий фон #fdfaf3 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 2. Обгортка віджета (Саме це виправить розтягнутість) */
 .tiktok-widget-wrapper {
-    width: 100%;
-    /* ГАЛЬМО ДЛЯ ШИРИНИ: Не даємо розлазитись ширше 1200px */
-    max-width: 1200px;
-    margin: 0 auto; /* Центруємо блок */
+  width: 100%;
+  /* ГАЛЬМО ДЛЯ ШИРИНИ: Не даємо розлазитись ширше 1200px */
+  max-width: 1200px;
+  margin: 0 auto; /* Центруємо блок */
 
-
-    /* Опціонально: якщо хочеш, щоб слайдер виглядав як "блок" */
-    /* border-radius: 8px; */
-    /* overflow: hidden; */
+  /* Опціонально: якщо хочеш, щоб слайдер виглядав як "блок" */
+  /* border-radius: 8px; */
+  /* overflow: hidden; */
 }
 
 .tiktok-header {
-    text-align: center;
+  text-align: center;
 }
 
 .tiktok-header h2 {
-    font-family: var(--font-serif); /* Шрифт Aboreto/Serif */
-    color: var(--color-text-dark);
-    font-size: 2rem;
-    font-weight: normal;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-    text-transform: uppercase;
+  font-family: var(--font-serif); /* Шрифт Aboreto/Serif */
+  color: var(--color-text-dark);
+  font-size: 2rem;
+  font-weight: normal;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
 }
 
 /* Анімація появи */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* === АДАПТИВНІСТЬ HERO === */
 @media (max-width: 768px) {
-    .hero-section {
-        min-height: 50vh; /* На мобільному менша висота */
-        padding: 60px 20px;
-    }
+  .hero-section {
+    min-height: 50vh; /* На мобільному менша висота */
+    padding: 60px 20px;
+  }
 
-    .hero-text-content h1 {
-        font-size: 2.2rem; /* Менший шрифт заголовка */
-    }
+  .hero-text-content h1 {
+    font-size: 2.2rem; /* Менший шрифт заголовка */
+  }
 
-    .hero-description {
-        font-size: 1rem;
-        line-height: 1.6;
-    }
+  .hero-description {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
 
-    .btn-primary {
-        width: 100%; /* Кнопка на всю ширину для зручності пальця */
-        padding: 15px 0;
-    }
+  .btn-primary {
+    width: 100%; /* Кнопка на всю ширину для зручності пальця */
+    padding: 15px 0;
+  }
 
-    .tiktok-showcase {
-        padding-top: 40px;
-        padding-bottom: 40px;
-    }
+  .tiktok-showcase {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
 
-    /* На мобільному дозволяємо зайняти всю ширину */
-    .tiktok-widget-wrapper {
-        max-width: 100%;
-        padding: 0 10px; /* Невеликі відступи збоку */
-    }
+  /* На мобільному дозволяємо зайняти всю ширину */
+  .tiktok-widget-wrapper {
+    max-width: 100%;
+    padding: 0 10px; /* Невеликі відступи збоку */
+  }
 }
 
 /* ======================= */
@@ -195,256 +204,253 @@ a:hover {
 .video-showcase,
 .instagram-showcase,
 .products-showcase {
-    padding: 60px 20px;
-    background-color: var(--color-bg-light); /* Той самий кремовий фон */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  padding: 60px 20px;
+  background-color: var(--color-bg-light); /* Той самий кремовий фон */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .video-header,
 .instagram-header,
 .product-header {
-    text-align: center;
-    margin-bottom: 30px;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-.video-header h2 ,
+.video-header h2,
 .instagram-header h2,
 .product-header h2 {
-    font-family: var(--font-serif); /* Шрифт Aboreto/Serif */
-    color: var(--color-text-dark);
-    font-size: 2rem;
-    font-weight: normal;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-    text-transform: uppercase;
+  font-family: var(--font-serif); /* Шрифт Aboreto/Serif */
+  color: var(--color-text-dark);
+  font-size: 2rem;
+  font-weight: normal;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
 }
 
 /* Декоративна лінія під заголовком */
 .decorative-line {
-    display: block;
-    width: 60px;
-    height: 2px;
-    background-color: var(--color-highlight);
-    margin: 0 auto;
+  display: block;
+  width: 60px;
+  height: 2px;
+  background-color: var(--color-highlight);
+  margin: 0 auto;
 }
 
 .video-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 900px; /* Оптимальна ширина */
-    margin: 0 auto;
+  position: relative;
+  width: 100%;
+  max-width: 900px; /* Оптимальна ширина */
+  margin: 0 auto;
 
-    /* 1. Жорстко задаємо пропорцію 16:9 (стандарт YouTube) */
-    aspect-ratio: 16 / 9;
+  /* 1. Жорстко задаємо пропорцію 16:9 (стандарт YouTube) */
+  aspect-ratio: 16 / 9;
 
-    /* 2. Стиль "Подвійна рама" */
-    /* Внутрішній золотий кант */
-    border: 3px solid var(--color-highlight);
+  /* 2. Стиль "Подвійна рама" */
+  /* Внутрішній золотий кант */
+  border: 3px solid var(--color-highlight);
 
-    /* Зовнішнє біле паспарту (не впливає на розмір відео) */
-    outline: 12px solid #fff;
+  /* Зовнішнє біле паспарту (не впливає на розмір відео) */
+  outline: 12px solid #fff;
 
-    /* 3. Тіні для об'єму */
-    box-shadow:
+  /* 3. Тіні для об'єму */
+  box-shadow:
         /* Тонка лінія навколо білого паспарту */
-            0 0 0 13px #e0dcd3,
-                /* Глибока тінь під рамкою */
-            0 20px 40px rgba(74, 63, 53, 0.25);
+    0 0 0 13px #e0dcd3,
+    /* Глибока тінь під рамкою */ 0 20px 40px rgba(74, 63, 53, 0.25);
 
-    background: #000; /* Чорний фон, щоб не було білих спалахів */
-    overflow: hidden; /* Обрізаємо все зайве */
+  background: #000; /* Чорний фон, щоб не було білих спалахів */
+  overflow: hidden; /* Обрізаємо все зайве */
 }
 
 /* Примушуємо відео розтягуватись на весь контейнер */
 .video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-    object-fit: cover; /* Гарантує, що відео заповнить рамку */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  object-fit: cover; /* Гарантує, що відео заповнить рамку */
 }
 
 /* Примусові стилі для Behold Widget */
 behold-widget {
-    width: 100% !important;
-    max-width: 1200px !important;
-    display: block !important;
-    margin: 0 auto;
-    min-height: 300px;
+  width: 100% !important;
+  max-width: 1200px !important;
+  display: block !important;
+  margin: 0 auto;
+  min-height: 300px;
 }
 
 .instagram-widget-wrapper {
-    width: 100%;
-    display: block
+  width: 100%;
+  display: block;
 }
 
 /* Обмежувач ширини такий самий, як у віджета ТікТок (max-width: 1200px) */
 .products-widget-wrapper {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .products-grid {
-    display: grid;
-    /* 4 колонки, як у класичній сітці */
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
+  display: grid;
+  /* 4 колонки, як у класичній сітці */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
 }
 
 .product-card {
-    background: #fff;
-    /* Легка рамка, щоб було акуратно */
-    border: 1px solid #e0dcd3;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    /* Трішки заокруглення, якщо хочеш м'якше */
-    /* border-radius: 4px; */
+  background: #fff;
+  /* Легка рамка, щоб було акуратно */
+  border: 1px solid #e0dcd3;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  /* Трішки заокруглення, якщо хочеш м'якше */
+  /* border-radius: 4px; */
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .image-wrapper {
-    position: relative;
-    width: 100%;
-    /* Пропорція 4:5 (як в Інстаграм/ТікТок фото) для стилю */
-    padding-top: 120%;
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  /* Пропорція 4:5 (як в Інстаграм/ТікТок фото) для стилю */
+  padding-top: 120%;
+  overflow: hidden;
 }
 
 .image-wrapper img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
 }
 
 .product-card:hover .image-wrapper img {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 /* Бейдж NEW */
 .new-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: var(--color-text-dark); /* Темний фон */
-    color: #fff;
-    padding: 4px 10px;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: var(--color-text-dark); /* Темний фон */
+  color: #fff;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .product-info {
-    padding: 20px;
-    text-align: center;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  padding: 20px;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .product-title {
-    font-family: var(--font-serif);
-    font-size: 1.1rem;
-    color: var(--color-text-dark);
-    margin-bottom: 8px;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--color-text-dark);
+  margin-bottom: 8px;
 }
 
 .product-price {
-    font-family: var(--font-sans);
-    color: var(--color-highlight); /* Золотий акцент */
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 15px;
+  font-family: var(--font-sans);
+  color: var(--color-highlight); /* Золотий акцент */
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
 }
 
 .btn-details {
-    background: transparent;
-    border: 1px solid var(--color-text-dark);
-    color: var(--color-text-dark);
-    padding: 10px 0;
-    width: 100%;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: 0.3s;
+  background: transparent;
+  border: 1px solid var(--color-text-dark);
+  color: var(--color-text-dark);
+  padding: 10px 0;
+  width: 100%;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .product-card:hover .btn-details {
-    background: var(--color-text-dark);
-    color: #fff;
+  background: var(--color-text-dark);
+  color: #fff;
 }
 
 .view-all-container {
-    text-align: center;
+  text-align: center;
 }
 
 /* Адаптив під мобілку */
 @media (max-width: 768px) {
-    .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-    .products-showcase {
-        padding-top: 40px;
-        padding-bottom: 40px;
-    }
-    .product-info {
-        padding: 10px;
-    }
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .products-showcase {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  .product-info {
+    padding: 10px;
+  }
 }
 
 /* Адаптивність для мобільних */
 @media (max-width: 768px) {
-    .video-header h2,
-    .instagram-header h2 {
-        font-size: 1.5rem;
-    }
+  .video-header h2,
+  .instagram-header h2 {
+    font-size: 1.5rem;
+  }
 
-    .video-showcase {
-        padding-top: 40px;     /* Трохи менше зверху */
-        padding-bottom: 0px;   /* Прибираємо відступ знизу, щоб футер був ближче */
-    }
+  .video-showcase {
+    padding-top: 40px; /* Трохи менше зверху */
+    padding-bottom: 0px; /* Прибираємо відступ знизу, щоб футер був ближче */
+  }
 
-    .instagram-showcase {
-        padding-bottom: 10px !important; /* Лишаємо трішки, щоб не прилипло намертво */
-        min-height: auto !important;     /* Забороняємо розтягуватися на весь екран */
-    }
+  .instagram-showcase {
+    padding-bottom: 10px !important; /* Лишаємо трішки, щоб не прилипло намертво */
+    min-height: auto !important; /* Забороняємо розтягуватися на весь екран */
+  }
 
-    .instagram-widget-wrapper {
-        margin-bottom: 0 !important;
-        padding-bottom: 0 !important;
-    }
+  .instagram-widget-wrapper {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
 
-    behold-widget {
-        margin-bottom: 0 !important;
-        padding-bottom: 0 !important;
-    }
+  behold-widget {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
 
-    .video-wrapper {
-        /* На телефоні зменшуємо товщину рамки */
-        outline: 6px solid #fff;
-        box-shadow:
-                0 0 0 7px #e0dcd3,
-                0 10px 20px rgba(0,0,0,0.2);
-    }
-
-
+  .video-wrapper {
+    /* На телефоні зменшуємо товщину рамки */
+    outline: 6px solid #fff;
+    box-shadow:
+      0 0 0 7px #e0dcd3,
+      0 10px 20px rgba(0, 0, 0, 0.2);
+  }
 }
