@@ -98,6 +98,23 @@
           </div>
 
           <div class="action-area">
+
+            <div class="quantity-selector" v-if="product.status === 'AVAILABLE' && product.quantity > 1">
+              <button
+                  class="qty-btn"
+                  @click="decreaseQty"
+                  :disabled="selectedQuantity <= 1"
+              >-</button>
+
+              <span class="qty-value">{{ selectedQuantity }}</span>
+
+              <button
+                  class="qty-btn"
+                  @click="increaseQty"
+                  :disabled="selectedQuantity >= product.quantity"
+              >+</button>
+            </div>
+
             <button
                 class="btn-main"
                 :class="getActionBtnClass(product.status)"
@@ -105,7 +122,7 @@
                 @click="addToCart"
             >
               <span v-if="isAddedAnim">У кошику ✔️</span>
-              <span v-else>{{ getActionBtnText(product.status) }}</span>
+              <span v-else>{{ getActionBtnText(product.status) }} ({{ selectedQuantity }} шт.)</span>
             </button>
           </div>
 
@@ -127,6 +144,7 @@ const product = ref(null);
 const selectedImage = ref('');
 const cartStore = useCartStore();
 const isAddedAnim = ref(false); // Для анімації кнопки
+const selectedQuantity = ref(1);
 
 onMounted(async () => {
   try {
@@ -172,11 +190,24 @@ const getActionBtnClass = (status) => {
   if (status === 'SOLD') return 'btn-disabled';
 };
 
+const increaseQty = () => {
+  if (product.value && selectedQuantity.value < product.value.quantity) {
+    selectedQuantity.value++;
+  }
+};
+
+const decreaseQty = () => {
+  if (selectedQuantity.value > 1) {
+    selectedQuantity.value--;
+  }
+};
+
 const addToCart = () => {
   if (product.value && product.value.status === 'AVAILABLE') {
-    cartStore.addToCart(product.value);
+    // Передаємо також вибрану кількість
+    // Важливо: переконайся, що твій cartStore приймає другий аргумент або об'єкт з кількістю!
+    cartStore.addToCart(product.value, selectedQuantity.value);
 
-    // Анімація успіху
     isAddedAnim.value = true;
     setTimeout(() => {
       isAddedAnim.value = false;

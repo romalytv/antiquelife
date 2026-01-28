@@ -3,18 +3,28 @@
 
     <div class="hero-image" :style="{ backgroundImage: `url(${post.mainImageUrl || '/placeholder-antique.jpg'})` }">
       <div class="hero-overlay"></div>
+
       <div class="hero-content">
         <div class="post-meta">
-          <span v-for="c in post.categories" :key="c.categoryId" class="cat-label">
-            {{ c.category_name }}
-          </span>
-          <span v-if="post.categories?.length" class="dot">•</span>
+          <template v-if="post.categories && post.categories.length">
+        <span
+            v-for="(c, index) in post.categories"
+            :key="c.categoryId"
+            class="cat-label"
+        >
+          {{ c.category_name }}
+          <span v-if="index < post.categories.length - 1" class="separator">• </span>
+        </span>
+          </template>
+
+          <span v-if="post.categories?.length" class="main-separator">| </span>
+
           <span class="date">{{ formatDate(post.createdAt) }}</span>
         </div>
+
         <h1>{{ post.title || extractTitle(post.content) }}</h1>
       </div>
     </div>
-
     <div class="content-wrapper">
 
       <div class="article-layout">
