@@ -138,11 +138,39 @@ onMounted(async () => {
 });
 
 const filteredProducts = computed(() => {
-  return products.value.filter(product => {
+  // 1. Спочатку фільтруємо (пошук + категорія) — це твій старий код
+  const list = products.value.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.value.toLowerCase());
     const catName = product.category ? product.category.category_name : 'Інше';
     const matchesCategory = selectedCategory.value === '' || catName === selectedCategory.value;
     return matchesSearch && matchesCategory;
+  });
+
+  // 2. Тепер СОРТУЄМО відфільтрований список
+  return list.sort((a, b) => {
+    // Карта пріоритетів: менше число = вище в списку
+    const statusPriority = {
+      'AVAILABLE': 1,
+      'RESERVED': 2,
+      'SOLD': 3
+    };
+
+    const priorityA = statusPriority[a.status] || 4; // 4 для невідомих статусів
+    const priorityB = statusPriority[b.status] || 4;
+
+    // КРОК 1: Порівнюємо за статусом
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB; // Сортування від меншого до більшого (1 -> 2 -> 3)
+    }
+
+    // КРОК 2: Якщо статуси однакові — сортуємо за новизною (датою)
+    // Припускаємо, що бекенд віддає поле created_at.
+    // Якщо його немає, можна видалити цей блок, тоді порядок буде як в БД (за ID).
+    if (a.created_at && b.created_at) {
+      return new Date(b.created_at) - new Date(a.created_at); // Новіші дати зверху
+    }
+
+    return 0;
   });
 });
 

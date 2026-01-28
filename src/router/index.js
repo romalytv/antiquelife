@@ -12,6 +12,8 @@ import AIPage from "@/views/AIPage.vue";
 import NewsPage from "@/views/NewsPage.vue";
 import JournalPost from "@/views/JournalPost.vue";
 import JournalPage from "@/views/JournalPage.vue";
+import PaymentPage from "@/views/PaymentPage.vue";
+import PaymentSuccess from "@/views/PaymentSuccess.vue";
 
 // 1. Визначте ваші маршрути (routes)
 const routes = [
@@ -83,6 +85,18 @@ const routes = [
         name: 'JournalPost',
         component: JournalPost,
         props: true
+    },
+    {
+        path: '/payment/:id',
+        name: 'PaymentPage',
+        component: PaymentPage,
+        props: true
+    },
+    {
+        path: '/success',
+        name: 'Success',
+        component: PaymentSuccess,
+        // Можна додати props: route => ({ order_id: route.query.order_id })
     }
 ];
 

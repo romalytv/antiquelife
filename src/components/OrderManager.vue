@@ -89,6 +89,11 @@
             <p v-if="selectedOrder.deliveryType === 'POST_OFFICE'">
               <strong>Деталі:</strong> {{ selectedOrder.postOfficeBranch }}
             </p>
+            <div v-if="selectedOrder.deliveryType === 'COURIER'">
+              <p><strong>Вулиця:</strong> {{ selectedOrder.street }}</p>
+              <p><strong>Будинок:</strong> {{ selectedOrder.building }}</p>
+              <p v-if="selectedOrder.apartment"><strong>Квартира:</strong> {{ selectedOrder.apartment }}</p>
+            </div>
 
             <h3 class="mt-20">💬 Коментар</h3>
             <p class="comment-box">{{ selectedOrder.comment || 'Без коментаря' }}</p>
@@ -248,7 +253,10 @@ const translateStatus = (status) => {
 
 const translateDelivery = (type) => {
   const map = {
-    'NOVA_POSHTA': 'Нова Пошта', 'POST_OFFICE': 'Інша пошта', 'SELF_PICKUP': 'Самовивіз'
+    'NOVA_POSHTA': 'Нова Пошта',
+    'POST_OFFICE': 'Інша пошта',
+    'SELF_PICKUP': 'Самовивіз',
+    'COURIER': 'Кур\'єр' // Додали переклад
   };
   return map[type] || type;
 };

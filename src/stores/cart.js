@@ -3,7 +3,7 @@ import { ref, computed, watch } from 'vue';
 import axios from 'axios';
 
 export const useCartStore = defineStore('cart', () => {
-    // Стан: завантажуємо з localStorage або створюємо пустий масив
+    // Стан: завантажуємо з localStorage
     const items = ref(JSON.parse(localStorage.getItem('cart_items')) || []);
 
     // Гетери
@@ -16,12 +16,24 @@ export const useCartStore = defineStore('cart', () => {
     });
 
     // Дії
-    const addToCart = (product) => {
+
+    // 1. Оновлено: тепер приймає count (за замовчуванням 1)
+    const addToCart = (product, count = 1) => {
         const prodId = product.product_id || product.id;
         const existingItem = items.value.find(item => item.product_id === prodId);
 
+        // Беремо реальний залишок зі складу. Якщо бекенд не прислав, вважаємо що 1.
+        const maxLimit = product.quantity !== undefined ? product.quantity : 1;
+
         if (existingItem) {
-            existingItem.quantity++;
+            // Перевіряємо, чи не перевищимо ліміт
+            if (existingItem.quantity + count <= existingItem.maxStock) {
+                existingItem.quantity += count;
+            } else {
+                // Якщо хоче більше ніж є - ставимо максимум
+                existingItem.quantity = existingItem.maxStock;
+                // Тут можна додати return false або кинути повідомлення, якщо треба
+            }
         } else {
             let imageUrl = null;
             if (product.imageUrls && product.imageUrls.length > 0) {
@@ -36,8 +48,20 @@ export const useCartStore = defineStore('cart', () => {
                 price: product.price,
                 image_url: imageUrl,
                 category: product.category,
-                quantity: 1
+                quantity: count,         // Скільки хоче клієнт
+                maxStock: maxLimit       // <-- ВАЖЛИВО: Запам'ятовуємо ліміт складу
             });
+        }
+    };
+
+    // 2. Нова дія: Зміна кількості (+/-) в самому кошику
+    const updateQuantity = (productId, newQty) => {
+        const item = items.value.find(item => item.product_id === productId);
+        if (item) {
+            // Перевіряємо межі: не менше 1 і не більше maxStock
+            if (newQty >= 1 && newQty <= item.maxStock) {
+                item.quantity = newQty;
+            }
         }
     };
 
@@ -58,7 +82,6 @@ export const useCartStore = defineStore('cart', () => {
             }))
         };
 
-        // Використовуємо чистий axios без заголовків авторизації
         const publicAxios = axios.create();
         const response = await publicAxios.post('/api/orders', payload);
 
@@ -76,6 +99,7 @@ export const useCartStore = defineStore('cart', () => {
         totalPrice,
         totalItems,
         addToCart,
+        updateQuantity, // <-- Експортуємо нову функцію
         removeFromCart,
         clearCart,
         submitOrder
