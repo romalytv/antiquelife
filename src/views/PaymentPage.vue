@@ -57,7 +57,7 @@ const loadPaymentData = async () => {
 
   try {
     // 1. Звертаємось до PaymentController
-    const response = await axios.get(`http://localhost:8080/api/payments/checkout/${orderId}`);
+    const response = await axios.get(`/api/payments/checkout/${orderId}`);
 
     // 2. Зберігаємо дані для форми LiqPay
     liqpayData.value.data = response.data.data;
