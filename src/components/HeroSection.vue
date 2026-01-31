@@ -10,7 +10,7 @@
     <div class="hero-content">
       <p class="hero-subtitle">Відкрийте для себе</p>
       <h1 class="hero-title">СВІТ АНТИКВАРІАТУ</h1>
-      <router-link to="/catalog" class="hero-button">ДО КАТАЛОГУ</router-link>
+      <router-link to="/catalog" class="hero-button">до КАТАЛОГУ</router-link>
     </div>
   </section>
 </template>
@@ -72,23 +72,36 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 14px;
 }
 
 .hero-subtitle {
-  font-family: "Georgia", serif; /* Або інший шрифт з курсивом */
-  font-style: italic;
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+  font-family: "Snell Roundhand", "SnellRoundhand", "Great Vibes", cursive;
+  font-size: 7.79rem;
   font-weight: 300;
+  line-height: 120%;
+  letter-spacing: normal;
+  color: #FFFFFF;
+  text-align: justify;
+  text-align-last: justify;
+  width: 825px; 
+  margin: 0 auto;
+  white-space: nowrap;
 }
 
 .hero-title {
-  font-family: "Arial", sans-serif;
-  font-size: 3.5rem;
-  letter-spacing: 0.2rem;
+  font-family: "Palatino Linotype", "Palatino", "Book Antiqua", "Georgia", serif;
+  font-size: 4.215rem;
   font-weight: 400;
-  margin-bottom: 2rem;
+  line-height: 120%;
+  letter-spacing: 0.09em;
+  color: #FFFFFF;
   text-transform: uppercase;
+  text-align: justify;
+  text-align-last: justify;
+  width: 825px;
+  margin: 0 auto;
+  white-space: nowrap;
 }
 
 .hero-button {
@@ -99,7 +112,10 @@ export default {
   font-size: 0.9rem;
   letter-spacing: 1px;
   transition: all 0.3s ease;
-  border: 1px solid white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  text-transform: uppercase;
 }
 
 .hero-button:hover {
@@ -119,10 +135,18 @@ export default {
 /* Адаптація для мобільних пристроїв */
 @media (max-width: 768px) {
   .hero-subtitle {
-    font-size: 1.8rem;
+    font-size: 3rem;
+    width: 100%;
+    max-width: 90%;
+    height: auto;
+    padding: 0 20px;
   }
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
+    width: 100%;
+    max-width: 90%;
+    height: auto;
+    padding: 0 20px;
   }
 }
 </style>

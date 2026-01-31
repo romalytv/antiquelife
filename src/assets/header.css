@@ -278,7 +278,7 @@
     justify-content: space-between;
     padding: 1rem 5%;
     position: relative;
-    background: #fff;
+    background: #07260e;
   }
 
   /* Remove desktop 100px gutters on small screens to avoid right gap */
@@ -303,6 +303,7 @@
     font-size: 1.5rem;
     cursor: pointer;
     z-index: 10001;
+    color: #ffffff;
   }
 
   /* Контейнер меню */
@@ -347,7 +348,7 @@
     display: block;
     font-weight: 500;
     font-size: 1.05rem;
-    color: #333;
+    color: #ffffff;
   }
 
   /* --- MOBILE DROPDOWN (ПРЕМІУМ ВИГЛЯД) --- */

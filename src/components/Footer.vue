@@ -9,11 +9,13 @@
             <span class="logo-text">ANTIQUE <span class="highlight">LIFE</span></span>
           </div>
           <p class="brand-desc">
-            Vintage & Antique
+            Портал антикваріату та вінтажу з <br>
+            Франції, Європи та українського <br>
+            мистецтва.
           </p>
-          <div class="brand-desc">
+          <!-- <div class="brand-desc">
             <span class="label">Location:</span> France
-          </div>
+          </div> -->
         </div>
 
         <div class="footer-col">
