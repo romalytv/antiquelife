@@ -226,13 +226,14 @@
   align-items: center;
 }
 .logo-text {
-  font-family: "Playfair Display", serif;
-  font-style: italic;
-  font-size: 28px; /* restored to mockup size */
-  font-weight: 500;
+  font-family:
+    "Snell Roundhand", "Edwardian Script ITC", "Brush Script MT", cursive;
+  font-size: 36px;
+  font-weight: 400;
+  font-style: normal;
   color: #ffffff;
-  letter-spacing: 0.6px;
-  line-height: 1;
+  letter-spacing: 0;
+  line-height: 100%;
   display: inline-block;
   white-space: nowrap;
 }
@@ -246,8 +247,8 @@
 }
 
 .header-inner .logo-text {
-  font-size: 28px !important;
-  font-weight: 500 !important;
+  font-size: 36px !important;
+  font-weight: 400 !important;
 }
 .logo-text-lite {
   font-weight: 400;
@@ -304,6 +305,27 @@
     cursor: pointer;
     z-index: 10001;
     color: #ffffff;
+  }
+
+  /* Center branding and keep hamburger fixed to the right */
+  .header-inner {
+    justify-content: center;
+    position: relative;
+  }
+
+  .mobile-branding {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hamburger-button {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10001;
   }
 
   /* Контейнер меню */
@@ -408,14 +430,7 @@
 
   /* --- КОШИК МОБІЛЬНИЙ (ВИПРАВЛЕНО ВІДСТУП) --- */
   .user-menu {
-    position: static;
-    transform: none;
-    /* Зменшено з 30px до 15px, щоб відповідати відступам меню */
-    margin-top: 15px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding-bottom: 20px; /* Додаткове повітря знизу */
+    display: none !important; /* hidden on mobile per mockup */
   }
 
   .cart-icon img {

@@ -83,11 +83,11 @@ export default {
   letter-spacing: normal;
   color: #FFFFFF;
   text-align: justify;
-  text-align-last: justify;
+  text-align-last: justify; 
   width: 825px; 
   margin: 0 auto;
-  white-space: nowrap;
-}
+  white-space: nowrap; 
+} 
 
 .hero-title {
   font-family: "Palatino Linotype", "Palatino", "Book Antiqua", "Georgia", serif;
@@ -144,7 +144,7 @@ export default {
   .hero-title {
     font-size: 1.8rem;
     width: 100%;
-    max-width: 90%;
+    /* max-width: 90%; */
     height: auto;
     padding: 0 20px;
   }

@@ -1,32 +1,43 @@
 <template>
   <header class="main-header">
-
     <div class="mobile-branding mobile-only">
       <router-link to="/" class="logo-link">
-        <span class="logo-text">ANTIQUE <span class="logo-text-lite">LIFE</span></span>
+        <span class="logo-text">Antique Life</span>
       </router-link>
     </div>
 
     <div class="header-inner">
       <div class="desktop-branding desktop-only">
         <router-link to="/" class="logo-link">
-          <span class="logo-text">ANTIQUE <span class="logo-text-lite">LIFE</span></span>
+          <span class="logo-text">Antique Life</span>
         </router-link>
       </div>
 
-      <div class="header-collapsible-content" :class="{ 'is-open': isMenuOpen }">
+      <div
+        class="header-collapsible-content"
+        :class="{ 'is-open': isMenuOpen }"
+      >
         <div class="centered-nav-group">
           <nav class="main-nav">
             <div class="nav-dropdown-container">
-              <a href="/market" class="nav-link" @click.passive="toggleMarket">
+              <!-- <a href="/market" class="nav-link" @click.passive="toggleMarket">
                 КАТАЛОГ
-              </a>
+              </a> -->
 
-              <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
-                <li v-for="cat in categoriesList" :key="cat.category_id || cat.id">
+              <ul
+                class="dropdown-menu"
+                :class="{ 'is-expanded': isMarketExpanded }"
+              >
+                <li
+                  v-for="cat in categoriesList"
+                  :key="cat.category_id || cat.id"
+                >
                   <router-link
-                      :to="{ path: '/market', query: { category: cat.category_name || cat.name } }"
-                      @click="closeMenu"
+                    :to="{
+                      path: '/market',
+                      query: { category: cat.category_name || cat.name },
+                    }"
+                    @click="closeMenu"
                   >
                     {{ cat.category_name || cat.name }}
                   </router-link>
@@ -34,17 +45,28 @@
               </ul>
             </div>
 
-            <router-link to="/journal" class="nav-link" @click="closeMenu">Головна</router-link>
-            <router-link to="/news" class="nav-link" @click="closeMenu">Каталог</router-link>
-            <router-link to="/contacts" class="nav-link" @click="closeMenu">Новини</router-link>
-            <router-link to="/ai" class="nav-link" @click="closeMenu">Експертиза антикваріату</router-link>
+            <router-link to="/journal" class="nav-link" @click="closeMenu"
+              >Головна</router-link
+            >
+            <router-link to="/news" class="nav-link" @click="closeMenu"
+              >Каталог</router-link
+            >
+            <router-link to="/contacts" class="nav-link" @click="closeMenu"
+              >Новини</router-link
+            >
+            <router-link to="/contacts" class="nav-link" @click="closeMenu"
+              >Контакти</router-link
+            >
+            <router-link to="/ai" class="nav-link" @click="closeMenu"
+              >Експертиза антикваріату</router-link
+            >
           </nav>
         </div>
       </div>
 
       <div class="user-menu">
         <router-link to="/cart" class="cart-icon" @click="closeMenu">
-          <img src="/src/public/buy-icon.png" alt="Кошик">
+          <img src="/src/public/buy-icon.png" alt="Кошик" />
           <span v-if="cartStore.itemsCount > 0" class="badge">
             {{ cartStore.itemsCount }}
           </span>
@@ -56,14 +78,13 @@
       <span v-if="isMenuOpen">✕</span>
       <span v-else>☰</span>
     </button>
-
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useCartStore } from '../stores/cart';
-import axios from 'axios';
+import { ref, onMounted } from "vue";
+import { useCartStore } from "../stores/cart";
+import axios from "axios";
 
 const cartStore = useCartStore();
 const isMenuOpen = ref(false);
@@ -91,8 +112,9 @@ const fetchCategories = async () => {
   try {
     const response = await axios.get(`/api/categories`);
 
-    categoriesList.value = response.data.sort((a, b) => a.category_id - b.category_id);
-
+    categoriesList.value = response.data.sort(
+      (a, b) => a.category_id - b.category_id,
+    );
   } catch (error) {
     console.error("Помилка завантаження категорій", error);
   }
