@@ -1,5 +1,5 @@
 <template>
-  <header class="main-header">
+  <header class="main-header" :class="{ 'menu-open': isMenuOpen }">
     <div class="mobile-branding mobile-only">
       <router-link to="/" class="logo-link">
         <span class="logo-text">Antique Life</span>
@@ -20,10 +20,6 @@
         <div class="centered-nav-group">
           <nav class="main-nav">
             <div class="nav-dropdown-container">
-              <!-- <a href="/market" class="nav-link" @click.passive="toggleMarket">
-                КАТАЛОГ
-              </a> -->
-
               <ul
                 class="dropdown-menu"
                 :class="{ 'is-expanded': isMarketExpanded }"
@@ -45,21 +41,21 @@
               </ul>
             </div>
 
-            <router-link to="/journal" class="nav-link" @click="closeMenu"
-              >Головна</router-link
-            >
-            <router-link to="/news" class="nav-link" @click="closeMenu"
-              >Каталог</router-link
-            >
-            <router-link to="/contacts" class="nav-link" @click="closeMenu"
-              >Новини</router-link
-            >
-            <router-link to="/contacts" class="nav-link" @click="closeMenu"
-              >Контакти</router-link
-            >
-            <router-link to="/ai" class="nav-link" @click="closeMenu"
-              >Експертиза антикваріату</router-link
-            >
+            <router-link to="/journal" class="nav-link" @click="closeMenu">
+              Головна
+            </router-link>
+            <router-link to="/news" class="nav-link" @click="closeMenu">
+              Каталог
+            </router-link>
+            <router-link to="/contacts" class="nav-link" @click="closeMenu">
+              Новини
+            </router-link>
+            <router-link to="/contacts" class="nav-link" @click="closeMenu">
+              Контакти
+            </router-link>
+            <router-link to="/ai" class="nav-link" @click="closeMenu">
+              Експертиза антикваріату
+            </router-link>
           </nav>
         </div>
       </div>
@@ -82,13 +78,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useCartStore } from "../stores/cart";
 import axios from "axios";
 
 const cartStore = useCartStore();
+
 const isMenuOpen = ref(false);
 const isMarketExpanded = ref(false);
+const savedScrollY = ref(0);
 
 const categoriesList = ref([]);
 
@@ -111,7 +109,6 @@ const toggleMarket = (event) => {
 const fetchCategories = async () => {
   try {
     const response = await axios.get(`/api/categories`);
-
     categoriesList.value = response.data.sort(
       (a, b) => a.category_id - b.category_id,
     );
@@ -122,6 +119,40 @@ const fetchCategories = async () => {
 
 onMounted(() => {
   fetchCategories();
+});
+
+/**
+ * ✅ BODY SCROLL LOCK — КЛЮЧОВИЙ ФІКС
+ */
+watch(isMenuOpen, (isOpen) => {
+  if (isOpen) {
+    savedScrollY.value = window.scrollY || window.pageYOffset || 0;
+
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${savedScrollY.value}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+  } else {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+
+    window.scrollTo(0, savedScrollY.value || 0);
+  }
+
+  document.body.classList.toggle("menu-open", isOpen);
+});
+
+onBeforeUnmount(() => {
+  document.body.classList.remove("menu-open");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
 });
 </script>
 

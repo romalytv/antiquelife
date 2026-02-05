@@ -10,7 +10,7 @@
     <div class="hero-content">
       <p class="hero-subtitle">Відкрийте для себе</p>
       <h1 class="hero-title">СВІТ АНТИКВАРІАТУ</h1>
-      <router-link to="/catalog" class="hero-button">до КАТАЛОГУ</router-link>
+      <router-link to="/market" class="hero-button">до КАТАЛОГУ</router-link>
     </div>
   </section>
 </template>
@@ -81,21 +81,22 @@ export default {
   font-weight: 300;
   line-height: 120%;
   letter-spacing: normal;
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: justify;
-  text-align-last: justify; 
-  width: 825px; 
+  text-align-last: justify;
+  width: 825px;
   margin: 0 auto;
-  white-space: nowrap; 
-} 
+  white-space: nowrap;
+}
 
 .hero-title {
-  font-family: "Palatino Linotype", "Palatino", "Book Antiqua", "Georgia", serif;
+  font-family:
+    "Palatino Linotype", "Palatino", "Book Antiqua", "Georgia", serif;
   font-size: 4.215rem;
   font-weight: 400;
   line-height: 120%;
   letter-spacing: 0.09em;
-  color: #FFFFFF;
+  color: #ffffff;
   text-transform: uppercase;
   text-align: justify;
   text-align-last: justify;
@@ -134,19 +135,37 @@ export default {
 
 /* Адаптація для мобільних пристроїв */
 @media (max-width: 768px) {
-  .hero-subtitle {
-    font-size: 3rem;
+  .hero-content {
     width: 100%;
-    max-width: 90%;
-    height: auto;
-    padding: 0 20px;
+    max-width: 90vw;
+    --hero-text-width: 320px;
+  }
+
+  .hero-subtitle {
+    font-size: 2rem;
+    width: var(--hero-text-width);
+    max-width: 90vw;
+    padding: 0;
+    box-sizing: border-box;
+    white-space: normal;
+    display: block;
+    line-height: 1.2;
+    text-align: center;
+    text-align-last: center;
+    margin: 0 auto;
   }
   .hero-title {
-    font-size: 1.8rem;
-    width: 100%;
-    /* max-width: 90%; */
-    height: auto;
-    padding: 0 20px;
+    font-size: 1.85rem;
+    width: var(--hero-text-width);
+    max-width: 90vw;
+    padding: 0;
+    box-sizing: border-box;
+    white-space: normal;
+    display: block;
+    line-height: 1.2;
+    text-align: center;
+    text-align-last: center;
+    margin: 0 auto;
   }
 }
 </style>
