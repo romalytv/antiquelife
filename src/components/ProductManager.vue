@@ -11,6 +11,42 @@
             <label for="hidden-input" class="btn-upload">📸 Додати фото</label>
             <span v-if="galleryItems.length > 0" class="counter">{{ galleryItems.length }} / 10</span>
           </div>
+          <div v-if="galleryItems.length > 0" class="ai-section">
+            <button
+                v-if="!form.coverImage"
+                type="button"
+                class="btn-ai-process"
+                @click="processImage"
+                :disabled="isProcessing"
+            >
+              {{ isProcessing ? '🎨 Малюємо...' : '✨ Згенерувати студійну обкладинку (AI)' }}
+            </button>
+
+            <div v-if="form.coverImage" class="ai-preview-panel">
+              <div class="ai-image-wrapper">
+                <img :src="form.coverImage" alt="AI Cover" class="ai-img-result">
+                <div class="ai-badge">AI Studio</div>
+              </div>
+
+              <div class="ai-actions">
+                <label class="checkbox-label">
+                  <input type="checkbox" v-model="useAiCover">
+                  <span class="custom-check"></span>
+                  Використовувати як головну
+                </label>
+
+                <div class="ai-btn-group">
+                  <button type="button" @click="processImage" :disabled="isProcessing" class="icon-btn-text refresh">
+                    🔄 {{ isProcessing ? '...' : 'Перегенерувати' }}
+                  </button>
+                  <button type="button" @click="clearAiImage" class="icon-btn-text danger">
+                    🗑 Видалити
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div v-if="galleryItems.length > 0" class="gallery-grid">
             <div v-for="(item, index) in galleryItems" :key="index" class="img-card">
               <img :src="item.url" class="preview-img">
@@ -148,7 +184,7 @@
         <tbody>
         <tr v-for="p in products" :key="p.product_id">
           <td class="td-photo">
-            <img :src="(p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : '/placeholder.png'" class="thumb">
+            <img :src="p.coverImage ? p.coverImage : ((p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : '/placeholder.png')" class="thumb">
           </td>
           <td class="td-info">
             <div class="p-title">{{ p.name }}</div>
@@ -182,6 +218,7 @@ const products = ref([]);
 const categories = ref([]);
 const isLoading = ref(false);
 const isEditing = ref(false);
+const isProcessing = ref(false);
 const textareaRef = ref(null);
 
 // Форма
@@ -199,8 +236,11 @@ const form = ref({
   subCategory: '', // Назва підкатегорії (String)
   brand: '',
   color: '',
-  material: ''
+  material: '',
+  coverImage: ''
 });
+
+const useAiCover = ref(false);
 
 const galleryItems = ref([]);
 
@@ -222,12 +262,6 @@ const filteredSubCategories = computed(() => {
     return currentCat.subCategories;
   }
   return [];
-});
-
-const subCategoryPlaceholder = computed(() => {
-  if (!form.value.categoryId) return 'Спочатку оберіть категорію';
-  if (filteredSubCategories.value.length === 0) return 'Для цієї категорії немає підкатегорій';
-  return 'Оберіть зі списку або введіть';
 });
 
 // --- WATCHERS ---
@@ -386,6 +420,52 @@ const handleSubmit = async () => {
   }
 };
 
+// --- AI LOGIC (GENERATION) ---
+
+const processImage = async () => {
+  if (galleryItems.value.length === 0) {
+    alert('Спочатку додайте фото товару!');
+    return;
+  }
+
+  // Беремо завжди ПЕРШЕ фото як джерело (найчастіше воно найкраще)
+  const sourceItem = galleryItems.value[0];
+
+  // Дозволяємо працювати тільки з новими (локальними) файлами для безпеки та швидкості
+  if (sourceItem.type !== 'local') {
+    alert("Для генерації обкладинки, будь ласка, додайте нове фото з комп'ютера.");
+    return;
+  }
+
+  isProcessing.value = true;
+  try {
+    const formData = new FormData();
+    formData.append('image', sourceItem.file);
+
+    // Виклик бекенду
+    const res = await axios.post('/admin/ai/generate-cover', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    // Зберігаємо результат
+    form.value.coverImage = res.data.url;
+
+    // Автоматично вмикаємо чекбокс при успішній генерації
+    useAiCover.value = true;
+
+  } catch (err) {
+    console.error(err);
+    alert('Помилка генерації: ' + (err.response?.data || err.message));
+  } finally {
+    isProcessing.value = false;
+  }
+};
+
+const clearAiImage = () => {
+  form.value.coverImage = '';
+  useAiCover.value = false;
+};
+
 const editProduct = (item) => {
   // Визначаємо ID категорії безпечно
   const catId = item.category ? item.category.categoryId : '';
@@ -408,9 +488,10 @@ const editProduct = (item) => {
 
     brand: item.brand || '',
     color: item.color || '',
-    material: item.material || ''
+    material: item.material || '',
+    coverImage: item.coverImage || ''
   };
-
+  useAiCover.value = !!item.coverImage;
   galleryItems.value = (item.imageUrls || []).map(url => ({ type: 'server', url: url }));
   isEditing.value = true;
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -428,8 +509,9 @@ const resetForm = () => {
   form.value = {
     product_id: null, name: '', description: '', price: 0, quantity: 1,
     status: 'AVAILABLE', epoch: '', origin: '', dimensions: '',
-    categoryId: '', subCategory: '', brand: '', color: '', material: ''
+    categoryId: '', subCategory: '', brand: '', color: '', material: '', coverImage: ''
   };
+  useAiCover.value = false;
   galleryItems.value.forEach(item => { if (item.type === 'local') URL.revokeObjectURL(item.url); });
   galleryItems.value = [];
   isEditing.value = false;
@@ -439,6 +521,130 @@ onMounted(loadData);
 </script>
 
 <style scoped>
+/* --- NEW AI STYLES --- */
+
+.ai-section {
+  margin-top: 15px;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 15px;
+}
+
+.btn-ai-process {
+  width: 100%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-bottom: 15px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-ai-process:hover { opacity: 0.9; }
+.btn-ai-process:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+.ai-preview-panel {
+  display: flex;
+  gap: 15px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  align-items: center; /* Вирівнювання по центру вертикально */
+}
+
+.ai-image-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0; /* Забороняємо картинці стискатись */
+}
+
+.ai-img-result {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #6366f1;
+  background: white;
+}
+
+.ai-badge {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #6366f1;
+  color: white;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+}
+
+.ai-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  overflow: hidden; /* Щоб кнопки не вилазили */
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  color: #374151;
+}
+
+.checkbox-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: #6366f1;
+  margin: 0;
+}
+
+.ai-btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap; /* Дозволяємо перенос, якщо дуже вузько */
+}
+
+.icon-btn-text {
+  background: white;
+  border: 1px solid #cbd5e0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.icon-btn-text.refresh { flex: 2; } /* Кнопка перегенерувати ширша */
+.icon-btn-text.danger { flex: 1; }  /* Кнопка видалити вужча */
+
+.icon-btn-text.refresh:hover { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+.icon-btn-text.danger:hover { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+
 /* --- ОСНОВНА СТРУКТУРА --- */
 .admin-panel {
   background-color: #f0f2f5;
@@ -878,6 +1084,46 @@ input, select, textarea {
 @media (max-width: 600px) {
   .form-grid-row {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .ai-preview-panel {
+    flex-direction: column; /* Елементи один під одним */
+    text-align: center;
+    padding: 15px;
+  }
+
+  .ai-image-wrapper {
+    width: 120px; /* Трохи більше фото */
+    height: 120px;
+    margin-bottom: 10px; /* Відступ до кнопок */
+  }
+
+  .ai-actions {
+    width: 100%;
+    align-items: center; /* Центруємо чекбокс */
+  }
+
+  .checkbox-label {
+    width: 100%;
+    justify-content: center; /* Чекбокс по центру */
+    padding: 5px 0;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid #f1f5f9;
+    margin-bottom: 5px;
+  }
+
+  .ai-btn-group {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .icon-btn-text {
+    flex: 1; /* Кнопки розтягуються на всю ширину */
+    padding: 10px; /* Більша зона натискання */
+    font-size: 14px;
   }
 }
 </style>

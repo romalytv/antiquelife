@@ -35,7 +35,7 @@
           <div v-if="hasMultipleImages(product)" class="slider-controls">
             <button class="nav-btn prev" @click.prevent="prevImage(product)">❮</button>
             <button class="nav-btn next" @click.prevent="nextImage(product)">❯</button>
-            <span class="img-counter">{{ (imageIndices[product.product_id] || 0) + 1 }} / {{ product.imageUrls.length }}</span>
+            <span class="img-counter">  {{ (imageIndices[product.product_id] || 0) + 1 }} / {{ getDisplayImages(product).length }} </span>
           </div>
 
           <span v-if="product.status === 'SOLD'" class="status-badge sold">ПРОДАНО</span>
@@ -93,23 +93,67 @@ const searchQuery = ref('');
 const selectedCategory = ref('');
 const imageIndices = ref({});
 
-// --- ЛОГІКА СЛАЙДЕРА (Те саме що було) ---
-const hasMultipleImages = (product) => product.imageUrls && product.imageUrls.length > 1;
+// --- ЛОГІКА СЛАЙДЕРА ТА ОБКЛАДИНКИ ---
+
+// Допоміжна функція: Збирає повний список фото для показу
+// 1. Якщо є coverImage -> воно стає ПЕРШИМ у списку.
+// 2. Далі йдуть всі інші фото з imageUrls.
+const getDisplayImages = (product) => {
+  const images = [];
+
+  // Якщо є AI обкладинка - додаємо її на початок
+  if (product.coverImage) {
+    images.push(product.coverImage);
+  }
+
+  // Додаємо решту фото з галереї
+  if (product.imageUrls && product.imageUrls.length > 0) {
+    images.push(...product.imageUrls);
+  }
+
+  // Якщо зовсім нічого немає - плейсхолдер
+  if (images.length === 0) {
+    images.push('/placeholder.png');
+  }
+
+  return images;
+};
+
+// Перевіряємо, чи є більше однієї картинки (для стрілок слайдера)
+const hasMultipleImages = (product) => {
+  const images = getDisplayImages(product);
+  return images.length > 1;
+};
+
+// Отримуємо поточне фото для відображення
 const getCurrentImage = (product) => {
-  if (!product.imageUrls || product.imageUrls.length === 0) return '/placeholder.png';
+  const images = getDisplayImages(product);
   const index = imageIndices.value[product.product_id] || 0;
-  return product.imageUrls[index];
+
+  // Захист від виходу за межі масиву (якщо фото видалили, а індекс лишився)
+  if (index >= images.length) {
+    return images[0];
+  }
+
+  return images[index];
 };
+
 const nextImage = (product) => {
+  const images = getDisplayImages(product);
   const currentIndex = imageIndices.value[product.product_id] || 0;
-  imageIndices.value[product.product_id] = (currentIndex + 1) % product.imageUrls.length;
+  imageIndices.value[product.product_id] = (currentIndex + 1) % images.length;
 };
+
 const prevImage = (product) => {
+  const images = getDisplayImages(product);
   const currentIndex = imageIndices.value[product.product_id] || 0;
-  const total = product.imageUrls.length;
+  const total = images.length;
   imageIndices.value[product.product_id] = currentIndex === 0 ? total - 1 : currentIndex - 1;
 };
-const resetImage = (productId) => { if (imageIndices.value[productId]) imageIndices.value[productId] = 0; };
+
+const resetImage = (productId) => {
+  if (imageIndices.value[productId]) imageIndices.value[productId] = 0;
+};
 // -----------------------
 
 const fetchProducts = async () => {
