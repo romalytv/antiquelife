@@ -128,6 +128,38 @@
   align-items: center;
 }
 
+.catalog-dropdown-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dropdown-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.7em;
+  transition: transform 0.3s ease;
+  transform: scaleY(0.6);
+}
+
+.dropdown-arrow.is-open {
+  transform: scaleY(-0.6);
+}
+
+@media (min-width: 769px) {
+  .catalog-dropdown-wrapper {
+    position: relative;
+    width: auto;
+    flex-direction: row;
+  }
+
+  .dropdown-arrow {
+    display: none;
+  }
+}
+
 /* --- MEGA MENU (DESKTOP) --- */
 .dropdown-menu {
   position: absolute;
@@ -174,7 +206,7 @@
 
 /* Коли наводимо на контейнер - показуємо */
 @media (min-width: 769px) {
-  .nav-dropdown-container:hover .dropdown-menu {
+  .catalog-dropdown-wrapper:hover .dropdown-menu {
     display: grid; /* Grid замість Block */
     grid-template-columns: 1fr 1fr; /* 2 колонки */
     gap: 15px 40px; /* Відступи: рядок стовпець */
@@ -192,23 +224,6 @@
 
 .dropdown-menu li {
   list-style: none;
-}
-
-.dropdown-menu li a {
-  text-decoration: none;
-  color: #555;
-  display: block;
-  text-transform: capitalize; /* Перша буква велика, решта малі - читається легше */
-  font-size: 0.95rem;
-  padding: 5px 0;
-  transition: all 0.2s;
-  border-bottom: 1px solid transparent; /* Щоб не скакало при ховері */
-}
-
-.dropdown-menu li a:hover {
-  color: #b08d57;
-  padding-left: 5px; /* Ефект зсуву вправо */
-  border-bottom: 1px solid #f0e6d2;
 }
 
 /* --- BRANDING --- */
@@ -400,11 +415,18 @@
   }
 
   /* --- MOBILE DROPDOWN (ПРЕМІУМ ВИГЛЯД) --- */
-  .nav-dropdown-container {
+  .catalog-dropdown-wrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .catalog-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
   .dropdown-menu {
@@ -417,8 +439,14 @@
     /* Новий фон - теплий, світлий, замість мертвого сірого */
     background: #fcfaf7;
     display: none;
-    padding: 5px 0; /* Мінімальні відступи зверху/знизу блоку */
+    padding: 0;
     margin: 0;
+    list-style: none;
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.3s ease,
+      padding 0.3s ease;
 
     /* Скидаємо десктопні налаштування */
     min-width: unset;
@@ -429,6 +457,33 @@
 
   .dropdown-menu.is-expanded {
     display: block !important;
+    max-height: 400px;
+    padding: 5px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* Стилізація скролбару */
+    scrollbar-width: thin;
+    scrollbar-color: #b08d57 #f4ece2;
+  }
+
+  /* WebkitScrollBar для Chrome, Safari, Edge */
+  .dropdown-menu.is-expanded::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .dropdown-menu.is-expanded::-webkit-scrollbar-track {
+    background: #f4ece2;
+    border-radius: 10px;
+  }
+
+  .dropdown-menu.is-expanded::-webkit-scrollbar-thumb {
+    background: #b08d57;
+    border-radius: 10px;
+  }
+
+  .dropdown-menu.is-expanded::-webkit-scrollbar-thumb:hover {
+    background: #9a7847;
   }
 
   .dropdown-menu li a {
@@ -443,6 +498,8 @@
     font-weight: 500;
     transition: all 0.2s ease;
     border-left: 3px solid transparent; /* Підготовка для акценту зліва */
+    display: block;
+    width: 100%;
   }
 
   /* Ефект при натисканні (Active) та наведенні */
@@ -457,6 +514,33 @@
   /* --- КОШИК МОБІЛЬНИЙ (ВИПРАВЛЕНО ВІДСТУП) --- */
   .user-menu {
     display: none !important; /* hidden on mobile per mockup */
+  }
+
+  /* Корзина як пункт меню */
+  .nav-link-cart {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: none !important;
+  }
+
+  .cart-icon-inline {
+    width: 28px;
+    height: 28px;
+    filter: none;
+  }
+
+  .badge-inline {
+    position: absolute;
+    top: 8px;
+    right: calc(50% - 20px);
+    background: #d32f2f;
+    color: #fff;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
   }
 
   .cart-icon img {

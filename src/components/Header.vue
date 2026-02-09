@@ -19,11 +19,27 @@
       >
         <div class="centered-nav-group">
           <nav class="main-nav">
-            <div class="nav-dropdown-container">
+            <router-link to="/journal" class="nav-link" @click="closeMenu">
+              Головна
+            </router-link>
+
+            <div class="catalog-dropdown-wrapper">
+              <a
+                href="#"
+                class="nav-link catalog-trigger"
+                @click.prevent="toggleMarket"
+              >
+                Каталог
+              </a>
               <ul
                 class="dropdown-menu"
                 :class="{ 'is-expanded': isMarketExpanded }"
               >
+                <li>
+                  <router-link to="/market" @click="closeMenu">
+                    Усі Товари
+                  </router-link>
+                </li>
                 <li
                   v-for="cat in categoriesList"
                   :key="cat.category_id || cat.id"
@@ -41,12 +57,6 @@
               </ul>
             </div>
 
-            <router-link to="/journal" class="nav-link" @click="closeMenu">
-              Головна
-            </router-link>
-            <router-link to="/news" class="nav-link" @click="closeMenu">
-              Каталог
-            </router-link>
             <router-link to="/contacts" class="nav-link" @click="closeMenu">
               Новини
             </router-link>
@@ -55,6 +65,22 @@
             </router-link>
             <router-link to="/ai" class="nav-link" @click="closeMenu">
               Експертиза антикваріату
+            </router-link>
+
+            <!-- Корзина в низу меню (тільки мобільна) -->
+            <router-link
+              to="/cart"
+              class="nav-link nav-link-cart mobile-only"
+              @click="closeMenu"
+            >
+              <img
+                src="/src/public/buy-icon.png"
+                alt="Кошик"
+                class="cart-icon-inline"
+              />
+              <span v-if="cartStore.itemsCount > 0" class="badge-inline">
+                {{ cartStore.itemsCount }}
+              </span>
             </router-link>
           </nav>
         </div>
@@ -88,7 +114,20 @@ const isMenuOpen = ref(false);
 const isMarketExpanded = ref(false);
 const savedScrollY = ref(0);
 
-const categoriesList = ref([]);
+const categoriesList = ref([
+  { id: 1, name: "Антикварний Та Вінтажний Посуд" },
+  { id: 2, name: "Антикварні Та Вінтажні Meблі" },
+  { id: 3, name: "Декор Та Предмети Інтер'єру" },
+  { id: 4, name: "Антикварні Лампи Та Світильники" },
+  { id: 5, name: "Дзеркала Та Рами" },
+  { id: 6, name: "Живопис Та Графіка" },
+  { id: 7, name: "Вироби З Металу Та Срібла" },
+  { id: 8, name: "Антикварні Годинники" },
+  { id: 9, name: "Антикварне Та Вінтажне Скло І Кришталь" },
+  { id: 10, name: "Вінтажна Та Антикварна Біжутерія" },
+  { id: 11, name: "Елітний Та Колекційний Антикваріат" },
+  { id: 12, name: "Різне" },
+]);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -109,11 +148,15 @@ const toggleMarket = (event) => {
 const fetchCategories = async () => {
   try {
     const response = await axios.get(`/api/categories`);
-    categoriesList.value = response.data.sort(
-      (a, b) => a.category_id - b.category_id,
-    );
+    if (response.data && response.data.length > 0) {
+      categoriesList.value = response.data.sort(
+        (a, b) => a.category_id - b.category_id,
+      );
+    }
   } catch (error) {
-    console.error("Помилка завантаження категорій", error);
+    console.log(
+      "API категорії недоступні, використовується список за замовчуванням",
+    );
   }
 };
 

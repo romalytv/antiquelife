@@ -138,34 +138,41 @@ export default {
   .hero-content {
     width: 100%;
     max-width: 90vw;
-    --hero-text-width: 320px;
+    padding: 0 20px;
   }
 
   .hero-subtitle {
-    font-size: 2rem;
-    width: var(--hero-text-width);
-    max-width: 90vw;
+    font-size: clamp(2.8rem, 9vw, 5rem);
+    width: auto;
+    max-width: 100%;
     padding: 0;
     box-sizing: border-box;
-    white-space: normal;
+    white-space: nowrap;
     display: block;
     line-height: 1.2;
     text-align: center;
-    text-align-last: center;
     margin: 0 auto;
+    word-spacing: normal;
+    letter-spacing: 0.02em;
   }
+  
   .hero-title {
-    font-size: 1.85rem;
-    width: var(--hero-text-width);
-    max-width: 90vw;
+    font-size: clamp(1.5rem, 5.5vw, 2.5rem);
+    width: auto;
+    max-width: 100%;
     padding: 0;
     box-sizing: border-box;
-    white-space: normal;
+    white-space: nowrap;
     display: block;
-    line-height: 1.2;
+    line-height: 1.3;
     text-align: center;
-    text-align-last: center;
     margin: 0 auto;
+    letter-spacing: 0.08em;
+  }
+  
+  .hero-button {
+    font-size: 0.75rem;
+    padding: 10px 25px;
   }
 }
 </style>
