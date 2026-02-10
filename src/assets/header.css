@@ -1,5 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap");
 
+@font-face {
+  font-family: 'Snell Roundhand';
+  /* Уважно перевір розширення файлу: .ttf або .otf */
+  src: url('src/assets/fonts/SnellRoundhand/Roundhand Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ======================= */
 /* ОСНОВНІ НАЛАШТУВАННЯ */
 /* ======================= */
@@ -244,10 +253,9 @@
   align-items: center;
 }
 .logo-text {
-  font-family:
-    "Edwardian Script ITC", "Brush Script MT", "Snell Roundhand", cursive;
+  font-family: "Snell Roundhand", "Baskerville", cursive;
   font-size: 28px;
-  font-weight: 500;
+  font-weight: 400;
   font-style: normal;
   color: #ffffff;
   letter-spacing: 1px;

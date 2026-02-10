@@ -1,21 +1,10 @@
 <template>
   <div class="expertise-page">
     <main class="main-content container">
+      <div class="grid-layout">
 
-      <div class="layout-wrapper">
+        <div class="upload-area-wrapper">
 
-        <div class="text-section">
-          <div v-if="!resultData">
-            <span class="main-title">Проаналізуйте вашу річ</span>
-            <p class="description-text">
-              Завантажте фото предмета — і штучний інтелект допоможе визначити, що це за
-              антикваріат, оцінити його приблизну вартість та розповісти історію походження.
-              Швидко, зручно та без потреби звертатися до експертів.
-            </p>
-          </div>
-        </div>
-
-        <div class="upload-section">
           <input
               type="file"
               ref="fileInput"
@@ -35,6 +24,7 @@
                 <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
               </svg>
             </div>
+            <p class="upload-hint">Натисніть, щоб додати фото</p>
           </div>
 
           <div v-else class="populated-state">
@@ -61,9 +51,21 @@
           </div>
         </div>
 
-        <div class="action-section">
+        <div class="info-area">
 
           <div v-if="!resultData">
+            <h1 class="main-title">Проаналізуйте вашу річ</h1>
+
+            <div class="limit-badge" :class="{ 'limit-reached': attempts >= 3 }">
+              <span v-if="attempts < 3">Залишилось спроб сьогодні: {{ 3 - attempts }}</span>
+              <span v-else>Ліміт вичерпано</span>
+            </div>
+
+            <p class="description-text">
+              Завантажте фото предмета — і штучний інтелект допоможе визначити, що це за
+              антикваріат, оцінити його приблизну вартість та розповісти історію походження.
+            </p>
+
             <button
                 class="analyze-btn"
                 @click="analyzeImage"
@@ -71,13 +73,9 @@
                 :class="{ 'btn-ready': galleryItems.length > 0 && !isLoading && attempts < 3 }"
             >
               <span v-if="isLoading">Аналізуємо...</span>
+              <span v-else-if="galleryItems.length === 0">Додайте фото</span>
               <span v-else>Запустити аналіз</span>
             </button>
-
-            <div class="limit-badge-wrapper">
-              <span v-if="attempts < 3" class="limit-text">Залишилось спроб сьогодні: {{ 3 - attempts }}</span>
-              <span v-else class="limit-text error">Ліміт вичерпано</span>
-            </div>
 
             <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
           </div>
@@ -118,13 +116,13 @@ const LS_KEY_EXPIRY = 'ai_scan_expiry';
 
 // Стан
 const fileInput = ref(null);
-const galleryItems = ref([]);
+const galleryItems = ref([]); // Тут зберігаємо { file, url }
 const resultData = ref(null);
 const isLoading = ref(false);
 const errorMsg = ref('');
 const attempts = ref(0);
 
-// --- LocalStorage Logic ---
+// --- LocalStorage (Ліміти) ---
 onMounted(() => {
   const now = Date.now();
   const storedExpiry = localStorage.getItem(LS_KEY_EXPIRY);
@@ -151,7 +149,7 @@ const incrementAttempts = () => {
   }
 };
 
-// --- Файли ---
+// --- Робота з файлами (Як у тебе в Адмінці) ---
 const triggerUpload = () => fileInput.value.click();
 
 const handleFileSelect = (event) => {
@@ -163,6 +161,7 @@ const handleFileSelect = (event) => {
     return;
   }
 
+  // Додаємо файли у форматі об'єктів
   newFiles.forEach(file => {
     galleryItems.value.push({
       file: file,
@@ -170,7 +169,7 @@ const handleFileSelect = (event) => {
     });
   });
 
-  event.target.value = '';
+  event.target.value = ''; // Скидаємо інпут
   errorMsg.value = '';
 };
 
@@ -188,7 +187,7 @@ const fileToBase64 = (file) => {
   });
 };
 
-// --- API ---
+// --- Основна логіка запиту до AI ---
 const analyzeImage = async () => {
   if (galleryItems.value.length === 0) return;
   if (attempts.value >= 3) { alert("Ліміт вичерпано."); return; }
@@ -197,17 +196,24 @@ const analyzeImage = async () => {
   errorMsg.value = '';
 
   try {
+    // 1. Конвертуємо файли в Base64
     const promises = galleryItems.value.map(item => fileToBase64(item.file));
     const base64Images = await Promise.all(promises);
 
+    // 2. Відправляємо на ПУБЛІЧНИЙ ендпоінт
     const response = await axios.post('/api/public/ai/analyze', {
       images: base64Images
     });
 
+    console.log("🔥 AI Response:", response.data);
+
     let content = null;
+
+    // 3. Розбираємо відповідь (підтримуємо обидва формати)
     if (response.data.choices?.[0]?.message?.content) {
-      content = response.data.choices[0].message.content;
+      content = response.data.choices[0].message.content; // Стандартний GPT
     } else if (response.data.output?.[0]) {
+      // Новий формат (якщо backend юзає Responses API)
       const outItem = response.data.output[0];
       content = Array.isArray(outItem.content)
           ? (outItem.content.find(c => c.type === 'text')?.text || outItem.content[0]?.text)
@@ -218,11 +224,17 @@ const analyzeImage = async () => {
 
     const cleanJson = content.replace(/```json|```/g, '').trim();
     resultData.value = JSON.parse(cleanJson);
-    incrementAttempts();
+
+    incrementAttempts(); // +1 спроба
 
   } catch (err) {
     console.error("AI Error:", err);
-    errorMsg.value = "❌ Помилка. Спробуйте ще раз.";
+    if (err.response && err.response.status === 429) {
+      errorMsg.value = "⏳ Забагато запитів. Ліміт вичерпано.";
+      attempts.value = 3;
+    } else {
+      errorMsg.value = "❌ Щось пішло не так. Спробуйте ще раз.";
+    }
   } finally {
     isLoading.value = false;
   }
@@ -240,208 +252,146 @@ const reset = () => {
 
 @font-face {
   font-family: 'Palatino Linotype';
-  src: url('src/assets/fonts/palatinolinotype_roman.ttf') format('woff2'),
-  url('src/assets/fonts/palatinolinotype_roman.ttf') format('woff');
+  src: url('src/assets/fonts/PalatinoLinotype/palatinolinotype_roman.ttf') format('woff2'),
+  url('src/assets/fonts/PalatinoLinotype/palatinolinotype_roman.ttf') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
-/* --- ЗАГАЛЬНІ --- */
+/* ЗАГАЛЬНІ СТИЛІ */
 .expertise-page { font-family: 'Montserrat', sans-serif; background: #fff; min-height: 100vh; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-.main-content { padding: 40px 0; }
 
-/* === SYSTEM LAYOUT (Grid/Flex) === */
-/* На десктопі це Grid, де Текст і Кнопка справа, Фото зліва */
-.layout-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 50px;
-  align-items: start;
-}
+/* HEADER */
+.header { background-color: #051805; color: #fff; padding: 20px 0; }
+.header-content { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-family: 'Palatino Linotype', serif; font-style: italic; font-size: 20px; }
+.nav-links a { color: #ccc; margin-left: 20px; text-decoration: none; text-transform: uppercase; font-size: 14px; }
+.nav-links a.active { color: #fff; }
 
-.upload-section { grid-column: 1; grid-row: 1 / span 2; } /* Фото зліва займає висоту */
-.text-section { grid-column: 2; }
-.action-section { grid-column: 2; }
+.main-content { padding: 60px 0; }
+.grid-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 50px; align-items: start; }
 
-/* === ТИПОГРАФІКА (Вирівнювання по лівому краю) === */
-.main-title {
-  font-family: 'Palatino Linotype', serif;
-  font-size: 32px;
-  color: #222;
-  margin-bottom: 20px;
-  text-align: left; /* Лівий край */
-  line-height: 1.2;
-}
+/* === ЛІВА КОЛОНКА: ЗАВАНТАЖЕННЯ === */
+.upload-area-wrapper { width: 100%; }
 
-.description-text {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 20px;
-  text-align: left; /* Лівий край */
-}
-
-/* === ЗОНА ФОТО === */
-.upload-section { width: 100%; }
-
+/* Стан 1: Немає фото (Квадрат) */
 .empty-state-box {
-  width: 100%;
-  aspect-ratio: 4/5; /* Трохи витягнутий квадрат, як на скріні */
-  background-color: #051805;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: opacity 0.3s;
+  width: 100%; aspect-ratio: 1; max-height: 500px;
+  background-color: #030f03; /* Темний фон */
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  cursor: pointer; transition: opacity 0.3s;
 }
 .empty-state-box:hover { opacity: 0.95; }
+.upload-hint { color: #fff; margin-top: 15px; font-size: 14px; }
 
-/* Список завантажених фото */
-.populated-state { display: flex; flex-direction: column; gap: 20px; }
-.photos-flex-container { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; }
+/* Стан 2: Є фото (Flex сітка) */
+.populated-state { display: flex; flex-direction: column; gap: 20px; margin-bottom: 15px}
+.photos-flex-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; }
 
 .photo-card {
   position: relative;
-  width: calc(33.33% - 7px);
-  aspect-ratio: 1;
+  width: calc((100% - 30px) / 3); /* 3 в ряд */
+  height: 360px; /* Фіксована висота */
   background: #f4f4f4; border: 1px solid #ddd;
+  display: flex; align-items: center; justify-content: center;
 }
 .uploaded-img { width: 100%; height: 100%; object-fit: cover; }
 .delete-btn {
-  position: absolute; top: 0; right: 0; background: rgba(255,255,255,0.8);
-  border: none; width: 24px; height: 24px; cursor: pointer;
+  position: absolute; top: 5px; right: 5px; background: white; border: none;
+  width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .photo-number {
-  position: absolute; bottom: 5px; left: 10px; font-size: 20px;
-  color: rgba(255,255,255,0.8); pointer-events: none;
+  position: absolute; bottom: 5px; left: 10px; font-size: 40px; color: rgba(0,0,0,0.1);
+  font-family: 'Palatino Linotype', serif; pointer-events: none;
 }
 
-/* Кнопка додавання ще фото */
+/* Широка кнопка "Додати ще" */
 .wide-add-btn {
   width: 100%; padding: 15px; background: #fff; border: 1px solid #333;
-  color: #333; font-family: 'Playfair Display', serif; text-transform: uppercase;
-  cursor: pointer; transition: all 0.2s;
+  color: #333; font-family: 'Palatino Linotype', serif; font-size: 16px;
+  cursor: pointer; text-transform: uppercase; transition: all 0.2s;
 }
-.wide-add-btn:hover { background: #f9f9f9; }
+.wide-add-btn:hover:not(:disabled) { background: #f9f9f9; border-color: #000; }
+.wide-add-btn:disabled { color: #ccc; border-color: #ccc; cursor: not-allowed; }
 
-/* === КНОПКА ДІЇ === */
+/* === ПРАВА КОЛОНКА === */
+.info-area { padding-top: 0; }
+.main-title { font-family: 'Palatino Linotype', serif; font-size: 20px; }
+.description-text { font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 30px; }
+
+/* КНОПКА АНАЛІЗУ */
 .analyze-btn {
-  width: 100%;
-  background-color: #ccc; /* Сірий, як на скріні */
-  color: #fff;
-  padding: 18px;
-  font-size: 20px;
-  border: none;
-  font-family: 'Palatino Linotype', serif;
-  cursor: not-allowed;
-  transition: all 0.3s;
-  margin-bottom: 10px;
+  width: 100%; background-color: #e0e0e0; color: #999; padding: 16px;
+  font-size: 18px; border: none; font-family: 'Palatino Linotype', serif;
+  cursor: not-allowed; transition: all 0.3s; letter-spacing: 1px;
 }
 .analyze-btn.btn-ready {
-  background-color: #a0a0a0; /* Активний сірий */
-  cursor: pointer;
+  background-color: #333; color: #fff; cursor: pointer;
 }
+.analyze-btn.btn-ready:hover { background-color: #051805; }
 
-.limit-badge-wrapper { text-align: left; margin-top: 5px; }
-.limit-text { font-size: 12px; color: #999; }
-.limit-text.error { color: #d32f2f; }
-.error-msg { color: #d32f2f; margin-top: 10px; font-size: 14px; }
+.limit-badge { display: inline-block; padding: 5px 10px; background: #eee; font-size: 12px; margin-bottom: 10px; border-radius: 4px; }
+.limit-badge.limit-reached { color: red; background: #ffebeb; }
+.error-msg { color: #d32f2f; margin-top: 15px; font-size: 14px; }
 
-/* === РЕЗУЛЬТАТИ === */
-.result-content { margin-top: 20px; text-align: left; margin-bottom: 20px;}
-.item-name { font-family: 'Palatino Linotype', serif; font-size: 24px; margin-bottom: 10px; }
-.price-tag { font-family: 'Palatino Linotype', serif; font-weight: 400; color: #051805; margin-bottom: 20px; font-size: 18px; }
-.analysis-section h3 { font-family: 'Palatino Linotype', serif; font-size: 18px; margin-bottom: 8px; color: #333; margin-top: 20px; }
-.analysis-section p { font-size: 14px; line-height: 1.6; color: #555; text-align: left; }
-.reset-btn { width: 100%; margin-top: 30px; background: none; border: 1px solid #ccc; padding: 15px; cursor: pointer; text-transform: uppercase; font-size: 12px; }
+/* РЕЗУЛЬТАТ */
+.result-content { margin-top: 10px; }
+.price-tag { font-family: 'Montserrat'; font-weight: 400; color: #051805; margin-bottom: 20px; font-size: 18px; }
+.analysis-section h3 { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 8px; color: #333; margin-top: 20px; }
+.analysis-section p { font-size: 13px; line-height: 1.6; color: #555; text-align: justify; }
+.reset-btn { margin-top: 30px; background: none; border: 1px solid #ccc; padding: 10px 20px; cursor: pointer; text-transform: uppercase; font-size: 12px; }
 
-/* =========================================
-   МОБІЛЬНА ВЕРСІЯ (ГОЛОВНІ ЗМІНИ ТУТ)
-   ========================================= */
+/* Mobile Adaptability */
 @media (max-width: 768px) {
-
+  /* 1. Відступи від країв екрану (10px) */
   .container {
-    padding: 0 20px;
+    padding: 0 10px;
   }
 
-  /* 1. Робимо колонку замість грід */
-  .layout-wrapper {
+  .main-content {
+    padding-top: 30px;
+  }
+
+  /* 2. Зміна порядку: Текст зверху, Фото знизу */
+  .grid-layout {
     display: flex;
-    flex-direction: column;
-    gap: 30px;
-    padding-top: 10px;
+    flex-direction: column-reverse;
+    gap: 40px;
   }
 
-  /* 2. ПОРЯДОК: Текст -> Фото -> Кнопка */
-  .text-section {
-    order: 1;
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 0;
+  /* Центрування тексту */
+  .info-area {
+    text-align: left; /* <--- ТУТ БУЛО center. Просто напиши left */
+    padding: 0;
   }
 
-  .upload-section {
-    order: 2;
-    width: 100%;
-    margin-bottom: 0;
-    /* Додаємо центрування для самого блоку секції, про всяк випадок */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .action-section {
-    order: 3;
-    width: 100%;
-  }
-
-  /* 3. Стилізація елементів */
-  .main-title {
-    font-size: 20px;
-    margin-bottom: 15px;
-    text-align: left;
-  }
-
-  .description-text {
-    font-size: 14px;
-    color: #888;
-    line-height: 1.5;
-    text-align: left;
-    margin-bottom: 0;
-  }
-
-  /* Чорний квадрат теж центруємо, якщо він менший за екран */
+  /* 3. Налаштування Чорного Квадрата (Empty State) */
   .empty-state-box {
-    width: 295px; /* Фіксуємо ширину як у фото */
-    height: 360px; /* Фіксуємо висоту як у фото */
-    margin: 0 auto; /* Центруємо сам квадрат */
+    width: 295px;       /* Як просили */
+    height: 360px;      /* Як просили */
+    margin: 0 auto;     /* Центрування */
+    max-width: 100%;    /* Щоб не вилазив на дуже вузьких екранах */
   }
 
-  .analyze-btn {
-    padding: 16px;
-    font-size: 18px;
-  }
-
-  /* --- ГОЛОВНА ЗМІНА ТУТ --- */
+  /* 4. Налаштування Списку фото (Populated State) */
   .photos-flex-container {
-    display: flex;
-    justify-content: center; /* Центруємо фото по горизонталі */
-    width: 100%;
+    flex-direction: column; /* Фото йдуть одне за одним вниз */
+    align-items: center;    /* Центрування стовпчика */
+    gap: 20px;              /* Відступ між фотографіями */
   }
 
   .photo-card {
     width: 295px;  /* Фіксована ширина */
     height: 360px; /* Фіксована висота */
-    margin: 0 auto; /* Додаткове страхування для центрування */
+    /* margin вже не треба, бо є gap у батьківського контейнера */
   }
 
-  /* Кнопка "Додати ще" теж має бути по ширині фото або на всю ширину */
+  /* Кнопка "Додати ще" теж має бути такої ж ширини */
   .wide-add-btn {
-    width: 295px; /* Робимо ширину такою ж, як у фото */
-    margin: 10px auto 0; /* Центруємо кнопку */
+    width: 295px;
+    margin: 0 auto; /* Центруємо кнопку */
     display: block;
   }
 }
