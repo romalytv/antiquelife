@@ -1,133 +1,284 @@
 /* --- Загальні налаштування --- */
 .antique-footer {
-    width: 100%;
-    background-color: var(--color-bg-light);
-    color: var(--color-text-dark);
-    border-top: 1px solid rgba(141, 110, 99, 0.2);
-    padding-top: 2rem; /* Менше повітря зверху */
-    font-size: 13px; /* Базовий шрифт зменшено */
+  width: 100%;
+  background-color: #001a01;
+  color: #ffffff;
+  border-top: none;
+  padding: 80px 0 40px;
+  font-size: 16px;
 }
 
-/* --- СІТКА (Grid Layout) --- */
-.footer-main {
-    padding-bottom: 0px;
-}
-
-.grid-layout {
-    display: grid;
-    /* Колонки тепер ближче за рахунок max-width */
-    grid-template-columns: 1.2fr 0.8fr 0.8fr 1fr;
-    gap: 20px; /* Відстань між колонками мінімальна */
-    max-width: 1000px; /* !ВАЖЛИВО: Це зробить футер "кучнішим" по центру */
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* --- Стилізація колонок --- */
-.footer-col h4 {
-    font-family: 'Aboreto', serif;
-    font-size: 0.9rem; /* Компактний заголовок */
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 15px; /* Менший відступ під заголовком */
-    color: var(--color-text-dark);
-    letter-spacing: 0.5px;
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
 }
 
 /* Логотип */
 .logo-text {
-    font-family: 'Cinzel', serif;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--color-text-dark);
-    display: block;
-    margin-bottom: 10px;
-    white-space: nowrap;
-}
-
-.logo-text .highlight {
-    color: var(--color-highlight);
+  font-family:
+    "Edwardian Script ITC", "Brush Script MT", "Snell Roundhand", cursive;
+  font-size: 44px;
+  font-weight: 500;
+  color: #ffffff;
+  display: block;
+  letter-spacing: 1px;
+  line-height: 1.1;
 }
 
 .brand-desc {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.85rem;
-    color: var(--color-text-light);
-    margin-bottom: 10px;
-    line-height: 1.4;
+  font-family: "Lato", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 1.6;
+  margin: 8px 0 0;
 }
 
-.location-row {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.85rem;
-    color: var(--color-text-dark);
+.footer-contact h4,
+.footer-info h4,
+.footer-follow h4 {
+  font-family:
+    "Palatino Linotype", "Palatino", "Book Antiqua", "Georgia", serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.09em;
+  margin: 6px 0 12px;
+  color: #ffffff;
+  text-transform: none;
 }
 
-/* --- Посилання та списки --- */
-.footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.footer-contact p {
+  margin: 6px 0;
+  font-family: "Lato", sans-serif;
+  font-size: 16px;
+  color: #ffffff;
 }
 
-.footer-links li {
-    margin-bottom: 8px; /* !ВАЖЛИВО: Менший відступ між рядками */
-    font-family: 'Lato', sans-serif;
-    font-size: 0.85rem; /* Акуратний дрібний шрифт */
-    line-height: 1.4;
-    color: var(--color-text-light);
+.footer-contact a {
+  font-weight: 400;
+  font-size: 16px;
+  color: #ffffff;
+  text-decoration: none;
 }
 
-.footer-links a {
-    text-decoration: none;
-    color: var(--color-text-light);
-    transition: all 0.3s ease;
-    display: inline-block;
+.footer-info ul,
+.footer-follow ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.footer-links a:hover {
-    color: var(--color-primary-brown);
-    padding-left: 3px;
+.footer-info li,
+.footer-follow li {
+  margin: 4px 0;
 }
 
-/* Контакти */
-.contact-list .label {
-    font-weight: 700;
-    color: var(--color-text-dark);
-    margin-right: 5px;
+.footer-info a,
+.footer-follow a {
+  font-family: "Lato", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #ffffff;
+  text-decoration: none;
 }
 
-.contact-list a {
-    color: var(--color-text-dark);
-    font-weight: 500;
+.footer-info a:hover,
+.footer-follow a:hover {
+  text-decoration: underline;
 }
 
-/* --- НИЖНІЙ КОПІРАЙТ --- */
+.footer-follow a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: rgba(255, 255, 255, 0.9);
+  transition:
+    color 0.2s,
+    transform 0.2s;
+  display: inline-block;
+}
+
+.footer-follow a:hover {
+  color: #b08d57;
+  transform: translateX(5px);
+}
+
 .footer-bottom {
-    padding: 5px 0; /* Тонша смуга внизу */
-    text-align: center;
+  margin-top: 40px;
+  text-align: center;
+  font-family: "Lato", sans-serif;
+  font-size: 16px;
 }
 
-.footer-bottom p {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.75rem; /* Дуже дрібний шрифт для копірайту */
-    color: #888; /* Трохи світліший */
-    margin: 0;
+/* За замовчуванням ховаємо іконки, показуватимемо їх лише на мобільному */
+.footer-social {
+  display: none;
+}
+
+.grid-layout > .footer-col:nth-child(3) .footer-links a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: rgba(255, 255, 255, 0.9);
+}
+
+/* --- Tablet / small desktop layout (як на другому макеті) --- */
+@media (min-width: 601px) and (max-width: 1023px) {
+  .footer-inner {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .footer-brand {
+    max-width: 420px;
+  }
+
+  .footer-info,
+  .footer-follow,
+  .footer-contact {
+    display: none;
+  }
+
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 40px auto 0;
+    padding: 0 16px;
+    text-align: left;
+  }
+}
+
+/* --- Desktop layout --- */
+@media (min-width: 1024px) {
+  .footer-inner {
+    max-width: none;
+    width: 100%;
+    padding: 0 101px;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 80px;
+    text-align: left;
+  }
+
+  .footer-brand {
+    max-width: 380px;
+  }
+
+  .footer-info,
+  .footer-follow,
+  .footer-contact {
+    min-width: 180px;
+  }
+
+  .footer-bottom {
+    max-width: none;
+    width: 100%;
+    margin: 40px auto 0;
+    padding: 0 101px;
+    text-align: left;
+  }
 }
 
 /* --- Мобільна адаптація --- */
-@media (max-width: 900px) {
-    .grid-layout {
-        max-width: 100%;
-        grid-template-columns: 1fr 1fr; /* Дві колонки */
-        padding: 0 30px;
-        gap: 30px;
-    }
-}
+@media (max-width: 600px) {
+  .antique-footer {
+    padding: 80px 0 28px;
+  }
 
-@media (max-width: 500px) {
-    .grid-layout {
-        grid-template-columns: 1fr; /* Одна колонка */
-        text-align: left;
-    }
+  .logo-text {
+    font-family: "Snell Roundhand", "Edwardian Script ITC", cursive;
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .brand-desc {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.09em;
+    text-align: center;
+    max-width: 285px;
+  }
+
+  .footer-contact p {
+    font-family: "Palatino Linotype", "Times New Roman", serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.09em;
+    text-align: center;
+  }
+
+  .footer-contact a {
+    font-size: 14px;
+  }
+
+  .footer-contact h4 {
+    font-family: "Palatino Linotype", "Times New Roman", serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.09em;
+    text-align: center;
+  }
+
+  .footer-inner {
+    max-width: 375px;
+  }
+
+  .footer-info,
+  .footer-follow {
+    display: none;
+  }
+
+  .footer-contact {
+    margin-top: 36px;
+  }
+
+  .footer-social {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+  }
+
+  .social-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .social-icon img {
+    width: 32px;
+    height: 32px;
+    display: block;
+  }
+
+  .footer-bottom {
+    display: none;
+  }
+
+  .social-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .social-icon img {
+    width: 26px;
+    height: 26px;
+  }
 }

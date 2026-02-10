@@ -1,117 +1,192 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap");
 
 /* ======================= */
 /* ОСНОВНІ НАЛАШТУВАННЯ */
 /* ======================= */
 .main-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem 4%;
-    border-bottom: 1px solid #e0e0e0;
-    background: #ffffff;
-    position: sticky;
-    top: 0;
-    width: 100%;
-    z-index: 9999;
-    position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 4%;
+  border-bottom: none; /* removed thin line between header and content */
+  background: #001a01;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+  position: relative;
 }
 
 .header-collapsible-content {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .centered-nav-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.2rem;
-    position: static;
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  gap: 1.2rem;
+  position: static;
 }
 
 /* Кошик на десктопі */
 .user-menu {
-    position: absolute;
-    right: 4%;
-    top: 50%;
-    transform: translateY(-50%);
+  position: relative;
+  right: 0;
+  top: auto;
+  transform: none;
 }
 
-.cart-icon img { width: 26px; transition: transform 0.2s; }
-.cart-icon:hover img { transform: scale(1.1); }
+/* Inner header container to align logo - menu - cart and respect 1440px layout */
+.header-inner {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 100px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Make nav centered between logo and cart when inside header-inner */
+.header-inner .centered-nav-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* додав код filter: brightness(0) invert(1); */
+.cart-icon img {
+  width: 26px;
+  transition: transform 0.2s;
+  filter: brightness(0) invert(1);
+}
+.cart-icon:hover img {
+  transform: scale(1.1);
+}
 
 .badge {
-    position: absolute;
-    top: -8px; right: -8px;
-    background: #d32f2f; color: #fff;
-    border-radius: 50%; padding: 2px 6px;
-    font-size: 0.75rem;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #d32f2f;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
 }
 
-.mobile-only { display: none; }
-.desktop-only { display: flex; }
+.mobile-only {
+  display: none;
+}
+.desktop-only {
+  display: flex;
+}
 
 /* ======================= */
 /* DESKTOP MENU (FIXED)    */
 /* ======================= */
 .main-nav {
-    display: flex;
-    gap: 3rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    align-items: center; /* Вирівнювання по центру висоти */
-    height: 100%; /* Важливо для ховер зони */
+  display: flex;
+  gap: 2.75rem; /* tighter spacing on desktop */
+  font-size: 16px; /* explicit 16px as requested */
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em; /* slightly wider tracking as in design */
+  align-items: center; /* Вирівнювання по центру висоти */
+  height: 100%; /* Важливо для ховер зони */
 }
 
 .nav-link {
-    text-decoration: none;
-    color: #333;
-    transition: color 0.2s;
-    position: relative;
-    padding: 10px 0; /* Збільшуємо зону кліку */
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  text-decoration: none;
+  color: #ffffff;
+  transition:
+    color 0.2s,
+    transform 0.2s;
+  position: relative;
+  padding: 6px 0; /* tighter vertical padding */
 }
-.nav-link:hover { color: #b08d57; }
+.nav-link:hover {
+  color: #b08d57;
+  transform: translateX(5px);
+}
 
 /* --- DROPDOWN CONTAINER --- */
 .nav-dropdown-container {
+  position: relative;
+  cursor: pointer;
+  height: 100%; /* Щоб контейнер займав висоту */
+  display: flex;
+  align-items: center;
+}
+
+.catalog-dropdown-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dropdown-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.7em;
+  transition: transform 0.3s ease;
+  transform: scaleY(0.6);
+}
+
+.dropdown-arrow.is-open {
+  transform: scaleY(-0.6);
+}
+
+@media (min-width: 769px) {
+  .catalog-dropdown-wrapper {
     position: relative;
-    cursor: pointer;
-    height: 100%; /* Щоб контейнер займав висоту */
-    display: flex;
-    align-items: center;
+    width: auto;
+    flex-direction: row;
+  }
+
+  .dropdown-arrow {
+    display: none;
+  }
 }
 
 /* --- MEGA MENU (DESKTOP) --- */
 .dropdown-menu {
-    position: absolute;
-    /* Починаємо відразу під хедером */
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
+  position: absolute;
+  /* Починаємо відразу під хедером */
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
 
-    /* ФІКС ЗНИКАННЯ: Додаємо прозорий відступ зверху,
+  /* ФІКС ЗНИКАННЯ: Додаємо прозорий відступ зверху,
        щоб мишка не губила фокус при переході */
-    padding-top: 20px;
-    margin-top: -5px; /* Трохи підтягуємо вгору для накладання */
+  padding-top: 20px;
+  margin-top: -5px; /* Трохи підтягуємо вгору для накладання */
 
-    display: none;
-    z-index: 100;
+  display: none;
+  z-index: 100;
 }
 
 /* Сам "білий блок" меню.
    Ми відділяємо його від dropdown-menu, щоб padding-top був прозорим */
 .dropdown-menu::after {
-    content: ''; /* Це прозорий міст, якщо треба, але padding-top працює краще */
+  content: ""; /* Це прозорий міст, якщо треба, але padding-top працює краще */
 }
 
 /* Стилізація списку всередині */
 .dropdown-menu {
-    /* Робимо список ГРІДОМ (Сіткою) */
-    background: transparent; /* Фон прозорий, бо фон даємо елементам або внутрішньому блоку */
+  /* Робимо список ГРІДОМ (Сіткою) */
+  background: transparent; /* Фон прозорий, бо фон даємо елементам або внутрішньому блоку */
 }
 
 /* Оскільки ul це і є dropdown-menu, дамо стилі прямо йому,
@@ -120,183 +195,381 @@
 */
 
 .dropdown-menu {
-    background-color: transparent; /* Важливо */
-    min-width: 500px; /* Широке меню */
+  background-color: transparent; /* Важливо */
+  min-width: 500px; /* Широке меню */
 }
 
 /* Стилізуємо LI елементи як сітку всередині білого блоку */
 .dropdown-menu {
-    display: none; /* Сховано */
+  display: none; /* Сховано */
 }
 
 /* Коли наводимо на контейнер - показуємо */
 @media (min-width: 769px) {
-    .nav-dropdown-container:hover .dropdown-menu {
-        display: grid; /* Grid замість Block */
-        grid-template-columns: 1fr 1fr; /* 2 колонки */
-        gap: 15px 40px; /* Відступи: рядок стовпець */
+  .catalog-dropdown-wrapper:hover .dropdown-menu {
+    display: grid; /* Grid замість Block */
+    grid-template-columns: 1fr 1fr; /* 2 колонки */
+    gap: 15px 40px; /* Відступи: рядок стовпець */
 
-        /* Стилі білої плашки */
-        background-color: #fff;
-        border: 1px solid #f0f0f0;
-        box-shadow: 0 15px 30px rgba(0,0,0,0.08);
-        padding: 30px; /* Внутрішні відступи */
+    /* Стилі білої плашки */
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    padding: 30px; /* Внутрішні відступи */
 
-        /* Компенсуємо padding-top, щоб фон був тільки на меню */
-        background-clip: padding-box;
-    }
+    /* Компенсуємо padding-top, щоб фон був тільки на меню */
+    background-clip: padding-box;
+  }
 }
 
 .dropdown-menu li {
-    list-style: none;
-}
-
-.dropdown-menu li a {
-    text-decoration: none;
-    color: #555;
-    display: block;
-    text-transform: capitalize; /* Перша буква велика, решта малі - читається легше */
-    font-size: 0.95rem;
-    padding: 5px 0;
-    transition: all 0.2s;
-    border-bottom: 1px solid transparent; /* Щоб не скакало при ховері */
-}
-
-.dropdown-menu li a:hover {
-    color: #b08d57;
-    padding-left: 5px; /* Ефект зсуву вправо */
-    border-bottom: 1px solid #f0e6d2;
+  list-style: none;
 }
 
 /* --- BRANDING --- */
-.desktop-branding { flex-direction: row; align-items: center; gap: 25px; margin-top: 10px; }
-.logo-link { text-decoration: none; color: inherit; }
-.logo-text { font-family: 'Cinzel', serif; font-size: 2.5rem; font-weight: 700; color: #1a1a1a; letter-spacing: 1px; line-height: 1; }
-.logo-text-lite { font-weight: 700; color: #D8C390; }
-.brand-divider { width: 1px; height: 45px; background-color: #D8C390; opacity: 0.7; }
+.desktop-branding {
+  flex-direction: row;
+  align-items: center;
+  gap: 25px;
+  margin-top: 0;
+}
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+}
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+}
+.logo-text {
+  font-family:
+    "Edwardian Script ITC", "Brush Script MT", "Snell Roundhand", cursive;
+  font-size: 28px;
+  font-weight: 500;
+  font-style: normal;
+  color: #ffffff;
+  letter-spacing: 1px;
+  line-height: 1.1;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Enforce exact typography for header to match mockup */
+.header-inner .main-nav .nav-link {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.header-inner .logo-text {
+  font-size: 28px !important;
+  font-weight: 500 !important;
+}
+.logo-text-lite {
+  font-weight: 400;
+  color: #ffffff;
+  margin-left: 6px;
+}
+
+@media (min-width: 769px) {
+  /* reduce outer header horizontal padding on desktop (we use header-inner gutters) */
+  .main-header {
+    padding: 1.2rem 0;
+  }
+
+  /* slightly increase cart icon size on desktop to match design */
+  .header-inner .cart-icon img {
+    width: 28px;
+  }
+}
+/* .brand-divider { width: 1px; height: 45px; background-color: #D8C390; opacity: 0.7; }
 .desktop-slogan-block { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-.slogan-line { font-family: 'Playfair Display', serif; font-size: 1rem; color: #4a4a4a; line-height: 1.2; letter-spacing: 0.3px; }
+.slogan-line { font-family: 'Playfair Display', serif; font-size: 1rem; color: #4a4a4a; line-height: 1.2; letter-spacing: 0.3px; } */
 
 /* ======================= */
 /* MOBILE FIXES (Max 768px) */
 /* ======================= */
 @media (max-width: 768px) {
-    .main-header {
-        justify-content: space-between;
-        padding: 1rem 5%;
-        position: relative;
-        background: #fff;
-    }
+  .main-header {
+    justify-content: space-between;
+    padding: 1rem 5%;
+    position: relative;
+    background: #07260e;
+  }
 
-    .mobile-only { display: block; }
-    .desktop-only { display: none; }
-    .mobile-branding .logo-text { font-size: 1.5rem; }
-    .hamburger-button { background: none; border: none; font-size: 1.5rem; cursor: pointer; z-index: 10001; }
+  /* Remove desktop 100px gutters on small screens to avoid right gap */
+  .header-inner {
+    max-width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
 
-    /* Контейнер меню */
-    .header-collapsible-content {
-        position: absolute;
-        top: 100%; left: 0; width: 100%;
-        background: #fff;
-        height: 0;
-        overflow: hidden;
-        transition: all 0.4s ease-in-out; /* Більш плавна анімація */
-        display: block;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    }
+  .mobile-only {
+    display: block;
+  }
+  .desktop-only {
+    display: none;
+  }
+  .mobile-branding .logo-text {
+    font-size: 1.5rem;
+  }
+  .hamburger-button {
+    background: transparent;
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 10002;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    box-shadow: none;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-    .header-collapsible-content.is-open {
-        height: 100vh;
-        overflow-y: auto;
-        border-top: 1px solid #f0f0f0;
-        padding-bottom: 80px; /* Місце для скролу знизу */
-    }
+  /* Center branding and keep hamburger fixed to the right */
+  .header-inner {
+    justify-content: center;
+    position: relative;
+  }
 
-    .centered-nav-group {
-        width: 100%;
-        padding-top: 10px;
-        position: static;
-    }
+  .mobile-branding {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-    .main-nav {
-        flex-direction: column;
-        width: 100%;
-        gap: 0;
-    }
+  .hamburger-button {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10001;
+  }
 
-    /* Стилі головних посилань меню */
-    .nav-link {
-        width: 100%;
-        text-align: center;
-        padding: 16px 0; /* Трохи зменшив для компактності */
-        border-bottom: 1px solid #f5f5f5;
-        display: block;
-        font-weight: 500;
-        font-size: 1.05rem;
-        color: #333;
-    }
+  .main-header.menu-open .hamburger-button {
+    position: fixed;
+    right: 17px;
+    top: 10px;
+    transform: none;
+    z-index: 10003;
+    background: transparent;
+    color: #0f1f12;
+  }
 
-    /* --- MOBILE DROPDOWN (ПРЕМІУМ ВИГЛЯД) --- */
-    .nav-dropdown-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .hamburger-button:focus,
+  .hamburger-button:active {
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+  }
 
-    .dropdown-menu {
-        position: static;
-        transform: none;
-        width: 100%;
-        box-shadow: none;
-        border: none;
+  /* Контейнер меню */
+  .header-collapsible-content {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    transition: transform 0.35s ease;
+    transform: translateX(100%);
+    display: block;
+    box-shadow: none;
+    padding: 90px 0 40px;
+    z-index: 10000;
+  }
 
-        /* Новий фон - теплий, світлий, замість мертвого сірого */
-        background: #fcfaf7;
-        display: none;
-        padding: 5px 0; /* Мінімальні відступи зверху/знизу блоку */
-        margin: 0;
+  .header-collapsible-content.is-open {
+    transform: translateX(0);
+  }
 
-        /* Скидаємо десктопні налаштування */
-        min-width: unset;
-        grid-template-columns: 1fr !important;
-        /* Додаємо внутрішню тінь для глибини */
-        box-shadow: inset 0 4px 8px -4px rgba(0,0,0,0.08);
-    }
+  .centered-nav-group {
+    width: 100%;
+    padding-top: 10px;
+    position: static;
+  }
 
-    .dropdown-menu.is-expanded { display: block !important; }
+  .main-nav {
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+  }
 
-    .dropdown-menu li a {
-        padding: 14px 30px; /* Зручна зона для тапу */
-        text-align: left; /* Вирівнювання зліва */
-        /* Прибираємо жорсткі бордюри між елементами для чистоти */
-        border-bottom: none;
-        color: #555;
-        font-size: 0.95rem;
-        /* Використовуємо ту саму капіталізацію, що й на десктопі */
-        text-transform: capitalize;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        border-left: 3px solid transparent; /* Підготовка для акценту зліва */
-    }
+  /* Стилі головних посилань меню */
+  .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 16px 0; /* Трохи зменшив для компактності */
+    border-bottom: 1px solid #f1f1f1;
+    display: block;
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: #0f1f12;
+  }
 
-    /* Ефект при натисканні (Active) та наведенні */
-    .dropdown-menu li a:hover,
-    .dropdown-menu li a:active {
-        background-color: #f4ece2; /* Дуже легкий золотисто-бежевий фон */
-        color: #4a3f35; /* Темніший, насичений колір тексту */
-        padding-left: 35px; /* Легкий зсув вправо */
-        border-left-color: #b08d57; /* Золотий акцент зліва, як на десктопі */
-    }
+  /* --- MOBILE DROPDOWN (ПРЕМІУМ ВИГЛЯД) --- */
+  .catalog-dropdown-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    /* --- КОШИК МОБІЛЬНИЙ (ВИПРАВЛЕНО ВІДСТУП) --- */
-    .user-menu {
-        position: static;
-        transform: none;
-        /* Зменшено з 30px до 15px, щоб відповідати відступам меню */
-        margin-top: 15px;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        padding-bottom: 20px; /* Додаткове повітря знизу */
-    }
+  .catalog-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
 
-    .cart-icon img {
-        width: 28px; /* Трохи більша іконка для зручності на мобільному */
-    }
+  .dropdown-menu {
+    position: static;
+    transform: none;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+
+    /* Новий фон - теплий, світлий, замість мертвого сірого */
+    background: #fcfaf7;
+    display: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.3s ease,
+      padding 0.3s ease;
+
+    /* Скидаємо десктопні налаштування */
+    min-width: unset;
+    grid-template-columns: 1fr !important;
+    /* Додаємо внутрішню тінь для глибини */
+    box-shadow: inset 0 4px 8px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  .dropdown-menu.is-expanded {
+    display: block !important;
+    max-height: 400px;
+    padding: 5px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* Стилізація скролбару */
+    scrollbar-width: thin;
+    scrollbar-color: #b08d57 #f4ece2;
+  }
+
+  /* WebkitScrollBar для Chrome, Safari, Edge */
+  .dropdown-menu.is-expanded::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .dropdown-menu.is-expanded::-webkit-scrollbar-track {
+    background: #f4ece2;
+    border-radius: 10px;
+  }
+
+  .dropdown-menu.is-expanded::-webkit-scrollbar-thumb {
+    background: #b08d57;
+    border-radius: 10px;
+  }
+
+  .dropdown-menu.is-expanded::-webkit-scrollbar-thumb:hover {
+    background: #9a7847;
+  }
+
+  .dropdown-menu li a {
+    padding: 14px 30px; /* Зручна зона для тапу */
+    text-align: left; /* Вирівнювання зліва */
+    /* Прибираємо жорсткі бордюри між елементами для чистоти */
+    border-bottom: none;
+    color: #555;
+    font-size: 0.95rem;
+    /* Використовуємо ту саму капіталізацію, що й на десктопі */
+    text-transform: capitalize;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent; /* Підготовка для акценту зліва */
+    display: block;
+    width: 100%;
+  }
+
+  /* Ефект при натисканні (Active) та наведенні */
+  .dropdown-menu li a:hover,
+  .dropdown-menu li a:active {
+    background-color: #f4ece2; /* Дуже легкий золотисто-бежевий фон */
+    color: #4a3f35; /* Темніший, насичений колір тексту */
+    padding-left: 35px; /* Легкий зсув вправо */
+    border-left-color: #b08d57; /* Золотий акцент зліва, як на десктопі */
+  }
+
+  /* --- КОШИК МОБІЛЬНИЙ (ВИПРАВЛЕНО ВІДСТУП) --- */
+  .user-menu {
+    display: none !important; /* hidden on mobile per mockup */
+  }
+
+  /* Корзина як пункт меню */
+  .nav-link-cart {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: none !important;
+  }
+
+  .cart-icon-inline {
+    width: 28px;
+    height: 28px;
+    filter: none;
+  }
+
+  .badge-inline {
+    position: absolute;
+    top: 8px;
+    right: calc(50% - 20px);
+    background: #d32f2f;
+    color: #fff;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+  }
+
+  .cart-icon img {
+    width: 28px; /* Трохи більша іконка для зручності на мобільному */
+  }
+}
+
+body.menu-open {
+  overflow: hidden !important;
+  height: 100vh !important;
+  position: fixed !important;
+  width: 100vw !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  touch-action: none;
+  scrollbar-width: none;
+}
+
+body.menu-open::-webkit-scrollbar {
+  display: none;
+}
+
+html.menu-open {
+  overflow: hidden !important;
+  height: 100vh !important;
+  scrollbar-width: none;
+}
+
+html.menu-open::-webkit-scrollbar {
+  display: none;
 }
