@@ -252,8 +252,8 @@ const reset = () => {
 
 @font-face {
   font-family: 'Palatino Linotype';
-  src: url('src/assets/fonts/PalatinoLinotype/palatinolinotype_roman.ttf') format('woff2'),
-  url('src/assets/fonts/PalatinoLinotype/palatinolinotype_roman.ttf') format('woff');
+  src: url('@/assets/fonts/PalatinoLinotype/palatinolinotype_roman.ttf') format('woff2'),
+  url('@/assets/fonts/PalatinoLinotype/palatinolinotype_roman.ttf') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
