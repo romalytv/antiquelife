@@ -19,13 +19,10 @@
       >
         <div class="centered-nav-group">
           <nav class="main-nav">
-            <router-link to="/journal" class="nav-link" @click="closeMenu">
-              Головна
-            </router-link>
 
             <div class="catalog-dropdown-wrapper">
               <a
-                href="#"
+                href="/market"
                 class="nav-link catalog-trigger"
                 @click.prevent="toggleMarket"
               >
@@ -57,8 +54,8 @@
               </ul>
             </div>
 
-            <router-link to="/contacts" class="nav-link" @click="closeMenu">
-              Новини
+            <router-link to="/journal" class="nav-link" @click="closeMenu">
+              Журнал
             </router-link>
             <router-link to="/contacts" class="nav-link" @click="closeMenu">
               Контакти
