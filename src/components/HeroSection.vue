@@ -137,42 +137,43 @@ export default {
 @media (max-width: 768px) {
   .hero-content {
     width: 100%;
-    max-width: 90vw;
-    padding: 0 20px;
+    box-sizing: border-box;
+    padding: 0 15px; /* Відступи по боках, щоб текст не лип до країв */
   }
 
   .hero-subtitle {
-    font-size: clamp(2.8rem, 9vw, 5rem);
-    width: auto;
-    max-width: 100%;
-    padding: 0;
-    box-sizing: border-box;
-    white-space: nowrap;
-    display: block;
+    /* 1. Ставимо чіткий великий розмір у пікселях */
+    font-size: 50px;
+
+    /* 2. Дозволяємо перенос слів (це врятує від обрізання) */
+    white-space: normal;
+
+    /* 3. Інші налаштування для краси */
+    line-height: 1.1; /* Менший інтервал між рядками, щоб текст був кучніше */
+    text-align: center;
+    text-align-last: center;
+    margin: 0 auto 10px; /* Відступ знизу до заголовка */
+    width: 100%;
+  }
+
+  .hero-title {
+    /* Також збільшуємо заголовок */
+    font-size: 28px;
+
+    white-space: nowrap; /* Дозволяємо перенос */
     line-height: 1.2;
     text-align: center;
-    margin: 0 auto;
-    word-spacing: normal;
-    letter-spacing: 0.02em;
+    text-align-last: center;
+    margin: 0 auto 25px; /* Відступ до кнопки */
+    letter-spacing: 0.05em;
+    width: 100%;
   }
-  
-  .hero-title {
-    font-size: clamp(1.5rem, 5.5vw, 2.5rem);
-    width: auto;
-    max-width: 100%;
-    padding: 0;
-    box-sizing: border-box;
-    white-space: nowrap;
-    display: block;
-    line-height: 1.3;
-    text-align: center;
-    margin: 0 auto;
-    letter-spacing: 0.08em;
-  }
-  
+
   .hero-button {
-    font-size: 0.75rem;
-    padding: 10px 25px;
+    font-size: 20px;
+    padding: 14px 30px;
+    width: auto; /* Кнопка по ширині тексту */
+    display: inline-block;
   }
 }
 </style>
