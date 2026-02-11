@@ -17,15 +17,20 @@
   align-items: center;
   justify-content: center;
   padding: 0.9rem 4%;
-  border-bottom: none; /* removed thin line between header and content */
-  background: #001a01;
-  position: sticky;
+  border-bottom: none;
+  background: #001a01; /* Твій темний фон */
+
+  /* --- ЗМІНИ ТУТ --- */
+  position: fixed;      /* Робимо фіксованим */
   top: 0;
+  left: 0;              /* Прив'язуємо до лівого краю */
   width: 100%;
   z-index: 9999;
-  position: relative;
-}
+  /* position: relative; <--- ЦЕЙ РЯДОК ТРЕБА БУЛО ВИДАЛИТИ */
 
+  /* Тінь, щоб відокремити хедер від контенту (опціонально) */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
 .header-collapsible-content {
   display: flex;
   justify-content: center;
@@ -304,7 +309,12 @@
   .main-header {
     justify-content: space-between;
     padding: 1rem 5%;
-    position: relative;
+
+    /* --- ЗМІНИ ТУТ --- */
+    position: fixed; /* Було relative, ставимо fixed */
+    top: 0;          /* Гарантуємо, що він зверху */
+    left: 0;
+
     background: #07260e;
   }
 

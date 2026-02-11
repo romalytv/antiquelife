@@ -103,7 +103,7 @@ onMounted(() => {
         showTooltip.value = false;
       }, 10000);
     }
-  }, 5000);
+  }, 500);
 });
 </script>
 
