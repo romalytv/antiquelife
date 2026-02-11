@@ -32,7 +32,9 @@ export default {
 <style scoped>
 .hero {
   position: relative;
+  /* Використовуємо dvh для мобільних браузерів (Safari), щоб панель адреси не стрибала */
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   display: flex;
   align-items: center;
@@ -62,7 +64,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4); /* Затемнення відео, щоб текст краще читали */
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .hero-content {
@@ -73,34 +75,46 @@ export default {
   flex-direction: column;
   align-items: center;
   gap: 14px;
+  /* Додаємо паддінг, щоб на малих екранах текст не лип до країв */
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .hero-subtitle {
   font-family: "Snell Roundhand", "SnellRoundhand", "Great Vibes", cursive;
-  font-size: 7.79rem;
+  /* Використовуємо clamp для плавного зменшення шрифту, база 7.79rem */
+  font-size: clamp(3rem, 8vw, 7.79rem);
   font-weight: 300;
-  line-height: 120%;
-  letter-spacing: normal;
+  line-height: 1.2;
   color: #ffffff;
+
+  /* Логіка ширини для десктопу */
+  width: 100%;
+  max-width: 825px; /* Обмежуємо ширину, але не фіксуємо її */
+
   text-align: justify;
   text-align-last: justify;
-  width: 825px;
   margin: 0 auto;
-  white-space: nowrap;
+  white-space: nowrap; /* На десктопі в один рядок */
 }
 
 .hero-title {
-  font-family:
-    "Palatino Linotype", "Palatino", "Book Antiqua", "Georgia", serif;
-  font-size: 4.215rem;
+  font-family: "Palatino Linotype", "Palatino", "Book Antiqua", "Georgia", serif;
+  /* Те саме - адаптивний шрифт */
+  font-size: clamp(1.8rem, 5vw, 4.215rem);
   font-weight: 400;
-  line-height: 120%;
+  line-height: 1.2;
   letter-spacing: 0.09em;
   color: #ffffff;
   text-transform: uppercase;
+
+  /* Логіка ширини */
+  width: 100%;
+  max-width: 825px;
+
   text-align: justify;
   text-align-last: justify;
-  width: 825px;
   margin: 0 auto;
   white-space: nowrap;
 }
@@ -115,65 +129,67 @@ export default {
   transition: all 0.3s ease;
   border: none;
   border-radius: 4px;
-  margin-top: 10px;
+  margin-top: 20px;
   text-transform: uppercase;
+  cursor: pointer;
+  display: inline-block;
 }
 
 .hero-button:hover {
-  background-color: transparent;
-  color: white;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
 }
 
-.debug-text {
-  margin-top: 1rem;
-  background: rgba(0, 0, 0, 0.5);
-  color: #c7f3c7;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-
-/* Адаптація для мобільних пристроїв */
+/* --- МОБІЛЬНА ВЕРСІЯ --- */
 @media (max-width: 768px) {
   .hero-content {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0 15px; /* Відступи по боках, щоб текст не лип до країв */
+    gap: 10px;
   }
 
   .hero-subtitle {
-    /* 1. Ставимо чіткий великий розмір у пікселях */
-    font-size: 50px;
-
-    /* 2. Дозволяємо перенос слів (це врятує від обрізання) */
-    white-space: normal;
-
-    /* 3. Інші налаштування для краси */
-    line-height: 1.1; /* Менший інтервал між рядками, щоб текст був кучніше */
+    /* Скидаємо вирівнювання по ширині, на телефоні це виглядає погано */
     text-align: center;
     text-align-last: center;
-    margin: 0 auto 10px; /* Відступ знизу до заголовка */
-    width: 100%;
+
+    /* Дозволяємо перенос слів */
+    white-space: normal;
+
+    /* Розмір шрифту для мобільного */
+    font-size: 50px;
+    line-height: 1.1;
+    width: auto;
+    max-width: 100%;
   }
 
   .hero-title {
-    /* Також збільшуємо заголовок */
-    font-size: 28px;
-
-    white-space: nowrap; /* Дозволяємо перенос */
-    line-height: 1.2;
     text-align: center;
     text-align-last: center;
-    margin: 0 auto 25px; /* Відступ до кнопки */
+
+    /* ВАЖЛИВО: дозволяємо перенос, якщо слово не влазить */
+    white-space: normal;
+    word-wrap: break-word;
+
+    font-size: 28px; /* Твій розмір */
+    line-height: 1.3;
+    width: auto;
+    max-width: 100%;
     letter-spacing: 0.05em;
-    width: 100%;
+    margin-bottom: 10px;
   }
 
   .hero-button {
-    font-size: 20px;
-    padding: 14px 30px;
-    width: auto; /* Кнопка по ширині тексту */
-    display: inline-block;
+    font-size: 16px;
+    padding: 14px 40px;
+  }
+}
+
+/* Для дуже маленьких екранів (iPhone SE, старі моделі) */
+@media (max-width: 380px) {
+  .hero-subtitle {
+    font-size: 40px;
+  }
+  .hero-title {
+    font-size: 24px;
   }
 }
 </style>
