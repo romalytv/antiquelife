@@ -165,12 +165,15 @@
 
 <script setup>
 import { ref, onMounted, computed, onUnmounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 // === CONFIG ===
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 12;
 
 // === STATE ===
+const route = useRoute();
+const router = useRouter(); // Додаємо роутер для зміни URL
 const products = ref([]);
 const categoriesList = ref([]);
 const loading = ref(true);
@@ -180,7 +183,7 @@ const selectedCategoryId = ref(null);
 const selectedSubCategoryId = ref(null);
 const sortOrder = ref('default');
 
-const currentPage = ref(1); // Поточна сторінка
+const currentPage = ref(1);
 
 const imageIndices = ref({});
 
@@ -211,6 +214,60 @@ const currentSortLabel = computed(() => {
   return "Сортування";
 });
 
+// === СИНХРОНІЗАЦІЯ З URL ===
+const applyFiltersFromQuery = () => {
+  if (categoriesList.value.length === 0) return;
+
+  const catQuery = route.query.category;
+  const subCatQuery = route.query.subcategory;
+
+  let foundCatId = null;
+  let foundSubCatId = null;
+
+  if (catQuery) {
+    // Шукаємо категорію
+    const matchedCat = categoriesList.value.find(
+        c => c.category_name?.toLowerCase() === catQuery.toLowerCase()
+    );
+
+    if (matchedCat) {
+      foundCatId = matchedCat.categoryId;
+
+      // Якщо є підкатегорія в URL, шукаємо і її
+      if (subCatQuery && matchedCat.subCategories) {
+        const matchedSubCat = matchedCat.subCategories.find(
+            s => s.name?.toLowerCase() === subCatQuery.toLowerCase()
+        );
+        if (matchedSubCat) {
+          foundSubCatId = matchedSubCat.sub_categoryId;
+        }
+      }
+    }
+  } else if (subCatQuery) {
+    // Якщо в URL є тільки підкатегорія (про всяк випадок)
+    for (const cat of categoriesList.value) {
+      const matchedSub = cat.subCategories?.find(s => s.name?.toLowerCase() === subCatQuery.toLowerCase());
+      if (matchedSub) {
+        foundCatId = cat.categoryId;
+        foundSubCatId = matchedSub.sub_categoryId;
+        break;
+      }
+    }
+  }
+
+  selectedCategoryId.value = foundCatId;
+  selectedSubCategoryId.value = foundSubCatId;
+};
+
+// Слідкуємо за змінами в URL
+watch(
+    () => route.query,
+    () => {
+      applyFiltersFromQuery();
+    },
+    { deep: true }
+);
+
 // === API ===
 const fetchData = async () => {
   loading.value = true;
@@ -221,6 +278,9 @@ const fetchData = async () => {
     ]);
     products.value = pRes.data || [];
     categoriesList.value = cRes.data || [];
+
+    // Застосовуємо фільтри після завантаження списку
+    applyFiltersFromQuery();
   } catch (e) { console.error(e); }
   finally { loading.value = false; }
 };
@@ -241,6 +301,7 @@ const closeAllDropdowns = () => {
   isCatOpen.value = false; isSortOpen.value = false;
   isMobileCatOpen.value = false; isMobileSortOpen.value = false;
 };
+
 const vClickOutside = {
   mounted(el, binding) {
     el.clickOutsideEvent = (event) => { if (!(el === event.target || el.contains(event.target))) binding.value(event); };
@@ -248,11 +309,55 @@ const vClickOutside = {
   },
   unmounted(el) { document.body.removeEventListener('click', el.clickOutsideEvent); },
 };
+
 const closeDropdowns = () => closeAllDropdowns();
 
-const selectCategory = (id) => { selectedCategoryId.value = id; selectedSubCategoryId.value = null; closeAllDropdowns(); };
-const selectSubCategory = (id) => { selectedSubCategoryId.value = id; closeAllDropdowns(); };
-const resetFilters = () => { selectedCategoryId.value = null; selectedSubCategoryId.value = null; closeAllDropdowns(); };
+// === ОНОВЛЕНІ ФУНКЦІЇ ВИБОРУ (ЗМІНЮЮТЬ URL) ===
+const selectCategory = (id) => {
+  const cat = categoriesList.value.find(c => c.categoryId === id);
+  if (cat) {
+    // Додаємо категорію в URL, прибираємо підкатегорію
+    router.push({ query: { ...route.query, category: cat.category_name, subcategory: undefined } });
+  }
+
+  selectedCategoryId.value = id;
+  selectedSubCategoryId.value = null;
+  closeAllDropdowns();
+};
+
+const selectSubCategory = (id) => {
+  let subName = '';
+  let parentCatName = '';
+
+  for (const cat of categoriesList.value) {
+    const sub = cat.subCategories?.find(s => s.sub_categoryId === id);
+    if (sub) {
+      subName = sub.name;
+      parentCatName = cat.category_name;
+      break;
+    }
+  }
+
+  if (subName) {
+    // Додаємо і категорію, і підкатегорію в URL
+    router.push({ query: { ...route.query, category: parentCatName, subcategory: subName } });
+  }
+
+  selectedSubCategoryId.value = id;
+  closeAllDropdowns();
+};
+
+const resetFilters = () => {
+  const query = { ...route.query };
+  delete query.category;
+  delete query.subcategory;
+  router.push({ query });
+
+  selectedCategoryId.value = null;
+  selectedSubCategoryId.value = null;
+  closeAllDropdowns();
+};
+
 const setSort = (order) => { sortOrder.value = order; closeAllDropdowns(); };
 
 // === FILTERING & SORTING ===
@@ -288,11 +393,10 @@ const paginatedProducts = computed(() => {
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Скрол нагору
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
 
-// Скидання сторінки на 1 при зміні фільтрів
 watch([searchQuery, selectedCategoryId, selectedSubCategoryId, sortOrder], () => {
   currentPage.value = 1;
 });
@@ -370,7 +474,7 @@ const formatPrice = (p) => p?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   width: 40px;
   height: 40px;
   border: 3px solid #f3f3f3;
-  border-top: 3px solid #d4af37; /* Золотий колір */
+  border-top: 3px solid #001a01; /* Золотий колір */
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -384,14 +488,14 @@ const formatPrice = (p) => p?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 .desktop-control-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
 .bar-left { display: flex; align-items: center; gap: 20px; }
 .search-pill { display: flex; align-items: center; background: #f4f4f4; padding: 12px 20px; border-radius: 30px; width: 300px; transition: 0.3s; }
-.search-pill:focus-within { background: #fff; box-shadow: 0 0 0 1px #d4af37; }
+.search-pill:focus-within { background: #fff; box-shadow: 0 0 0 1px #001a01; }
 .search-icon { color: #888; margin-right: 10px; font-size: 15px; }
 .search-input { border: none; background: transparent; outline: none; width: 100%; font-family: 'Roboto', sans-serif; font-size: 14px; color: #333; }
 .results-count { font-family: 'Roboto', sans-serif; font-size: 13px; color: #999; }
 .bar-right { display: flex; gap: 15px; }
 .custom-dropdown { position: relative; min-width: 180px; }
 .dropdown-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #e0e0e0; border-radius: 30px; padding: 12px 20px; font-family: 'Roboto', sans-serif; font-size: 14px; color: #333; cursor: pointer; transition: 0.2s; }
-.dropdown-btn:hover { border-color: #d4af37; }
+.dropdown-btn:hover { border-color: #001a01; }
 .arrow-icon { font-size: 10px; color: #999; margin-left: 10px; transition: 0.2s; }
 .arrow-icon.rotated { transform: rotate(180deg); }
 .dropdown-menu { position: absolute; top: calc(100% + 10px); right: 0; left: 0; background: #fff; border-radius: 16px; padding: 10px 0; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #f0f0f0; max-height: 400px; overflow-y: auto; }
@@ -446,8 +550,8 @@ const formatPrice = (p) => p?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 .page-btn.arrow { border-radius: 4px; }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #d4af37;
-  color: #d4af37;
+  border-color: #001a01;
+  color: #001a01;
 }
 
 .page-btn.active {
@@ -469,7 +573,7 @@ const formatPrice = (p) => p?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   .desktop-control-bar { display: none; }
   .mobile-control-panel { display: block; margin-bottom: 25px; }
   .mobile-search-wrapper { margin-bottom: 8px; }
-  .mobile-search-input { width: 100%; padding: 12px 20px; border: 1px solid #d4af37; border-radius: 50px; font-family: 'Roboto', sans-serif; font-size: 15px; color: #333; outline: none; background: #fff; }
+  .mobile-search-input { width: 100%; padding: 12px 20px; border: 1px solid #001a01; border-radius: 50px; font-family: 'Roboto', sans-serif; font-size: 15px; color: #333; outline: none; background: #fff; }
   .mobile-count-text { font-family: 'Roboto', sans-serif; font-size: 13px; color: #888; margin-bottom: 15px; padding-left: 10px; }
   .mobile-buttons-row { display: flex; gap: 12px; }
   .mobile-dropdown-wrapper { flex: 1; position: relative; }
