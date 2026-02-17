@@ -1,4 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, RouterView } from 'vue-router';
+import { i18n } from '../i18n'; // <-- Переконайся, що шлях до твого i18n.js правильний
+
 import MainPage from "@/views/MainPage.vue";
 import MarketPage from "@/views/MarketPage.vue";
 import ItemPage from "@/views/ItemPage.vue";
@@ -23,156 +25,80 @@ import FAQ from "@/components/footerpages/FAQ.vue";
 import HowWeWork from "@/components/footerpages/HowWeWork.vue";
 import Services from "@/components/footerpages/Services.vue";
 
-// 1. Визначте ваші маршрути (routes)
 const routes = [
     {
-        path: '/', // URL-адреса
-        name: 'Home', // Назва маршруту
-        component: MainPage // Компонент-сторінка, який буде показаний
+        // Головний обгортковий маршрут, який ловить мову
+        path: '/:lang(uk|en|ru)',
+        component: RouterView, // Вбудований компонент для рендерингу сторінок
+        children: [
+            // Шляхи без сліша (/) спереду!
+            { path: '', name: 'Home', component: MainPage },
+            { path: 'market', name: 'Market', component: MarketPage },
+            { path: 'product/:id', name: 'Item', component: ItemPage },
+            { path: 'cart', name: 'Cart', component: CartPage },
+            { path: 'login', component: Login },
+            { path: 'admin', component: AdminPage, meta: { requiresAuth: true } },
+            { path: 'order-success/:id', name: 'OrderSuccess', component: OrderSuccessPage, props: true },
+            { path: 'contacts', name: 'contacts', component: ContactPage },
+            { path: 'contact/success', name: 'ContactSuccess', component: ContactSuccessPage },
+            { path: 'ai', name: 'AIPage', component: AIPage },
+            { path: 'news', name: 'NewsPage', component: NewsPage },
+            { path: 'journal', name: 'JournalList', component: JournalPage },
+            { path: 'journal/:id', name: 'JournalPost', component: JournalPost, props: true },
+            { path: 'payment/:id', name: 'PaymentPage', component: PaymentPage, props: true },
+            { path: 'success', name: 'Success', component: PaymentSuccess },
+            { path: 'about-us', name: 'AboutUs', component: AboutUs },
+            { path: 'privacy-policy', name: 'Privacy Policy', component: PrivacyPolicy },
+            { path: 'public-offer', name: 'PublicOffer', component: PublicOffer },
+            { path: 'shipping-policy', name: 'Shipping Policy', component: ShippingPolicy },
+            { path: 'refund', name: 'RefundPolicy', component: Refund },
+            { path: 'faq', name: 'FAQ', component: FAQ },
+            { path: 'how-we-work', name: 'HowWeWork', component: HowWeWork },
+            { path: 'our-services', name: 'OurServices', component: Services }
+        ]
     },
+    // Редирект з "голого" кореня на дефолтну мову
     {
-        path: '/market',
-        name: 'Market',
-        component: MarketPage
+        path: '/',
+        redirect: '/uk'
     },
+    // Редирект для будь-яких старих посилань, де забули вказати мову
     {
-        // :id означає, що сюди прилетить UUID
-        path: '/product/:id',
-        name: 'Item',
-        component: ItemPage
-    },
-    {
-        path: '/cart',
-        name: 'Cart',
-        component: CartPage
-    },
-    {
-        path: '/login',
-        component: Login
-    }, // Вхід
-    {
-        path: '/admin',
-        component: AdminPage,
-        meta: { requiresAuth: true } // <--- МІТКА: "Тільки для своїх"
-    },
-    {
-        path: '/order-success/:id',
-        name: 'OrderSuccess',
-        component: OrderSuccessPage,
-        props: true // Дозволяє передавати id як prop, хоча ми беремо через route.params
-    },
-    {
-        path: '/contacts',       // Це буде в адресному рядку: your-site.com/contacts
-        name: 'contacts',
-        component: ContactPage
-    },
-    {
-        path: '/contact/success', // URL сторінки успіху
-        name: 'ContactSuccess',
-        component: ContactSuccessPage
-    },
-    {
-        path: '/ai', // URL сторінки успіху
-        name: 'AIPage',
-        component: AIPage
-    },
-    {
-        path: '/news', // URL сторінки успіху
-        name: 'NewsPage',
-        component: NewsPage
-    },
-    {
-        path: '/journal',
-        name: 'JournalList',
-        component: JournalPage
-    },
-
-    // Сторінка однієї новини
-    {
-        path: '/journal/:id',
-        name: 'JournalPost',
-        component: JournalPost,
-        props: true
-    },
-    {
-        path: '/payment/:id',
-        name: 'PaymentPage',
-        component: PaymentPage,
-        props: true
-    },
-    {
-        path: '/success',
-        name: 'Success',
-        component: PaymentSuccess,
-        // Можна додати props: route => ({ order_id: route.query.order_id })
-    },
-    {
-        path: '/about-us',
-        name: 'AboutUs',
-        component: AboutUs
-    },
-    {
-        path: '/privacy-policy',
-        name: 'Privacy Policy',
-        // Можна використовувати lazy-loading, щоб сайт вантажився швидше
-        component: PrivacyPolicy
-    },
-    {
-        path: '/public-offer',
-        name: 'PublicOffer',
-        component: PublicOffer
-    },
-    {
-        path: '/shipping-policy',
-        name: 'Shipping Policy',
-        component: ShippingPolicy
-    },
-    {
-        path: '/refund',
-        name: 'RefundPolicy',
-        component: Refund
-    },
-    {
-        path: '/faq',
-        name: 'FAQ',
-        component: FAQ
-    },
-    {
-        path: '/how-we-work',
-        name: 'HowWeWork',
-        component: HowWeWork
-    },
-    {
-        path: '/our-services',
-        name: 'OurServices',
-        component: Services
+        path: '/:pathMatch(.*)*',
+        redirect: to => {
+            return { path: '/uk' + to.path };
+        }
     }
 ];
 
-// 2. Створіть екземпляр роутера
 const router = createRouter({
-    history: createWebHistory(), // Використовує "чисті" URL без #
-    routes, // Ваш список маршрутів
+    history: createWebHistory(),
+    routes,
 });
 
-// ОХОРОНЕЦЬ РОУТЕРА
+// ОХОРОНЕЦЬ РОУТЕРА (Синхронізація мови + Авторизація)
 router.beforeEach((to, from, next) => {
-    // Перевіряємо, чи маршрут вимагає авторизації
+    // 1. Беремо мову з URL (якщо немає - ставимо 'uk')
+    const lang = to.params.lang || 'uk';
+
+    // 2. Синхронізуємо Vue i18n з URL
+    if (i18n.global.locale.value !== lang) {
+        i18n.global.locale.value = lang;
+    }
+
+    // 3. Перевірка авторизації
     if (to.meta.requiresAuth) {
         const token = localStorage.getItem('jwt_token');
 
         if (token) {
-            // Якщо токен є — пропускаємо
             next();
         } else {
-            // Якщо немає — відправляємо на логін
-            next('/login');
+            // Редирект на логін зі збереженням поточної мови
+            next(`/${lang}/login`);
         }
     } else {
-        // Якщо сторінка публічна — пропускаємо всіх
         next();
     }
 });
 
-// 3. Експортуйте роутер
 export default router;

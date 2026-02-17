@@ -1,14 +1,14 @@
 <template>
   <header class="main-header" :class="{ 'menu-open': isMenuOpen }">
     <div class="mobile-branding mobile-only">
-      <router-link to="/" class="logo-link">
+      <router-link :to="$localPath('/')" class="logo-link" @click="closeMenu">
         <span class="logo-text">Antique Life</span>
       </router-link>
     </div>
 
     <div class="header-inner">
       <div class="desktop-branding desktop-only">
-        <router-link to="/" class="logo-link">
+        <router-link :to="$localPath('/')" class="logo-link">
           <span class="logo-text">Antique Life</span>
         </router-link>
       </div>
@@ -18,30 +18,30 @@
           <nav class="main-nav">
 
             <div class="catalog-dropdown-wrapper" @mouseenter="handleDesktopHover(true)" @mouseleave="handleDesktopHover(false)">
-              <router-link to="/market" class="nav-link catalog-trigger" @click="toggleMarket">
+              <router-link :to="$localPath('/market')" class="nav-link catalog-trigger" @click="toggleMarket">
                 {{ $t('header.catalog') }}
               </router-link>
               <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
-                <li><router-link to="/market" @click="closeMenu">{{ $t('header.all_products') }}</router-link></li>
+                <li><router-link :to="$localPath('/market')" @click="closeMenu">{{ $t('header.all_products') }}</router-link></li>
 
-                <li v-for="cat in categoriesList" :key="cat.id || cat.category_id">
+                <li v-for="cat in categoriesList" :key="cat.id || cat.categoryId">
                   <router-link
-                      :to="{ path: '/market', query: { category: cat.name || cat.category_name } }"
+                      :to="{ path: $localPath('/market'), query: { category: cat.category_name || cat.name } }"
                       @click="closeMenu"
                   >
-                    {{ $t(`categories_list.${cat.id || cat.categoryId}.name`).toUpperCase() }}
+                    {{ $t(`categories_list.${cat.categoryId || cat.id}.name`).toUpperCase() }}
                   </router-link>
                 </li>
               </ul>
             </div>
 
-            <router-link to="/journal" class="nav-link" @click="closeMenu">{{ $t('header.journal') }}</router-link>
-            <router-link to="/contacts" class="nav-link" @click="closeMenu">{{ $t('header.contacts') }}</router-link>
-            <router-link to="/ai" class="nav-link" @click="closeMenu">{{ $t('header.expertise') }}</router-link>
+            <router-link :to="$localPath('/journal')" class="nav-link" @click="closeMenu">{{ $t('header.journal') }}</router-link>
+            <router-link :to="$localPath('/contacts')" class="nav-link" @click="closeMenu">{{ $t('header.contacts') }}</router-link>
+            <router-link :to="$localPath('/ai')" class="nav-link" @click="closeMenu">{{ $t('header.expertise') }}</router-link>
 
             <LanguageSwitcher class="mobile-only" />
 
-            <router-link to="/cart" class="nav-link nav-link-cart mobile-only" @click="closeMenu">
+            <router-link :to="$localPath('/cart')" class="nav-link nav-link-cart mobile-only" @click="closeMenu">
               <img src="/src/public/buy-icon.png" :alt="$t('header.cart')" class="cart-icon-inline" />
               <span v-if="cartStore.itemsCount > 0" class="badge-inline">{{ cartStore.itemsCount }}</span>
             </router-link>
@@ -51,7 +51,7 @@
 
       <div class="user-menu desktop-only">
         <LanguageSwitcher />
-        <router-link to="/cart" class="cart-icon" @click="closeMenu">
+        <router-link :to="$localPath('/cart')" class="cart-icon" @click="closeMenu">
           <img src="/src/public/buy-icon.png" :alt="$t('header.cart')" />
           <span v-if="cartStore.itemsCount > 0" class="badge">{{ cartStore.itemsCount }}</span>
         </router-link>
@@ -115,7 +115,6 @@ const toggleMarket = (event) => {
     event.preventDefault();
     isMarketExpanded.value = !isMarketExpanded.value;
   }
-  // На десктопі event.preventDefault() не викликається, тому працює як звичайне посилання
 };
 
 const fetchCategories = async () => {
@@ -123,7 +122,7 @@ const fetchCategories = async () => {
     const response = await axios.get(`/api/categories`);
     if (response.data && response.data.length > 0) {
       categoriesList.value = response.data.sort(
-          (a, b) => a.category_id - b.category_id,
+          (a, b) => (a.categoryId || a.id) - (b.categoryId || b.id),
       );
     }
   } catch (error) {

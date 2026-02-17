@@ -3,35 +3,31 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <span class="logo-text">Antique Life</span>
-        <p class="brand-desc">
-          Портал антикваріату та вінтажу з <br>
-          Франції, Європи та українського <br>
-          мистецтва.
-        </p>
+        <p class="brand-desc" v-html="$t('footer.brand_desc')"></p>
       </div>
 
       <div class="footer-info">
-        <h4>About company</h4>
+        <h4>{{ $t('footer.about_company') }}</h4>
         <ul>
-          <li><router-link to="/about-us">About Us</router-link></li>
-          <li><router-link to="/how-we-work">How we work</router-link></li>
-          <li><router-link to="/our-services">Our services</router-link></li>
-          <li><router-link to="/privacy-policy">Privacy Policy</router-link></li>
-          <li><router-link to="/public-offer">Public Offer & Terms</router-link></li>
+          <li><router-link :to="$localPath('/about-us')">{{ $t('footer.about_us') }}</router-link></li>
+          <li><router-link :to="$localPath('/how-we-work')">{{ $t('footer.how_we_work') }}</router-link></li>
+          <li><router-link :to="$localPath('/our-services')">{{ $t('footer.our_services') }}</router-link></li>
+          <li><router-link :to="$localPath('/privacy-policy')">{{ $t('footer.privacy_policy') }}</router-link></li>
+          <li><router-link :to="$localPath('/public-offer')">{{ $t('footer.public_offer') }}</router-link></li>
         </ul>
       </div>
 
       <div class="footer-info">
-        <h4>To buyers</h4>
+        <h4>{{ $t('footer.to_buyers') }}</h4>
         <ul>
-          <li><router-link to="/shipping-policy">Shipping and Payment</router-link></li>
-          <li><router-link to="/refund">Refund Policy</router-link></li>
-          <li><router-link to="/faq">FAQ</router-link></li>
+          <li><router-link :to="$localPath('/shipping-policy')">{{ $t('footer.shipping') }}</router-link></li>
+          <li><router-link :to="$localPath('/refund')">{{ $t('footer.refund') }}</router-link></li>
+          <li><router-link :to="$localPath('/faq')">{{ $t('footer.faq') }}</router-link></li>
         </ul>
       </div>
 
       <div class="footer-follow">
-        <h4>Follow us</h4>
+        <h4>{{ $t('footer.follow_us') }}</h4>
         <ul>
           <li>
             <a
@@ -69,7 +65,7 @@
       </div>
 
       <div class="footer-contact">
-        <h4>Contact Us</h4>
+        <h4>{{ $t('footer.contact_us') }}</h4>
         <p><a href="mailto:info@antiquelife.com">info@antiquelife.com</a></p>
         <p><a href="tel:+33745708919">+33 7 45 70 89 19</a></p>
         <p>9:00 - 18:00 (CET)</p>
@@ -104,13 +100,13 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© 2025 by Antique Life. All Rights Reserved.</p>
+      <p>{{ $t('footer.rights') }}</p>
     </div>
   </footer>
 </template>
 
 <script setup>
-// Скріпт порожній, оскільки логіка форми видалена
+// Скріпт порожній, оскільки логіка форми видалена, але він готовий для Composition API
 </script>
 
 <style scoped src="/src/assets/footer.css"></style>

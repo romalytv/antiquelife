@@ -402,7 +402,7 @@
     transform: translateX(100%);
     display: block;
     box-shadow: none;
-    padding: 90px 0 40px;
+    padding: 60px 0 40px;
     z-index: 10000;
   }
 
@@ -565,6 +565,31 @@
 
   .cart-icon img {
     width: 28px; /* Трохи більша іконка для зручності на мобільному */
+  }
+
+  /* 1. Піднімаємо логотип над білим полотном меню */
+  .mobile-branding {
+    z-index: 10001; /* Має бути вище, ніж .header-collapsible-content (10000) */
+    position: relative;
+  }
+
+  /* 2. Змінюємо колір логотипу на зелений, коли меню відкрите */
+  .main-header.menu-open .mobile-branding .logo-text {
+    color: var(--color-primary-green) !important; /* Насичений зелений з ваших змінних */
+    transition: color 0.3s ease;
+  }
+
+  /* 3. Гарантуємо, що розмір та шрифт збігаються з десктопом */
+  .mobile-branding .logo-text {
+    font-family: "Snell Roundhand", cursive;
+    font-size: 28px !important; /* Робимо точно таким, як на десктопі */
+    font-weight: 500;
+  }
+
+  /* Коригуємо позицію хрестика (✕), щоб він не перекривав логотип,
+     якщо він з'їжджає на маленьких екранах */
+  .main-header.menu-open .hamburger-button {
+    color: var(--color-primary-green); /* Також робимо хрестик зеленим для гармонії */
   }
 }
 
