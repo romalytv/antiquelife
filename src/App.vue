@@ -9,17 +9,19 @@
     <TheFooter />
 
     <ContactPopup />
+    <RegionModal />
   </div>
 </template>
 
 <script>
-// Не забудьте імпортувати ваші загальні компоненти
 import TheHeader from './components/Header.vue';
 import TheFooter from './components/Footer.vue';
-import ContactPopup from "@/components/ContactPopup.vue";
+import ContactPopup from "./components/ContactPopup.vue";
+import RegionModal from "@/components/RegionModal.vue";
 
 export default {
   components: {
+    RegionModal,
     ContactPopup,
     TheHeader,
     TheFooter,
@@ -28,5 +30,5 @@ export default {
 </script>
 
 <style>
-/* Тут ваші глобальні стилі */
+
 </style>

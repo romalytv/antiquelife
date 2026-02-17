@@ -21,7 +21,7 @@
   background: #001a01; /* Твій темний фон */
 
   /* --- ЗМІНИ ТУТ --- */
-  position: fixed;      /* Робимо фіксованим */
+  position: sticky;      /* Робимо фіксованим */
   top: 0;
   left: 0;              /* Прив'язуємо до лівого краю */
   width: 100%;
@@ -51,8 +51,10 @@
   right: 0;
   top: auto;
   transform: none;
+  display: flex; /* ДОДАНО */
+  align-items: center; /* ДОДАНО */
+  gap: 25px; /* ДОДАНО: Відстань між перемикачем мов і кошиком */
 }
-
 /* Inner header container to align logo - menu - cart and respect 1440px layout */
 .header-inner {
   width: 100%;
@@ -311,7 +313,7 @@
     padding: 1rem 5%;
 
     /* --- ЗМІНИ ТУТ --- */
-    position: fixed; /* Було relative, ставимо fixed */
+    position: sticky; /* Було relative, ставимо fixed */
     top: 0;          /* Гарантуємо, що він зверху */
     left: 0;
 
@@ -530,8 +532,8 @@
   }
 
   /* --- КОШИК МОБІЛЬНИЙ (ВИПРАВЛЕНО ВІДСТУП) --- */
-  .user-menu {
-    display: none !important; /* hidden on mobile per mockup */
+  .user-menu.desktop-only {
+    display: none !important;
   }
 
   /* Корзина як пункт меню */

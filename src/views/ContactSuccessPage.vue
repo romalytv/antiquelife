@@ -7,13 +7,15 @@
       <div class="wax-seal-wrapper">
         <div class="wax-seal">
           <svg viewBox="0 0 100 100" class="seal-svg">
-            <circle cx="50" cy="50" r="45" fill="#8d2d2d" /> <circle cx="50" cy="50" r="35" fill="none" stroke="#681e1e" stroke-width="2" />
-            <path d="M30 50 L45 65 L75 35" fill="none" stroke="#e0c097" stroke-width="5" stroke-linecap="round" /> </svg>
+            <circle cx="50" cy="50" r="45" fill="#8b0000" />
+            <circle cx="50" cy="50" r="35" fill="none" stroke="#5c0000" stroke-width="2" />
+            <path d="M30 50 L45 65 L75 35" fill="none" stroke="#e0c097" stroke-width="5" stroke-linecap="round" />
+          </svg>
         </div>
       </div>
 
       <div class="content-text fade-in">
-        <h1 class="title">Лист отримано</h1>
+        <h1 class="section-cursive-title">Лист отримано</h1>
         <div class="decorative-separator">✻</div>
 
         <p class="message">
@@ -25,7 +27,7 @@
         </p>
 
         <div class="actions">
-          <router-link to="/market" class="btn-primary-outline">
+          <router-link to="/market" class="btn-main">
             Продовжити перегляд
           </router-link>
 
@@ -54,7 +56,7 @@ const clientName = computed(() => route.query.name || 'Шановний гіст
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-bg-light);
+  background-color: #f7f7f7; /* Світло-сірий фон сайту */
   padding: 20px;
 }
 
@@ -65,25 +67,26 @@ const clientName = computed(() => route.query.name || 'Шановний гіст
   padding: 60px 40px;
   text-align: center;
   position: relative;
-  box-shadow: 0 20px 50px rgba(74, 63, 53, 0.15);
-  background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); /* М'яка тінь */
   box-sizing: border-box;
+  border: 1px solid #eaeaea;
 }
 
-/* Рамка */
+/* Рамка-декор всередині картки */
 .card-border {
   position: absolute;
   top: 15px; left: 15px; right: 15px; bottom: 15px;
-  border: 1px solid var(--color-highlight);
+  border: 1px solid #eaeaea;
   pointer-events: none;
 }
 .card-border::after {
   content: '';
   position: absolute;
   top: 4px; left: 4px; right: 4px; bottom: 4px;
-  border: 1px solid rgba(141, 110, 99, 0.3);
+  border: 1px solid rgba(6, 28, 11, 0.05); /* Дуже легкий зеленуватий відтінок */
 }
 
+/* --- СУРГУЧЕВА ПЕЧАТКА --- */
 .wax-seal-wrapper {
   margin-bottom: 30px;
   display: flex;
@@ -94,51 +97,59 @@ const clientName = computed(() => route.query.name || 'Шановний гіст
 }
 
 .seal-svg {
-  width: 100px;
-  height: 100px;
-  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+  width: 90px;
+  height: 90px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
 }
 
 @keyframes stampIn {
   to { opacity: 1; transform: scale(1); }
 }
 
-.title {
-  font-family: var(--font-serif);
-  font-size: 2.5rem;
-  color: var(--color-text-dark);
-  text-transform: uppercase;
+/* --- ТЕКСТИ --- */
+.section-cursive-title {
+  /* Елегантний рукописний шрифт */
+  font-family: 'Snell Roundhand', 'Bickham Script Pro', 'Brush Script MT', 'Great Vibes', cursive, serif;
+  font-style: italic;
+  font-size: 3rem;
+  font-weight: normal;
+  color: #111;
   margin: 0;
-  letter-spacing: 2px;
 }
 
 .decorative-separator {
-  font-size: 2rem;
-  color: var(--color-highlight);
-  margin: 10px 0 20px;
+  font-size: 1.5rem;
+  color: #061c0b; /* Темно-зелений */
+  margin: 15px 0 25px;
+  opacity: 0.7;
 }
 
 .message {
-  font-size: 1.2rem;
-  font-family: var(--font-sans);
-  color: var(--color-text-dark);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  color: #333;
   margin-bottom: 10px;
+  letter-spacing: 0.05em;
 }
 
 .client-name {
-  font-family: var(--font-serif);
+  font-family: 'Georgia', serif;
   font-style: italic;
-  font-weight: bold;
-  color: var(--color-primary-brown);
+  font-size: 1.1em;
+  color: #061c0b; /* Темно-зелений */
 }
 
 .sub-message {
-  font-size: 1rem;
-  color: var(--color-text-light);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
   line-height: 1.6;
+  letter-spacing: 0.05em;
+  color: #666;
   margin-bottom: 40px;
 }
 
+/* --- АНІМАЦІЯ ПОЯВИ --- */
 .fade-in {
   opacity: 0;
   animation: fadeIn 0.8s ease-out 0.4s forwards;
@@ -148,6 +159,7 @@ const clientName = computed(() => route.query.name || 'Шановний гіст
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* --- КНОПКИ --- */
 .actions {
   display: flex;
   flex-direction: column;
@@ -158,47 +170,53 @@ const clientName = computed(() => route.query.name || 'Шановний гіст
   width: 100%;
 }
 
-.btn-primary-outline {
+.btn-main {
   display: inline-block;
-  padding: 12px 30px;
-  border: 1px solid var(--color-text-dark);
-  color: var(--color-text-dark);
-  font-family: var(--font-serif);
+  padding: 16px 30px;
+  border: none;
+  border-radius: 4px;
+  background-color: #061c0b; /* Темно-зелений */
+  color: #fff;
+  font-family: 'Georgia', serif;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  background: transparent;
-  white-space: nowrap; /* Забороняємо перенос тексту */
+  font-size: 1rem;
+  transition: background 0.3s ease;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.btn-primary-outline:hover {
-  background-color: var(--color-text-dark);
-  color: #fff;
+.btn-main:hover {
+  background-color: #0a2e12;
 }
 
 .btn-simple {
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.9rem;
-  color: var(--color-text-light);
-  text-decoration: underline;
-  background: none;
+  color: #888;
+  text-decoration: none;
   border: none;
+  background: transparent;
   cursor: pointer;
-  font-family: var(--font-sans);
+  transition: color 0.2s;
+  letter-spacing: 0.05em;
 }
-.btn-simple:hover { color: var(--color-highlight); }
+.btn-simple:hover {
+  color: #061c0b;
+  text-decoration: underline;
+}
 
+/* --- МОБІЛЬНА АДАПТАЦІЯ --- */
 @media (max-width: 600px) {
-  .title { font-size: 1.8rem; }
-  .success-card { padding: 40px 20px; }
+  .section-cursive-title { font-size: 2.2rem; }
+  .success-card { padding: 50px 20px; border: none; box-shadow: none; background: transparent; }
+  .card-border { display: none; } /* Прибираємо подвійну рамку на мобільному для чистоти */
 
-  /* Адаптація кнопки */
-  .btn-primary-outline {
+  .btn-main {
     width: 100%;
-    box-sizing: border-box;
-    padding: 12px 10px; /* Менші бокові відступи */
-    font-size: 0.8rem;  /* Трохи менший шрифт */
-    white-space: normal; /* Дозволяємо перенос, якщо вже зовсім не лізе */
+    text-align: center;
+    padding: 16px 10px;
+    font-size: 0.95rem;
   }
 }
 </style>

@@ -13,82 +13,47 @@
         </router-link>
       </div>
 
-      <div
-        class="header-collapsible-content"
-        :class="{ 'is-open': isMenuOpen }"
-      >
+      <div class="header-collapsible-content" :class="{ 'is-open': isMenuOpen }">
         <div class="centered-nav-group">
           <nav class="main-nav">
 
-            <div class="catalog-dropdown-wrapper">
-              <a
-                href="/market"
-                class="nav-link catalog-trigger"
-                @click.prevent="toggleMarket"
-              >
-                Каталог
-              </a>
-              <ul
-                class="dropdown-menu"
-                :class="{ 'is-expanded': isMarketExpanded }"
-              >
-                <li>
-                  <router-link to="/market" @click="closeMenu">
-                    Усі Товари
-                  </router-link>
-                </li>
-                <li
-                  v-for="cat in categoriesList"
-                  :key="cat.category_id || cat.id"
-                >
+            <div class="catalog-dropdown-wrapper" @mouseenter="handleDesktopHover(true)" @mouseleave="handleDesktopHover(false)">
+              <router-link to="/market" class="nav-link catalog-trigger" @click="toggleMarket">
+                {{ $t('header.catalog') }}
+              </router-link>
+              <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
+                <li><router-link to="/market" @click="closeMenu">{{ $t('header.all_products') }}</router-link></li>
+
+                <li v-for="cat in categoriesList" :key="cat.id || cat.category_id">
                   <router-link
-                    :to="{
-                      path: '/market',
-                      query: { category: cat.category_name || cat.name },
-                    }"
-                    @click="closeMenu"
+                      :to="{ path: '/market', query: { category: cat.name || cat.category_name } }"
+                      @click="closeMenu"
                   >
-                    {{ cat.category_name || cat.name }}
+                    {{ $t(`categories_list.${cat.id || cat.categoryId}.name`).toUpperCase() }}
                   </router-link>
                 </li>
               </ul>
             </div>
 
-            <router-link to="/journal" class="nav-link" @click="closeMenu">
-              Журнал
-            </router-link>
-            <router-link to="/contacts" class="nav-link" @click="closeMenu">
-              Контакти
-            </router-link>
-            <router-link to="/ai" class="nav-link" @click="closeMenu">
-              Експертиза антикваріату
-            </router-link>
+            <router-link to="/journal" class="nav-link" @click="closeMenu">{{ $t('header.journal') }}</router-link>
+            <router-link to="/contacts" class="nav-link" @click="closeMenu">{{ $t('header.contacts') }}</router-link>
+            <router-link to="/ai" class="nav-link" @click="closeMenu">{{ $t('header.expertise') }}</router-link>
 
-            <!-- Корзина в низу меню (тільки мобільна) -->
-            <router-link
-              to="/cart"
-              class="nav-link nav-link-cart mobile-only"
-              @click="closeMenu"
-            >
-              <img
-                src="/src/public/buy-icon.png"
-                alt="Кошик"
-                class="cart-icon-inline"
-              />
-              <span v-if="cartStore.itemsCount > 0" class="badge-inline">
-                {{ cartStore.itemsCount }}
-              </span>
+            <LanguageSwitcher class="mobile-only" />
+
+            <router-link to="/cart" class="nav-link nav-link-cart mobile-only" @click="closeMenu">
+              <img src="/src/public/buy-icon.png" :alt="$t('header.cart')" class="cart-icon-inline" />
+              <span v-if="cartStore.itemsCount > 0" class="badge-inline">{{ cartStore.itemsCount }}</span>
             </router-link>
           </nav>
         </div>
       </div>
 
-      <div class="user-menu">
+      <div class="user-menu desktop-only">
+        <LanguageSwitcher />
         <router-link to="/cart" class="cart-icon" @click="closeMenu">
-          <img src="/src/public/buy-icon.png" alt="Кошик" />
-          <span v-if="cartStore.itemsCount > 0" class="badge">
-            {{ cartStore.itemsCount }}
-          </span>
+          <img src="/src/public/buy-icon.png" :alt="$t('header.cart')" />
+          <span v-if="cartStore.itemsCount > 0" class="badge">{{ cartStore.itemsCount }}</span>
         </router-link>
       </div>
     </div>
@@ -103,6 +68,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useCartStore } from "../stores/cart";
+import LanguageSwitcher from "./LanguageSwitcher.vue";
 import axios from "axios";
 
 const cartStore = useCartStore();
@@ -111,18 +77,19 @@ const isMenuOpen = ref(false);
 const isMarketExpanded = ref(false);
 const savedScrollY = ref(0);
 
+// Початковий список залишається як фолбек
 const categoriesList = ref([
-  { id: 1, name: "Антикварний Та Вінтажний Посуд" },
-  { id: 2, name: "Антикварні Та Вінтажні Meблі" },
-  { id: 3, name: "Декор Та Предмети Інтер'єру" },
-  { id: 4, name: "Антикварні Лампи Та Світильники" },
-  { id: 5, name: "Дзеркала Та Рами" },
-  { id: 6, name: "Живопис Та Графіка" },
-  { id: 7, name: "Вироби З Металу Та Срібла" },
-  { id: 8, name: "Антикварні Годинники" },
-  { id: 9, name: "Антикварне Та Вінтажне Скло І Кришталь" },
-  { id: 10, name: "Вінтажна Та Антикварна Біжутерія" },
-  { id: 11, name: "Елітний Та Колекційний Антикваріат" },
+  { id: 1, name: "Антикварний та вінтажний посуд" },
+  { id: 2, name: "Антикварні та вінтажні меблі" },
+  { id: 3, name: "Декор та предмети інтер'єру" },
+  { id: 4, name: "Антикварні лампи та світильники" },
+  { id: 5, name: "Дзеркала та рами" },
+  { id: 6, name: "Живопис та графіка" },
+  { id: 7, name: "Вироби з металу та срібла" },
+  { id: 8, name: "Антикварні годинники" },
+  { id: 9, name: "Антикварне та вінтажне скло і кришталь" },
+  { id: 10, name: "Вінтажна та антикварна біжутерія" },
+  { id: 11, name: "Елітний та колекційний антикваріат" },
   { id: 12, name: "Різне" },
 ]);
 
@@ -135,11 +102,20 @@ const closeMenu = () => {
   isMarketExpanded.value = false;
 };
 
+// Відкриття підменю при наведенні (тільки для десктопу)
+const handleDesktopHover = (state) => {
+  if (window.innerWidth > 768) {
+    isMarketExpanded.value = state;
+  }
+};
+
+// Клік по "Каталог" (на мобільному відкриває список, на десктопі пускає на сторінку)
 const toggleMarket = (event) => {
   if (window.innerWidth <= 768) {
     event.preventDefault();
     isMarketExpanded.value = !isMarketExpanded.value;
   }
+  // На десктопі event.preventDefault() не викликається, тому працює як звичайне посилання
 };
 
 const fetchCategories = async () => {
@@ -147,12 +123,12 @@ const fetchCategories = async () => {
     const response = await axios.get(`/api/categories`);
     if (response.data && response.data.length > 0) {
       categoriesList.value = response.data.sort(
-        (a, b) => a.category_id - b.category_id,
+          (a, b) => a.category_id - b.category_id,
       );
     }
   } catch (error) {
     console.log(
-      "API категорії недоступні, використовується список за замовчуванням",
+        "API категорії недоступні, використовується список за замовчуванням",
     );
   }
 };
@@ -161,9 +137,6 @@ onMounted(() => {
   fetchCategories();
 });
 
-/**
- * ✅ BODY SCROLL LOCK — КЛЮЧОВИЙ ФІКС
- */
 watch(isMenuOpen, (isOpen) => {
   if (isOpen) {
     savedScrollY.value = window.scrollY || window.pageYOffset || 0;

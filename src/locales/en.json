@@ -1,0 +1,151 @@
+{
+  "about": {
+    "h1": "About Us | Antique Life",
+    "subtitle": "Your reliable guide to the world of European and Ukrainian antiques",
+    "intro_1": "<b>Welcome to Antique Life</b> — a project that stood at the origins of modern antique and vintage culture in Ukraine.",
+    "intro_2": "We started this business almost 20 years ago, long before European antiques became a mass trend. That is why today Antique Life is not just a store, but a trusted name.",
+    "h2_1": "How we find unique items",
+    "p_1_1": "Our work begins where most never go. We massively and regularly visit French flea markets, vintage markets, and local estate sales all over France — from big cities to small provinces. This is exactly where we find real gems: beautiful things with history, unexpected masterpieces, and items that have not yet reached galleries or resellers.",
+    "p_1_2": "Thanks to this, we are able to offer <b>better prices without losing quality and authenticity</b>.",
+    "h2_2": "Auctions and estate sales",
+    "p_2_1": "A separate area of our work is auctions. We attend all key auctions in the south of France and other regions of Europe, where we buy lots both on client demand and for our permanent stock. This gives us access to items that rarely appear in open sales.",
+    "p_2_2": "We also cooperate with organizations dealing with property clearance from houses and apartments. Thanks to these partnerships, we often get first access to sales of private collections and family estates — even before the items hit the market. This is where the strongest finds are born.",
+    "h2_3": "Ukrainian heritage and European antiques",
+    "p_3_1": "Antique Life is more than just France. For many years we have been working and continue to work with <b>authentic antiques of the Austro-Hungarian era</b> preserved on the territory of Ukraine.",
+    "p_3_2": "A special place in our activity is occupied by Ukrainian decorative and applied heritage, in particular the art of Hutsulshchyna, as well as modern Ukrainian art, which we consider an important part of living cultural continuity.",
+    "h2_4": "What you will find in our collection:",
+    "list_1": "<b>affordable vintage</b> and unique trinkets with character;",
+    "list_2": "<b>antiques</b> of museum and collectible level;",
+    "list_3": "<b>interior items</b> that create an atmosphere, not just decor.",
+    "conclusion_1": "Every item in Antique Life is a story, an emotion, and a touch of time.",
+    "conclusion_2": "We work not on the principle of 'selling', but on the principle of finding exactly what resonates. We consult, select, accompany, and deliver — honestly, professionally, and with respect to the client.",
+    "conclusion_3": "<b>Antique Life</b> is a business with a soul, experience, and responsibility to culture.<br>We were among the first.<br>We know the market from the inside.<br>And we remain the ones who set the standard.",
+    "seo": {
+      "title": "About Us | Antique Life",
+      "description": "Antique Life — a portal of antiques and vintage from France, Europe, and Ukraine. Over 20 years of experience, unique finds, auctions, and interior items.",
+      "keywords": "antiques, vintage, antiques from France, Ukrainian heritage, Antique Life, antique auctions, interior decor"
+    }
+  },
+  "howWeWork": {
+    "h1": "How We Work",
+    "intro": "Antique Life is a living process of search, discovery, and genuine finds. We work where antiques have not yet become a commodity, but remain a part of life, history, and family memory.",
+    "h2_1": "Antique \"Hunts\"",
+    "p_1_1": "We organize and constantly conduct thoughtful antique expeditions:",
+    "list_1_1": "night flea markets in the villages of the Côte d'Azur",
+    "list_1_2": "local morning markets that tourists do not reach",
+    "list_1_3": "famous auctions by the sea, where recreation, culture, and shopping are combined",
+    "list_1_4": "estate sale tours, where real family heirlooms are kept",
+    "p_1_2": "It is in such places that we find items with character — those that do not appear in mass sales.",
+    "h2_2": "📲 Live Finds — On Opening Day",
+    "p_2_1": "Everything we find during fairs, auctions, and expeditions, you immediately see in our Telegram channel.<br><br>No filters, no delays — you watch the process in real-time and have the opportunity to be the first to choose your item.",
+    "h2_3": "Redemption, Preservation, and Delivery",
+    "p_3_1": "We accompany every find from the moment of purchase to its safe arrival to the client:",
+    "list_3_1": "professional redemption",
+    "list_3_2": "careful packaging",
+    "list_3_3": "storage",
+    "list_3_4": "delivery to Ukraine and European countries",
+    "p_3_2": "Every item passes through our hands — with respect for its age and history.",
+    "h2_4": "Formation of Collections of Ukrainian Authenticity",
+    "p_4_1": "A separate area of our work is the creation of collections of Ukrainian cultural heritage.<br><br>We work with authentic antiques of the Austro-Hungarian era, Ukrainian decorative and applied art, Hutsul items, and modern Ukrainian art.<br><br>This is our responsibility — to preserve, return, and popularize Ukrainian authenticity in the modern world.",
+    "h2_5": "Online Showcase",
+    "p_5_1": "Our online store presents items that are in stock and available for quick purchase.<br><br>The assortment is constantly updated and covers thousands of items — from affordable vintage to unique collectibles.",
+    "outro_1": "Antique Life is not just working with antiques.",
+    "outro_2": "It is a path.<br>It is intuition.<br>It is trust in time.",
+    "seo": {
+      "title": "How We Work | Antique Life",
+      "description": "How Antique Life works: antique expeditions, auctions, antique delivery, and the formation of collections of Ukrainian authenticity.",
+      "keywords": "antiques, French flea markets, Ukrainian authenticity, antique auctions, vintage"
+    }
+  },
+  "services": {
+    "page_title": "Antique Life Services — Antiques from France and Europe",
+    "items": {
+      "search": {
+        "title": "Search for antiques and vintage in France",
+        "desc": "We professionally search for antique and vintage items at flea markets, fairs, thrift stores, estate sales, and private collections in France and Europe. This gives us access to rare items at the best prices."
+      },
+      "auctions": {
+        "title": "Antique auctions in France and Europe",
+        "desc": "Participation in leading auctions in the south of France and other European regions. Purchasing lots both for permanent stock and upon client request."
+      },
+      "collections": {
+        "title": "Searching for collection items",
+        "desc": "We purposefully search for specific items, series, or collections upon client request — from vintage tableware to collectible antiques and art."
+      },
+      "live_tours": {
+        "title": "Online tours and live reports",
+        "desc": "We conduct online tours on social networks from antique markets, thrift stores, and auctions. You can see the search process and have first access to findings in real-time."
+      },
+      "shop_tours": {
+        "title": "Antique shopping tours in France",
+        "desc": "Organization of antique tours: visiting markets, auctions, and thrift stores, accompaniment, consultations, purchasing, and delivery."
+      },
+      "ua_antiques": {
+        "title": "Ukrainian antiques and authenticity",
+        "desc": "Forming collections of Ukrainian antiques from the Austro-Hungarian era, decorative and applied arts of the Hutsul region, and modern Ukrainian art."
+      },
+      "online_shop": {
+        "title": "Online antique shop",
+        "desc": "Online store of vintage and antique items in stock. Regular updates, large assortment, quick purchase."
+      },
+      "packaging": {
+        "title": "Packaging and delivery of antiques",
+        "desc": "Professional packaging, storage, and delivery of antiques to Ukraine and European countries in compliance with historical item handling standards."
+      }
+    }
+  },
+  "shipping": {
+    "page_title": "Shipping and Payment",
+    "intro": "We organize the delivery of antique and vintage items taking into account their condition, size, and location.",
+    "ukraine": {
+      "title": "Delivery within Ukraine",
+      "desc": "Items already located in Ukraine are delivered exclusively within Ukraine. You can choose a convenient delivery method:",
+      "list": [
+        "targeted courier delivery",
+        "delivery via 'Nova Poshta'",
+        "other delivery services by prior agreement"
+      ],
+      "note": "The cost of delivery is paid by the client unless otherwise agreed individually."
+    },
+    "europe": {
+      "title": "Delivery from France and Europe",
+      "desc": "Items located in France or other European countries can be delivered throughout Europe, as well as to Ukraine. We organize:",
+      "list": [
+        "professional packaging",
+        "storage (if necessary)",
+        "international delivery"
+      ],
+      "note": "For fragile, oversized, or valuable items, it is possible to involve private carriers."
+    },
+    "payment": {
+      "title": "Payment",
+      "desc": "You can pay for your order directly on the website using available online payment methods. Alternative payment options are also possible, which are agreed upon individually depending on the item and delivery conditions."
+    },
+    "assistance": {
+      "title": "Assistance with independently found items",
+      "desc": "Upon request, we can organize the packaging and delivery of items you have found independently at auctions or specialized European platforms, with delivery to Ukraine or European countries."
+    }
+  },
+  "header": {
+    "catalog": "Catalog",
+    "all_products": "ALL PRODUCTS",
+    "journal": "Journal",
+    "contacts": "Contacts",
+    "expertise": "Antique Appraisal",
+    "cart": "Cart"
+  },
+  "categories_list": {
+    "1": { "name": "Antique & Vintage Tableware", "desc": "Plates, sets, glasses, cutlery" },
+    "2": { "name": "Antique & Vintage Furniture", "desc": "Tables, chairs, cabinets, chests of drawers" },
+    "3": { "name": "Decor & Interior Items", "desc": "Statues, candlesticks, vases" },
+    "4": { "name": "Antique Lamps & Lighting", "desc": "Chandeliers, wall lamps, floor lamps" },
+    "5": { "name": "Mirrors & Frames", "desc": "Mirrors, picture frames, easels" },
+    "6": { "name": "Painting & Graphics", "desc": "Paintings, engravings, icons" },
+    "7": { "name": "Metal & Silverware", "desc": "Bronze, brass, silver" },
+    "8": { "name": "Antique Clocks", "desc": "Wall, mantel, floor clocks" },
+    "9": { "name": "Antique & Vintage Glass & Crystal", "desc": "Vases, glasses, art glass" },
+    "10": { "name": "Vintage & Antique Jewelry", "desc": "Jewelry, brooches, cufflinks" },
+    "11": { "name": "Elite & Collectible Antiques", "desc": "Rare and expensive items" },
+    "12": { "name": "Miscellaneous", "desc": "Other antique items" }
+  }
+}

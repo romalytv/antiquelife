@@ -11,13 +11,22 @@
       </div>
 
       <div class="footer-info">
-        <h4>Info</h4>
+        <h4>About company</h4>
         <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Accessibility Statement</a></li>
-          <li><a href="#">Shopping Policy</a></li>
-          <li><a href="#">Terms &amp; Conditions</a></li>
-          <li><a href="#">Refund Policy</a></li>
+          <li><router-link to="/about-us">About Us</router-link></li>
+          <li><router-link to="/how-we-work">How we work</router-link></li>
+          <li><router-link to="/our-services">Our services</router-link></li>
+          <li><router-link to="/privacy-policy">Privacy Policy</router-link></li>
+          <li><router-link to="/public-offer">Public Offer & Terms</router-link></li>
+        </ul>
+      </div>
+
+      <div class="footer-info">
+        <h4>To buyers</h4>
+        <ul>
+          <li><router-link to="/shipping-policy">Shipping and Payment</router-link></li>
+          <li><router-link to="/refund">Refund Policy</router-link></li>
+          <li><router-link to="/faq">FAQ</router-link></li>
         </ul>
       </div>
 
@@ -26,26 +35,34 @@
         <ul>
           <li>
             <a
-              href="https://www.instagram.com/france_antique_centre/"
-              target="_blank"
-              rel="noopener"
-              >Instagram</a
+                href="https://www.instagram.com/france_antique_centre/"
+                target="_blank"
+                rel="noopener"
+            >Instagram</a
             >
           </li>
           <li>
             <a
-              href="https://www.tiktok.com/@france_antique_centre"
-              target="_blank"
-              rel="noopener"
-              >TikTok</a
+                href="https://www.tiktok.com/@france_antique_centre"
+                target="_blank"
+                rel="noopener"
+            >TikTok</a
             >
           </li>
           <li>
             <a
-              href="https://t.me/antiquelife"
-              target="_blank"
-              rel="noopener"
-              >Telegram</a
+                href="https://t.me/antiquelife"
+                target="_blank"
+                rel="noopener"
+            >Telegram</a
+            >
+          </li>
+          <li>
+            <a
+                href="https://www.threads.com/@france_antique_centre"
+                target="_blank"
+                rel="noopener"
+            >Threads</a
             >
           </li>
         </ul>
@@ -60,26 +77,26 @@
 
       <div class="footer-social">
         <a
-          class="social-icon"
-          href="https://www.instagram.com/france_antique_centre/"
-          target="_blank"
-          rel="noopener"
+            class="social-icon"
+            href="https://www.instagram.com/france_antique_centre/"
+            target="_blank"
+            rel="noopener"
         >
           <img src="@/assets/icons/instagram.svg" alt="Instagram" />
         </a>
         <a
-          class="social-icon"
-          href="https://www.youtube.com/"
-          target="_blank"
-          rel="noopener"
+            class="social-icon"
+            href="https://www.youtube.com/"
+            target="_blank"
+            rel="noopener"
         >
           <img src="@/assets/icons/youtube.svg" alt="YouTube" />
         </a>
         <a
-          class="social-icon"
-          href="https://www.tiktok.com/@france_antique_centre"
-          target="_blank"
-          rel="noopener"
+            class="social-icon"
+            href="https://www.tiktok.com/@france_antique_centre"
+            target="_blank"
+            rel="noopener"
         >
           <img src="@/assets/icons/tiktok.svg" alt="TikTok" />
         </a>

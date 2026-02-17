@@ -22,4 +22,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+    server: {
+        // Додаємо наші тестові домени сюди
+        allowedHosts: ['antique.test', 'antique.test.ua']
+    }
 })
