@@ -14,6 +14,14 @@ import JournalPost from "@/views/JournalPost.vue";
 import JournalPage from "@/views/JournalPage.vue";
 import PaymentPage from "@/views/PaymentPage.vue";
 import PaymentSuccess from "@/views/PaymentSuccess.vue";
+import AboutUs from "@/components/footerpages/AboutUs.vue";
+import PrivacyPolicy from "@/components/footerpages/PrivacyPolicy.vue";
+import PublicOffer from "@/components/footerpages/PublicOffer.vue";
+import ShippingPolicy from "@/components/footerpages/ShippingPolicy.vue";
+import Refund from "@/components/footerpages/Refund.vue";
+import FAQ from "@/components/footerpages/FAQ.vue";
+import HowWeWork from "@/components/footerpages/HowWeWork.vue";
+import Services from "@/components/footerpages/Services.vue";
 
 // 1. Визначте ваші маршрути (routes)
 const routes = [
@@ -97,6 +105,47 @@ const routes = [
         name: 'Success',
         component: PaymentSuccess,
         // Можна додати props: route => ({ order_id: route.query.order_id })
+    },
+    {
+        path: '/about-us',
+        name: 'AboutUs',
+        component: AboutUs
+    },
+    {
+        path: '/privacy-policy',
+        name: 'Privacy Policy',
+        // Можна використовувати lazy-loading, щоб сайт вантажився швидше
+        component: PrivacyPolicy
+    },
+    {
+        path: '/public-offer',
+        name: 'PublicOffer',
+        component: PublicOffer
+    },
+    {
+        path: '/shipping-policy',
+        name: 'Shipping Policy',
+        component: ShippingPolicy
+    },
+    {
+        path: '/refund',
+        name: 'RefundPolicy',
+        component: Refund
+    },
+    {
+        path: '/faq',
+        name: 'FAQ',
+        component: FAQ
+    },
+    {
+        path: '/how-we-work',
+        name: 'HowWeWork',
+        component: HowWeWork
+    },
+    {
+        path: '/our-services',
+        name: 'OurServices',
+        component: Services
     }
 ];
 

@@ -17,79 +17,43 @@
         <div class="centered-nav-group">
           <nav class="main-nav">
 
-            <div
-                class="catalog-dropdown-wrapper"
-                @mouseenter="handleDesktopHover(true)"
-                @mouseleave="handleDesktopHover(false)"
-            >
-              <router-link
-                  to="/market"
-                  class="nav-link catalog-trigger"
-                  @click="toggleMarket"
-              >
-                Каталог
+            <div class="catalog-dropdown-wrapper" @mouseenter="handleDesktopHover(true)" @mouseleave="handleDesktopHover(false)">
+              <router-link to="/market" class="nav-link catalog-trigger" @click="toggleMarket">
+                {{ $t('header.catalog') }}
               </router-link>
+              <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
+                <li><router-link to="/market" @click="closeMenu">{{ $t('header.all_products') }}</router-link></li>
 
-              <ul
-                  class="dropdown-menu"
-                  :class="{ 'is-expanded': isMarketExpanded }"
-              >
-                <li>
-                  <router-link to="/market" @click="closeMenu">
-                    УСІ ТОВАРИ
-                  </router-link>
-                </li>
-                <li
-                    v-for="cat in categoriesList"
-                    :key="cat.category_id || cat.id"
-                >
+                <li v-for="cat in categoriesList" :key="cat.id || cat.category_id">
                   <router-link
-                      :to="{
-                      path: '/market',
-                      query: { category: cat.category_name || cat.name },
-                    }"
+                      :to="{ path: '/market', query: { category: cat.name || cat.category_name } }"
                       @click="closeMenu"
                   >
-                    {{ (cat.category_name || cat.name).toUpperCase() }}
+                    {{ $t(`categories_list.${cat.id || cat.categoryId}.name`).toUpperCase() }}
                   </router-link>
                 </li>
               </ul>
             </div>
 
-            <router-link to="/journal" class="nav-link" @click="closeMenu">
-              Журнал
-            </router-link>
-            <router-link to="/contacts" class="nav-link" @click="closeMenu">
-              Контакти
-            </router-link>
-            <router-link to="/ai" class="nav-link" @click="closeMenu">
-              Експертиза антикваріату
-            </router-link>
+            <router-link to="/journal" class="nav-link" @click="closeMenu">{{ $t('header.journal') }}</router-link>
+            <router-link to="/contacts" class="nav-link" @click="closeMenu">{{ $t('header.contacts') }}</router-link>
+            <router-link to="/ai" class="nav-link" @click="closeMenu">{{ $t('header.expertise') }}</router-link>
 
-            <router-link
-                to="/cart"
-                class="nav-link nav-link-cart mobile-only"
-                @click="closeMenu"
-            >
-              <img
-                  src="/src/public/buy-icon.png"
-                  alt="Кошик"
-                  class="cart-icon-inline"
-              />
-              <span v-if="cartStore.itemsCount > 0" class="badge-inline">
-                {{ cartStore.itemsCount }}
-              </span>
+            <LanguageSwitcher class="mobile-only" />
+
+            <router-link to="/cart" class="nav-link nav-link-cart mobile-only" @click="closeMenu">
+              <img src="/src/public/buy-icon.png" :alt="$t('header.cart')" class="cart-icon-inline" />
+              <span v-if="cartStore.itemsCount > 0" class="badge-inline">{{ cartStore.itemsCount }}</span>
             </router-link>
           </nav>
         </div>
       </div>
 
-      <div class="user-menu">
+      <div class="user-menu desktop-only">
+        <LanguageSwitcher />
         <router-link to="/cart" class="cart-icon" @click="closeMenu">
-          <img src="/src/public/buy-icon.png" alt="Кошик" />
-          <span v-if="cartStore.itemsCount > 0" class="badge">
-            {{ cartStore.itemsCount }}
-          </span>
+          <img src="/src/public/buy-icon.png" :alt="$t('header.cart')" />
+          <span v-if="cartStore.itemsCount > 0" class="badge">{{ cartStore.itemsCount }}</span>
         </router-link>
       </div>
     </div>
@@ -104,6 +68,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useCartStore } from "../stores/cart";
+import LanguageSwitcher from "./LanguageSwitcher.vue";
 import axios from "axios";
 
 const cartStore = useCartStore();

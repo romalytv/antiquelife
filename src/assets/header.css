@@ -51,8 +51,10 @@
   right: 0;
   top: auto;
   transform: none;
+  display: flex; /* ДОДАНО */
+  align-items: center; /* ДОДАНО */
+  gap: 25px; /* ДОДАНО: Відстань між перемикачем мов і кошиком */
 }
-
 /* Inner header container to align logo - menu - cart and respect 1440px layout */
 .header-inner {
   width: 100%;
@@ -530,8 +532,8 @@
   }
 
   /* --- КОШИК МОБІЛЬНИЙ (ВИПРАВЛЕНО ВІДСТУП) --- */
-  .user-menu {
-    display: none !important; /* hidden on mobile per mockup */
+  .user-menu.desktop-only {
+    display: none !important;
   }
 
   /* Корзина як пункт меню */
