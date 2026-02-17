@@ -24,12 +24,12 @@
               <ul class="dropdown-menu" :class="{ 'is-expanded': isMarketExpanded }">
                 <li><router-link :to="$localPath('/market')" @click="closeMenu">{{ $t('header.all_products') }}</router-link></li>
 
-                <li v-for="cat in categoriesList" :key="cat.id || cat.category_id">
+                <li v-for="cat in categoriesList" :key="cat.id || cat.categoryId">
                   <router-link
                       :to="{ path: $localPath('/market'), query: { category: cat.category_name || cat.name } }"
                       @click="closeMenu"
                   >
-                    {{ $t(`categories_list.${cat.category_id || cat.id}.name`).toUpperCase() }}
+                    {{ $t(`categories_list.${cat.categoryId || cat.id}.name`).toUpperCase() }}
                   </router-link>
                 </li>
               </ul>
@@ -122,7 +122,7 @@ const fetchCategories = async () => {
     const response = await axios.get(`/api/categories`);
     if (response.data && response.data.length > 0) {
       categoriesList.value = response.data.sort(
-          (a, b) => (a.category_id || a.id) - (b.category_id || b.id),
+          (a, b) => (a.categoryId || a.id) - (b.categoryId || b.id),
       );
     }
   } catch (error) {

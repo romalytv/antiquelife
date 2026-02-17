@@ -527,45 +527,83 @@ const formatPrice = (p) => p?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
-  gap: 10px;
+  margin: 60px 0 40px;
+  gap: 15px;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 8px;
 }
 
 .page-btn {
-  background: #fff;
+  background: transparent;
   border: 1px solid #e0e0e0;
-  color: #333;
-  width: 40px;
-  height: 40px;
+  color: #1a1a1a;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: 0.2s;
-  font-family: 'Roboto', sans-serif;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
+  border-radius: 50%; /* Кругла форма виглядає більш витончено */
 }
-/* Квадратні кнопки для пагінації, як у фільтрів на мобільному */
-.page-btn.number { border-radius: 4px; }
-.page-btn.arrow { border-radius: 4px; }
 
-.page-btn:hover:not(:disabled) {
-  border-color: #001a01;
+/* Стрілки робимо без фону та рамок для легкості */
+.page-btn.arrow {
+  border: none;
+  font-size: 20px;
   color: #001a01;
+  background: none;
 }
 
+.page-btn.arrow:hover:not(:disabled) {
+  color: #b08d57; /* Золотий акцент при наведенні */
+  transform: translateX(3px);
+}
+
+.page-btn.arrow:first-child:hover:not(:disabled) {
+  transform: translateX(-3px);
+}
+
+.page-btn.number:hover:not(.active) {
+  border-color: #b08d57;
+  color: #b08d57;
+}
+
+/* Активна сторінка - твій фірмовий зелений */
 .page-btn.active {
-  background: #222;
+  background: #001a01;
   color: #fff;
-  border-color: #222;
+  border-color: #001a01;
+  box-shadow: 0 4px 12px rgba(0, 26, 1, 0.2);
 }
 
 .page-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.2;
   cursor: not-allowed;
-  background: #f9f9f9;
 }
 
+/* Адаптив під мобілку */
+@media (max-width: 768px) {
+  .pagination-container {
+    gap: 8px;
+    margin-top: 40px;
+  }
+
+  .page-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .page-numbers {
+    gap: 5px;
+  }
+}
 
 /* ================= MOBILE STYLES ================= */
 @media (max-width: 992px) {
