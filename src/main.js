@@ -30,4 +30,11 @@ app.use(createPinia());
 app.use(i18n);
 app.use(head); // <--- 3. Підключаємо до додатка
 
+app.config.globalProperties.$localPath = (path) => {
+    const currentLang = i18n.global.locale.value;
+    // Якщо шлях вже починається зі слеша, просто склеюємо
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `/${currentLang}${cleanPath}`;
+};
+
 app.mount('#app');

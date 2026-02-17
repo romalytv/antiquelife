@@ -1,43 +1,15 @@
 <template>
   <div class="antique-page-container">
-    <!-- <section class="video-showcase" ref="videoSection">
-      <div class="video-header">
-        <h2>Відкрийте для себе цікавий світ антикваріату</h2>
-        <span class="decorative-line"></span>
-      </div>
-
-      <div class="video-wrapper">
-        <iframe
-            :key="isPlaying"
-            :src="finalVideoUrl"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-        </iframe>
-      </div>
-    </section>  -->
-
-    <!--    <section class="instagram-showcase">-->
-    <!--      <div class="instagram-header">-->
-    <!--        <h2>Ми в Instagram</h2>-->
-    <!--        <span class="decorative-line"></span>-->
-    <!--      </div>-->
-
-    <!--      <div class="instagram-widget-wrapper">-->
-    <!--        <InstagramFeed />-->
-    <!--      </div>-->
-    <!--    </section>-->
-
     <HeroSection />
 
-    <section class="tiktok-showcase">
-      <div class="tiktok-header">
-        <h2>Ми в TikTok</h2>
+    <section class="social-showcase">
+      <div class="social-header">
+        <h2>Наші соціальні мережі</h2>
         <span class="decorative-line"></span>
       </div>
 
-      <div class="tiktok-widget-wrapper">
-        <TikTokFeed />
+      <div class="social-widget-wrapper">
+        <SocialFeed />
       </div>
     </section>
 
@@ -46,15 +18,15 @@
 </template>
 
 <script>
-import InstagramFeed from "@/components/InstagramFeed.vue";
-import TikTokFeed from "@/components/TikTokFeed.vue";
+import SocialFeed from "@/components/SocialFeed.vue";
 import LatestProducts from "@/components/LatestProducts.vue";
 import axios from "axios";
 import HeroSection from "@/components/HeroSection.vue";
 
 export default {
   name: "MainPage",
-  components: { HeroSection, TikTokFeed, InstagramFeed, LatestProducts },
+  // Прибрав "TikTokFeed: SocialFeed", залишив просто SocialFeed
+  components: { HeroSection, SocialFeed, LatestProducts },
   data() {
     return {
       videoId: "NC4XTu3Ap98",
@@ -74,37 +46,33 @@ export default {
     },
   },
   methods: {
-    // Метод для отримання актуального відео
     async fetchCurrentVideo() {
       try {
-        // Заміни URL на свій, якщо він відрізняється
         const response = await axios.get("/api/youtube/current");
         if (response.data && response.data.videoId) {
           this.videoId = response.data.videoId;
         }
       } catch (error) {
         console.error(
-          "Не вдалося завантажити YouTube відео, показуємо дефолтне",
-          error,
+            "Не вдалося завантажити YouTube відео, показуємо дефолтне",
+            error,
         );
       }
     },
   },
   mounted() {
-    // 1. Запускаємо отримання відео
     this.fetchCurrentVideo();
 
-    // 2. Твій старий код для Autoplay при скролі
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !this.isPlaying) {
-            console.log("Video section visible - starting autoplay");
-            this.isPlaying = true;
-          }
-        });
-      },
-      { threshold: 0.4 },
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && !this.isPlaying) {
+              console.log("Video section visible - starting autoplay");
+              this.isPlaying = true;
+            }
+          });
+        },
+        { threshold: 0.4 },
     );
 
     if (this.$refs.videoSection) {
@@ -113,5 +81,3 @@ export default {
   },
 };
 </script>
-
-<style scoped src="/src/assets/main.css"></style>

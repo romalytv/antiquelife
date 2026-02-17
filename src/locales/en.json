@@ -134,6 +134,22 @@
     "expertise": "Antique Appraisal",
     "cart": "Cart"
   },
+  "footer": {
+    "brand_desc": "Portal of antiques and vintage from <br> France, Europe, and Ukrainian <br> art.",
+    "about_company": "About company",
+    "about_us": "About Us",
+    "how_we_work": "How we work",
+    "our_services": "Our services",
+    "privacy_policy": "Privacy Policy",
+    "public_offer": "Public Offer & Terms",
+    "to_buyers": "To buyers",
+    "shipping": "Shipping and Payment",
+    "refund": "Refund Policy",
+    "faq": "FAQ",
+    "follow_us": "Follow us",
+    "contact_us": "Contact Us",
+    "rights": "© 2026 Antique Life. All Rights Reserved."
+  },
   "categories_list": {
     "1": { "name": "Antique & Vintage Tableware", "desc": "Plates, sets, glasses, cutlery" },
     "2": { "name": "Antique & Vintage Furniture", "desc": "Tables, chairs, cabinets, chests of drawers" },
@@ -147,5 +163,71 @@
     "10": { "name": "Vintage & Antique Jewelry", "desc": "Jewelry, brooches, cufflinks" },
     "11": { "name": "Elite & Collectible Antiques", "desc": "Rare and expensive items" },
     "12": { "name": "Miscellaneous", "desc": "Other antique items" }
+  },
+  "faq": {
+    "h1": "Frequently Asked Questions",
+    "subtitle": "Everything you wanted to know about Antique Life",
+    "q1_h2": "Are all items authentic?",
+    "q1_p": "Yes, we specialize exclusively in original vintage and antique items. Each piece is hand-picked at markets and auctions in France and Europe.",
+    "q2_h2": "How is the delivery of fragile items carried out?",
+    "q2_p": "We have extensive experience in packaging antiques. We use special protective materials and reliable transportation to ensure your purchases arrive undamaged.",
+    "q3_h2": "Can I request a search for a specific item?",
+    "q3_p": "Of course. We provide personal search services. You can send us a description or a photo of the desired item, and we will try to find it for you.",
+    "q4_h2": "Is there a possibility to return an item?",
+    "q4_p": "According to our store rules, antique goods of proper quality are not subject to return, as they have historical value. However, we always describe the condition of the item in detail before purchase.",
+    "conclusion_1": "Have more questions?",
+    "conclusion_2": "Contact us via the Contacts section or social media.",
+    "seo": {
+      "title": "FAQ — Frequently Asked Questions | Antique Life",
+      "description": "Frequently asked questions about shipping, payment, and authenticity of antiques from France."
+    }
+  },
+  "privacy": {
+    "h1": "Privacy Policy",
+    "subtitle": "Protection of your personal data",
+    "intro": "We respect your privacy and are committed to protecting your personal data. This policy explains how we collect and use information.",
+    "h2_1": "What information we collect",
+    "p_1": "We collect data you provide when registering, placing an order, or subscribing to news: name, phone number, email, and shipping address.",
+    "h2_2": "Purpose of data collection",
+    "p_2": "Your data is used to process orders, provide customer support, and inform you about new finds in French markets.",
+    "h2_3": "Data protection",
+    "p_3": "We take modern security measures to prevent unauthorized access to your information. Your data is not shared with third parties, except for delivery services.",
+    "conclusion": "By using our site, you agree to the terms of this policy.",
+    "seo": {
+      "title": "Privacy Policy | Antique Life",
+      "description": "Learn how Antique Life protects and uses your personal data."
+    }
+  },
+  "offer": {
+    "h1": "Public Offer",
+    "subtitle": "Sales and Purchase Agreement",
+    "intro": "This document is an official offer from Antique Life to any individual to enter into a sales agreement for antique and vintage items.",
+    "h2_1": "Subject of the Agreement",
+    "p_1": "The Seller undertakes to transfer ownership of the goods to the Buyer, and the Buyer undertakes to pay for and accept the goods under the terms of this Agreement.",
+    "h2_2": "Moment of Conclusion",
+    "p_2": "Acceptance of this offer is considered to be the moment the 'Place Order' button is clicked or payment is made on the website.",
+    "h2_3": "Status of Goods",
+    "p_3": "The Buyer realizes that the items are vintage or antique and may have traces of time and use, which is not considered a defect but part of their history.",
+    "conclusion": "The agreement is legally binding and does not require signing paper copies.",
+    "seo": {
+      "title": "Public Offer — Agreement | Antique Life",
+      "description": "Terms and conditions of the sales agreement for antique goods on the Antique Life website."
+    }
+  },
+  "refund": {
+    "h1": "Refund Policy",
+    "subtitle": "Terms of return and exchange",
+    "intro": "We want every purchase at Antique Life to bring joy. Since we deal with antiques, there are specific return conditions.",
+    "h2_1": "Features of Antique Goods",
+    "p_1": "Most of our items are vintage or antique. Signs of use, patina, or minor flaws are part of their history and are not considered defects.",
+    "h2_2": "Return of Goods",
+    "p_2": "According to current legislation, antique items of proper quality are not subject to return or exchange. We ask you to carefully study photos and descriptions before purchasing.",
+    "h2_3": "Damage During Shipping",
+    "p_3": "If an item was damaged during transport, please document it directly at the delivery service branch and contact us within 24 hours.",
+    "conclusion": "We are always open to dialogue and ready to provide additional photos or videos of the item before shipping.",
+    "seo": {
+      "title": "Refund Policy | Antique Life",
+      "description": "Terms of return and exchange for antique goods at Antique Life."
+    }
   }
 }

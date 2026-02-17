@@ -15,6 +15,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter, useRoute } from 'vue-router' // <--- ДОДАЛИ РОУТЕР
 
 // 1. Створюємо динамічні змінні для доменів
 const isDev = import.meta.env.DEV
@@ -22,6 +23,8 @@ const DOMAIN_COM = isDev ? 'http://antique.test:5173' : 'https://antique-life.co
 const DOMAIN_UA = isDev ? 'http://antique.test.ua:5173' : 'https://antique-life.com.ua'
 
 const { locale } = useI18n()
+const router = useRouter() // <--- ІНІЦІАЛІЗУЄМО
+const route = useRoute()   // <--- ІНІЦІАЛІЗУЄМО
 const isOpen = ref(false)
 
 const toggleMenu = () => {
@@ -36,31 +39,27 @@ const currentLangLabel = computed(() => {
 const selectLang = (lang) => {
   isOpen.value = false
 
+  // Якщо юзер клікнув на ту саму мову, де він зараз — нічого не робимо
+  if (locale.value === lang) return
+
   const currentHostname = window.location.hostname
   const isUaDomain = currentHostname.includes('.com.ua') || currentHostname.includes('.test.ua')
-  const currentPath = window.location.pathname
 
-  if (lang === 'uk') {
-    if (!isUaDomain) {
-      window.location.href = `${DOMAIN_UA}${currentPath}?store_selected=1`
-    }
+  // Беремо поточний шлях (наприклад, /uk/about-us) і міняємо перші букви на нову мову (/ru/about-us)
+  // route.fullPath зберігає навіть параметри (наприклад, ?sort=price)
+  const newPath = route.fullPath.replace(/^\/(uk|en|ru)/, `/${lang}`)
+
+  // ЛОГІКА ПЕРЕКЛЮЧЕННЯ
+  if (lang === 'uk' && !isUaDomain) {
+    // Якщо вибрали УКР, але ми на міжнародному домені -> перекидаємо на .com.ua з новим шляхом
+    window.location.href = `${DOMAIN_UA}${newPath}`
+  } else if (lang !== 'uk' && isUaDomain) {
+    // Якщо вибрали EN/RU, але ми на укр домені -> перекидаємо на .com з новим шляхом
+    window.location.href = `${DOMAIN_COM}${newPath}`
   } else {
-    if (isUaDomain) {
-      window.location.href = `${DOMAIN_COM}${currentPath}?store_selected=1&lang=${lang}`
-    } else {
-      // 1. Оновлюємо мову в пам'яті та інтерфейсі
-      locale.value = lang
-      localStorage.setItem('com_locale', lang)
-
-      // 2. ОНОВЛЮЄМО АДРЕСНИЙ РЯДОК (без перезавантаження сторінки)
-      const urlParams = new URLSearchParams(window.location.search)
-      if (urlParams.has('lang')) {
-        urlParams.set('lang', lang) // Замінюємо 'en' на 'ru' (або навпаки)
-        const newUrl = `${currentPath}?${urlParams.toString()}${window.location.hash}`
-        // Тихо переписуємо URL у браузері
-        window.history.replaceState({}, '', newUrl)
-      }
-    }
+    // Якщо домен міняти не треба, просто використовуємо Vue Router для миттєвого переходу
+    locale.value = lang
+    router.push(newPath)
   }
 }
 </script>
