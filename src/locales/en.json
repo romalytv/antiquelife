@@ -353,7 +353,7 @@
     "formTitle": "Write to Us",
     "nameLabel": "Your Name",
     "namePlaceholder": "NAME",
-    "emailPlaceholder": "JOHN@EXAMPLE.COM",
+    "emailPlaceholder": "JOHN{'@'}EXAMPLE.COM",
     "messageLabel": "Message",
     "messagePlaceholder": "HOW CAN WE HELP YOU?",
     "btnSend": "SEND",

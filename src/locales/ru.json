@@ -353,7 +353,7 @@
     "formTitle": "Напишите нам",
     "nameLabel": "Ваше имя",
     "namePlaceholder": "ИМЯ",
-    "emailPlaceholder": "IVAN@EXAMPLE.COM",
+    "emailPlaceholder": "JOHN{'@'}EXAMPLE.COM",
     "messageLabel": "Сообщение",
     "messagePlaceholder": "ЧЕМ МЫ МОЖЕМ ПОМОЧЬ?",
     "btnSend": "ОТПРАВИТЬ",
