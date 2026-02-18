@@ -4,7 +4,7 @@
 
     <section class="social-showcase">
       <div class="social-header">
-        <h2>Наші соціальні мережі</h2>
+        <h2>{{ $t('home.socialMedia') }}</h2>
         <span class="decorative-line"></span>
       </div>
 
@@ -14,6 +14,18 @@
     </section>
 
     <LatestProducts />
+
+    <TablewareShowcase />
+
+    <DecorShowcase />
+
+    <GlassShowcase />
+
+    <TelegramBanner />
+
+    <NewsShowcase />
+
+
   </div>
 </template>
 
@@ -22,11 +34,18 @@ import SocialFeed from "@/components/SocialFeed.vue";
 import LatestProducts from "@/components/LatestProducts.vue";
 import axios from "axios";
 import HeroSection from "@/components/HeroSection.vue";
+import TablewareShowcase from "@/components/TablewareShowcase.vue";
+import DecorShowcase from "@/components/DecorShowcase.vue";
+import GlassShowcase from "@/components/GlassShowcase.vue";
+import TelegramBanner from "@/components/TelegramBanner.vue";
+import NewsShowcase from "@/components/NewsShowcase.vue";
 
 export default {
   name: "MainPage",
   // Прибрав "TikTokFeed: SocialFeed", залишив просто SocialFeed
-  components: { HeroSection, SocialFeed, LatestProducts },
+  components: {
+    NewsShowcase,
+    TelegramBanner, GlassShowcase, DecorShowcase, TablewareShowcase, HeroSection, SocialFeed, LatestProducts },
   data() {
     return {
       videoId: "NC4XTu3Ap98",

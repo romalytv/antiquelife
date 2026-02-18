@@ -2,31 +2,31 @@
   <div class="page-wrapper">
     <div v-if="!product" class="loading-screen">
       <div class="loader"></div>
-      <p>Завантаження експонату...</p>
+      <p>{{ $t('item.loading') }}</p>
     </div>
 
     <div v-else class="item-container">
 
       <nav class="breadcrumbs">
-        <span @click="router.push('/market')" class="crumb-link">Каталог</span>
+        <span @click="router.push($localPath('/market'))" class="crumb-link">{{ $t('header.catalog') }}</span>
 
         <template v-if="product.category">
           <span class="separator">/</span>
           <span
-              @click="router.push({ path: '/market', query: { category: product.category.category_name } })"
+              @click="router.push({ path: $localPath('/market'), query: { cat: getCategorySlug(product.category) } })"
               class="crumb-link"
           >
-            {{ product.category.category_name }}
+            {{ getCatName(product.category.categoryId) }}
           </span>
         </template>
 
         <template v-if="product.subCategory">
           <span class="separator">/</span>
           <span
-              @click="router.push({ path: '/market', query: { category: product.category?.category_name, subcategory: product.subCategory.name } })"
+              @click="router.push({ path: $localPath('/market'), query: { cat: getCategorySlug(product.category), sub: getSubCategorySlug(product.subCategory, product.category.categoryId) } })"
               class="crumb-link"
           >
-            {{ product.subCategory.name }}
+            {{ getSubName(product.subCategory.sub_categoryId) }}
           </span>
         </template>
       </nav>
@@ -42,7 +42,7 @@
           >
             <img
                 :src="selectedImage || '/placeholder.png'"
-                :alt="product.name"
+                :alt="getLocalizedText(product.name)"
                 class="main-img"
                 :class="{ 'img-grayscale': product.status === 'SOLD' }"
             />
@@ -52,8 +52,8 @@
               <button class="slider-arrow arrow-right" @click="nextImage">&#10095;</button>
             </template>
 
-            <div v-if="product.status === 'SOLD'" class="stamp-overlay">SOLD</div>
-            <div v-if="product.status === 'RESERVED'" class="stamp-overlay reserved">RESERVED</div>
+            <div v-if="product.status === 'SOLD'" class="stamp-overlay">{{ $t('market.sold').toUpperCase() }}</div>
+            <div v-if="product.status === 'RESERVED'" class="stamp-overlay reserved">{{ $t('market.reserved').toUpperCase() }}</div>
           </div>
 
           <div class="mobile-dots" v-if="product.imageUrls && product.imageUrls.length > 1">
@@ -81,21 +81,21 @@
 
         <div class="info-section">
 
-          <h1 class="product-title">{{ product.name }}</h1>
+          <h1 class="product-title">{{ getLocalizedText(product.name) }}</h1>
 
           <div class="status-price-row">
             <span :class="['status-badge', getStatusClass(product.status)]">
               {{ translateStatus(product.status) }}
             </span>
             <span class="price" :class="{ 'price-muted': product.status !== 'AVAILABLE' }">
-              {{ formatPrice(product.price) }} ₴
+              {{ formatPrice(product.price) }} €
             </span>
           </div>
 
           <div class="action-area">
 
             <div class="stock-info" v-if="product.status === 'AVAILABLE' && product.quantity > 1">
-              Доступно на складі: <strong>{{ product.quantity }}</strong> шт.
+              {{ $t('item.inStock') }}: <strong>{{ product.quantity }}</strong> {{ $t('item.pcs') }}.
             </div>
 
             <div class="quantity-selector" v-if="product.status === 'AVAILABLE' && product.quantity > 1">
@@ -110,64 +110,61 @@
                 :disabled="product.status !== 'AVAILABLE' || isAddedAnim"
                 @click="addToCart"
             >
-              <span v-if="isAddedAnim">У кошику ✔️</span>
-              <span v-else>{{ getActionBtnText(product.status) }} <template v-if="product.quantity > 1">({{ selectedQuantity }} шт.)</template></span>
+              <span v-if="isAddedAnim">{{ $t('item.inCart') }} ✔️</span>
+              <span v-else>{{ getActionBtnText(product.status) }} <template v-if="product.quantity > 1">({{ selectedQuantity }} {{ $t('item.pcs') }}.)</template></span>
             </button>
 
           </div>
 
-          <h2 class="section-cursive-title">Технічні характеристики</h2>
+          <h2 class="section-cursive-title">{{ $t('item.specs') }}</h2>
 
           <div class="specs-list">
-            <div class="spec-item" v-if="product.origin">
-              <span class="spec-label">Походження:</span>
-              <span class="spec-value">{{ product.origin }}</span>
+            <div class="spec-item" v-if="getLocalizedText(product.origin)">
+              <span class="spec-label">{{ $t('item.origin') }}:</span>
+              <span class="spec-value">{{ getLocalizedText(product.origin) }}</span>
             </div>
-            <div class="spec-item" v-if="product.epoch">
-              <span class="spec-label">Епоха:</span>
-              <span class="spec-value">{{ product.epoch }}</span>
+            <div class="spec-item" v-if="getLocalizedText(product.epoch)">
+              <span class="spec-label">{{ $t('item.epoch') }}:</span>
+              <span class="spec-value">{{ getLocalizedText(product.epoch) }}</span>
             </div>
             <div class="spec-item" v-if="product.dimensions">
-              <span class="spec-label">Розміри:</span>
+              <span class="spec-label">{{ $t('item.dimensions') }}:</span>
               <span class="spec-value">{{ product.dimensions }}</span>
             </div>
-            <div class="spec-item" v-if="product.material">
-              <span class="spec-label">Матеріал:</span>
-              <span class="spec-value">{{ product.material }}</span>
+            <div class="spec-item" v-if="getLocalizedText(product.material)">
+              <span class="spec-label">{{ $t('item.material') }}:</span>
+              <span class="spec-value">{{ getLocalizedText(product.material) }}</span>
             </div>
             <div class="spec-item" v-if="product.brand">
-              <span class="spec-label">Бренд:</span>
+              <span class="spec-label">{{ $t('item.brand') }}:</span>
               <span class="spec-value">{{ product.brand }}</span>
             </div>
-            <div class="spec-item" v-if="product.color">
-              <span class="spec-label">Колір:</span>
-              <span class="spec-value">{{ product.color }}</span>
+            <div class="spec-item" v-if="getLocalizedText(product.color)">
+              <span class="spec-label">{{ $t('item.color') }}:</span>
+              <span class="spec-value">{{ getLocalizedText(product.color) }}</span>
             </div>
           </div>
 
-          <div v-if="product.description" class="description-section">
-            <h2 class="section-cursive-title">Опис предмета</h2>
-            <div class="description-box" v-html="product.description">
-            </div>
+          <div v-if="getLocalizedText(product.description)" class="description-section">
+            <h2 class="section-cursive-title">{{ $t('item.description') }}</h2>
+            <div class="description-box" v-html="getLocalizedText(product.description)"></div>
           </div>
 
         </div>
       </div>
 
       <div v-if="recommendedProducts.length > 0" class="recommendations-section">
-        <h2 class="section-cursive-title">Рекомендовані товари</h2>
+        <h2 class="section-cursive-title">{{ $t('item.recommended') }}</h2>
 
         <div class="rec-grid">
           <div
               v-for="rec in recommendedProducts"
-              :key="rec.id"
-              class="rec-card"
-              @click="goToProduct(rec.id)"
-          >
+              :key="rec.product_id"  class="rec-card"
+              @click="goToProduct(rec.product_id)" >
             <div class="rec-img-wrapper">
-              <img :src="rec.imageUrls?.[0] || '/placeholder.png'" :alt="rec.name" class="rec-img" />
+              <img :src="rec.coverImage || rec.imageUrls?.[0] || '/placeholder.png'" :alt="getLocalizedText(rec.name)" class="rec-img" />
             </div>
-            <h3 class="rec-title">{{ rec.name }}</h3>
+            <h3 class="rec-title">{{ getLocalizedText(rec.name) }}</h3>
             <div class="rec-price">{{ formatPrice(rec.price) }} ₴</div>
           </div>
         </div>
@@ -181,18 +178,66 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCartStore } from '../stores/cart';
+import { useI18n } from 'vue-i18n'; // ДОДАНО
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
+const { t, locale } = useI18n(); // ДОДАНО
 
-// Залишаємо дужки порожніми, щоб VS Code не сварився на "null"
 const product = ref();
 const selectedImage = ref('');
 const cartStore = useCartStore();
 const isAddedAnim = ref(false);
 const selectedQuantity = ref(1);
 const recommendedProducts = ref([]);
+const categoriesList = ref([]); // Додаємо список категорій для хлібних крихт
+
+// --- ХЕЛПЕРИ ЛОКАЛІЗАЦІЇ ТА SEO-URL ---
+const getLocalizedText = (localizedObj) => {
+  if (!localizedObj) return '';
+  if (typeof localizedObj === 'string') return localizedObj;
+  return localizedObj[locale.value] || localizedObj['en'] || localizedObj['uk'] || '';
+};
+
+const slugify = (text) => {
+  if (!text) return '';
+  return String(text).toLowerCase().trim()
+      .replace(/['"«»,()]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/[^\w\-а-яіїєґ]/gi, '')
+      .replace(/\-\-+/g, '-');
+};
+
+const getCatName = (id) => {
+  const key = `categories.c_${id}.name`;
+  const trans = t(key);
+  if (trans !== key) return trans;
+  const foundCat = categoriesList.value.find(c => c.categoryId === id);
+  return foundCat ? foundCat.category_name : '';
+};
+
+const getSubName = (id) => {
+  const key = `subcategories.s_${id}`;
+  const trans = t(key);
+  if (trans !== key) return trans;
+  for (const cat of categoriesList.value) {
+    const foundSub = cat.subCategories?.find(s => s.sub_categoryId === id);
+    if (foundSub) return foundSub.name;
+  }
+  return '';
+};
+
+const getCategorySlug = (catObj) => {
+  const id = catObj.categoryId;
+  return `${id}-${slugify(getCatName(id))}`;
+};
+
+const getSubCategorySlug = (subObj, parentCatId) => {
+  const id = subObj.sub_categoryId;
+  return `${id}-${slugify(getSubName(id))}`;
+};
+// ----------------------------------------
 
 const fetchProductData = async (id) => {
   try {
@@ -212,22 +257,27 @@ const fetchProductData = async (id) => {
   }
 };
 
+const fetchCategoriesAndProduct = async (id) => {
+  try {
+    // Спочатку вантажимо категорії (для хлібних крихт), потім товар
+    const catRes = await axios.get(`/api/categories`);
+    categoriesList.value = catRes.data || [];
+    await fetchProductData(id);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 const fetchRecommendations = async () => {
   try {
-    // Беремо всі товари
     const res = await axios.get('/api/products');
-
-    // Дізнаємося категорію поточного товару
-    const currentCategory = product.value?.category?.category_name;
+    const currentCategory = product.value?.category?.categoryId;
     const currentProductId = product.value?.product_id;
 
     recommendedProducts.value = res.data
-        // 1. Залишаємо ТІЛЬКИ товари з такою ж категорією
-        .filter((p) => p.category?.category_name === currentCategory)
-        // 2. Викидаємо поточний товар (щоб не рекомендувати те, що людина вже дивиться)
+        // Порівнюємо по ID, бо назви тепер можуть бути різними об'єктами
+        .filter((p) => p.category?.categoryId === currentCategory)
         .filter((p) => p.product_id !== currentProductId)
-        // 3. (Якщо бекенд не сортує, можна додати .reverse() або сортування по даті тут)
-        // 4. Беремо 4 штуки
         .slice(0, 4);
 
   } catch (error) {
@@ -236,14 +286,14 @@ const fetchRecommendations = async () => {
 };
 
 onMounted(() => {
-  fetchProductData(route.params.id);
+  fetchCategoriesAndProduct(route.params.id);
 });
 
 watch(
     () => route.params.id,
     (newId) => {
       if (newId) {
-        product.value = null; // Тимчасово обнуляємо для показу лоадера
+        product.value = null;
         fetchProductData(newId);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -252,13 +302,18 @@ watch(
 
 // Переходимо на сторінку конкретного товару
 const goToProduct = (id) => {
-  router.push(`/product/${id}`);
+  if (!id) return; // Захист від undefined
+  router.push({ name: 'Item', params: { id: id } });
 };
 
 const formatPrice = (price) => price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
 const translateStatus = (status) => {
-  const map = { 'AVAILABLE': 'В наявності', 'RESERVED': 'В резерві', 'SOLD': 'Продано' };
+  const map = {
+    'AVAILABLE': t('market.available') || 'В наявності',
+    'RESERVED': t('market.reserved') || 'В резерві',
+    'SOLD': t('market.sold') || 'Продано'
+  };
   return map[status] || status;
 };
 
@@ -270,9 +325,9 @@ const getStatusClass = (status) => {
 };
 
 const getActionBtnText = (status) => {
-  if (status === 'AVAILABLE') return 'Додати в кошик';
-  if (status === 'RESERVED') return 'В резерві';
-  if (status === 'SOLD') return 'Продано';
+  if (status === 'AVAILABLE') return t('item.addToCart') || 'Додати в кошик';
+  if (status === 'RESERVED') return t('market.reserved') || 'В резерві';
+  if (status === 'SOLD') return t('market.sold') || 'Продано';
   return 'Недоступно';
 };
 
@@ -309,10 +364,7 @@ const nextImage = () => {
   if (!product.value?.imageUrls || product.value.imageUrls.length <= 1) return;
   const currentIndex = product.value.imageUrls.indexOf(selectedImage.value);
   let nextIndex = currentIndex + 1;
-  // Якщо дійшли до кінця - повертаємося на перше фото
-  if (nextIndex >= product.value.imageUrls.length) {
-    nextIndex = 0;
-  }
+  if (nextIndex >= product.value.imageUrls.length) nextIndex = 0;
   selectedImage.value = product.value.imageUrls[nextIndex];
 };
 
@@ -320,10 +372,7 @@ const prevImage = () => {
   if (!product.value?.imageUrls || product.value.imageUrls.length <= 1) return;
   const currentIndex = product.value.imageUrls.indexOf(selectedImage.value);
   let prevIndex = currentIndex - 1;
-  // Якщо ми на першому фото - переходимо на останнє
-  if (prevIndex < 0) {
-    prevIndex = product.value.imageUrls.length - 1;
-  }
+  if (prevIndex < 0) prevIndex = product.value.imageUrls.length - 1;
   selectedImage.value = product.value.imageUrls[prevIndex];
 };
 
@@ -331,24 +380,11 @@ const prevImage = () => {
 let touchStartX = 0;
 let touchEndX = 0;
 
-const handleTouchStart = (e) => {
-  touchStartX = e.changedTouches[0].screenX;
-};
-
-const handleTouchEnd = (e) => {
-  touchEndX = e.changedTouches[0].screenX;
-  handleSwipeGesture();
-};
-
+const handleTouchStart = (e) => { touchStartX = e.changedTouches[0].screenX; };
+const handleTouchEnd = (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipeGesture(); };
 const handleSwipeGesture = () => {
-  // Якщо користувач провів пальцем вліво більше ніж на 50px
-  if (touchEndX < touchStartX - 50) {
-    nextImage();
-  }
-  // Якщо користувач провів пальцем вправо більше ніж на 50px
-  if (touchEndX > touchStartX + 50) {
-    prevImage();
-  }
+  if (touchEndX < touchStartX - 50) nextImage();
+  if (touchEndX > touchStartX + 50) prevImage();
 };
 </script>
 

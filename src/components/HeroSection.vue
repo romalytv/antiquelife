@@ -8,9 +8,13 @@
     </div>
 
     <div class="hero-content">
-      <p class="hero-subtitle">Відкрийте для себе</p>
-      <h1 class="hero-title">СВІТ АНТИКВАРІАТУ</h1>
-      <router-link to="/market" class="hero-button">до КАТАЛОГУ</router-link>
+      <p class="hero-subtitle">{{ $t('hero.subtitle') }}</p>
+
+      <h1 class="hero-title">{{ $t('hero.title') }}</h1>
+
+      <router-link :to="$localPath('/market')" class="hero-button">
+        {{ $t('hero.button') }}
+      </router-link>
     </div>
   </section>
 </template>
@@ -19,12 +23,8 @@
 export default {
   name: "HeroSection",
   mounted() {
-    // видимий log для перевірки, що компонент завантажився
-    // відкрийте консоль браузера коли сторінка завантажена
-    // щоб переконатись, що компонент працює
-    // (корисно при налагодженні підключення компонентів)
     // eslint-disable-next-line no-console
-    console.log("HeroSection mounted");
+    console.log("HeroSection mounted with i18n support");
   },
 };
 </script>
