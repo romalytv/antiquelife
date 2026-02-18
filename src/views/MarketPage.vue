@@ -4,9 +4,9 @@
     <header class="desktop-control-bar">
       <div class="bar-left">
         <div class="search-pill">
-          <input v-model="searchQuery" type="text" placeholder="Пошук предметів..." class="search-input"/>
+          <input v-model="searchQuery" type="text" :placeholder="$t('market.searchPlaceholder')" class="search-input"/>
         </div>
-        <span class="results-count">Знайдено: {{ filteredProducts.length }}</span>
+        <span class="results-count">{{ $t('market.foundCount') }}: {{ filteredProducts.length }}</span>
       </div>
 
       <div class="bar-right">
@@ -17,15 +17,17 @@
           </button>
           <transition name="fade">
             <div class="dropdown-menu" v-if="isCatOpen">
-              <div class="dropdown-item main-item" :class="{ 'selected': !selectedCategoryId }" @click="resetFilters">Всі категорії</div>
+              <div class="dropdown-item main-item" :class="{ 'selected': !selectedCategoryId }" @click="resetFilters">{{ $t('market.allCategories') }}</div>
+
               <template v-for="cat in categoriesList" :key="cat.categoryId">
                 <div class="dropdown-item main-item" :class="{ 'selected': selectedCategoryId === cat.categoryId && !selectedSubCategoryId }" @click="selectCategory(cat.categoryId)">
-                  {{ cat.category_name }}
+                  {{ getCatName(cat.categoryId) }}
                 </div>
                 <div v-for="sub in cat.subCategories" :key="sub.sub_categoryId" class="dropdown-item sub-item" :class="{ 'selected': selectedSubCategoryId === sub.sub_categoryId }" @click="selectSubCategory(sub.sub_categoryId)">
-                  {{ sub.name }}
+                  {{ getSubName(sub.sub_categoryId) }}
                 </div>
               </template>
+
             </div>
           </transition>
         </div>
@@ -37,21 +39,20 @@
           </button>
           <transition name="fade">
             <div class="dropdown-menu" v-if="isSortOpen">
-              <div class="dropdown-item" @click="setSort('default')">За замовчуванням</div>
-              <div class="dropdown-item" @click="setSort('price_asc')">Ціна: від дешевих</div>
-              <div class="dropdown-item" @click="setSort('price_desc')">Ціна: від дорогих</div>
+              <div class="dropdown-item" @click="setSort('default')">{{ $t('market.sortDefault') }}</div>
+              <div class="dropdown-item" @click="setSort('price_asc')">{{ $t('market.sortPriceAsc') }}</div>
+              <div class="dropdown-item" @click="setSort('price_desc')">{{ $t('market.sortPriceDesc') }}</div>
             </div>
           </transition>
         </div>
       </div>
     </header>
 
-
     <div class="mobile-control-panel">
       <div class="mobile-search-wrapper">
-        <input v-model="searchQuery" type="text" placeholder="Пошук предметів..." class="mobile-search-input"/>
+        <input v-model="searchQuery" type="text" :placeholder="$t('market.searchPlaceholder')" class="mobile-search-input"/>
       </div>
-      <div class="mobile-count-text">Знайдено: {{ filteredProducts.length }}</div>
+      <div class="mobile-count-text">{{ $t('market.foundCount') }}: {{ filteredProducts.length }}</div>
       <div class="mobile-buttons-row">
         <div class="mobile-dropdown-wrapper">
           <button class="mobile-filter-btn" @click.stop="toggleMobileCat">
@@ -60,11 +61,17 @@
           </button>
           <transition name="slide-down">
             <div class="mobile-dropdown-list" v-if="isMobileCatOpen">
-              <div class="m-item main" @click="resetFilters">Всі категорії</div>
+              <div class="m-item main" @click="resetFilters">{{ $t('market.allCategories') }}</div>
+
               <template v-for="cat in categoriesList" :key="cat.categoryId">
-                <div class="m-item main" @click="selectCategory(cat.categoryId)">{{ cat.category_name }}</div>
-                <div v-for="sub in cat.subCategories" :key="sub.sub_categoryId" class="m-item sub" @click="selectSubCategory(sub.sub_categoryId)">— {{ sub.name }}</div>
+                <div class="m-item main" @click="selectCategory(cat.categoryId)">
+                  {{ getCatName(cat.categoryId) }}
+                </div>
+                <div v-for="sub in cat.subCategories" :key="sub.sub_categoryId" class="m-item sub" @click="selectSubCategory(sub.sub_categoryId)">
+                  — {{ getSubName(sub.sub_categoryId) }}
+                </div>
               </template>
+
             </div>
           </transition>
         </div>
@@ -75,15 +82,14 @@
           </button>
           <transition name="slide-down">
             <div class="mobile-dropdown-list" v-if="isMobileSortOpen">
-              <div class="m-item" @click="setSort('default')">Сортування</div>
-              <div class="m-item" @click="setSort('price_asc')">Від дешевих</div>
-              <div class="m-item" @click="setSort('price_desc')">Від дорогих</div>
+              <div class="m-item" @click="setSort('default')">{{ $t('market.sorting') }}</div>
+              <div class="m-item" @click="setSort('price_asc')">{{ $t('market.sortPriceAsc') }}</div>
+              <div class="m-item" @click="setSort('price_desc')">{{ $t('market.sortPriceDesc') }}</div>
             </div>
           </transition>
         </div>
       </div>
     </div>
-
 
     <main class="catalog-grid-area">
       <div class="products-grid" v-if="paginatedProducts.length > 0">
@@ -97,7 +103,7 @@
             <router-link :to="{ name: 'Item', params: { id: product.product_id }}">
               <img
                   :src="getCurrentImage(product)"
-                  :alt="product.name"
+                  :alt="getLocalizedText(product.name)"
                   loading="lazy"
                   :class="{ 'img-sold': product.status === 'SOLD' }"
               />
@@ -106,28 +112,28 @@
               <button class="arrow-btn prev" @click.prevent="prevImage(product)">❮</button>
               <button class="arrow-btn next" @click.prevent="nextImage(product)">❯</button>
             </div>
-            <span v-if="product.status === 'SOLD'" class="badge sold">Sold</span>
-            <span v-else-if="product.status === 'RESERVED'" class="badge reserved">Reserve</span>
+            <span v-if="product.status === 'SOLD'" class="badge sold">{{ $t('market.sold') }}</span>
+            <span v-else-if="product.status === 'RESERVED'" class="badge reserved">{{ $t('market.reserved') }}</span>
           </div>
 
           <div class="card-details">
             <h3 class="card-title">
               <router-link :to="{ name: 'Item', params: { id: product.product_id }}">
-                {{ product.name }}
+                {{ getLocalizedText(product.name) }}
               </router-link>
             </h3>
             <div class="card-price" :class="{ 'crossed': product.status === 'SOLD' }">
-              {{ formatPrice(product.price) }} ₴
+              {{ formatPrice(product.price) }} €
             </div>
           </div>
         </div>
       </div>
 
       <div v-else-if="loading" class="info-message loading">
-        <span class="loader-spinner"></span> <span>Завантаження колекції...</span>
+        <span class="loader-spinner"></span> <span>{{ $t('market.loadingCollection') }}</span>
       </div>
       <div v-else class="info-message empty">
-        <span>Експонатів не знайдено.</span>
+        <span>{{ $t('market.noItemsFound') }}</span>
       </div>
 
       <div class="pagination-container" v-if="totalPages > 1">
@@ -166,14 +172,14 @@
 <script setup>
 import { ref, onMounted, computed, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 
-// === CONFIG ===
 const ITEMS_PER_PAGE = 12;
-
-// === STATE ===
 const route = useRoute();
-const router = useRouter(); // Додаємо роутер для зміни URL
+const router = useRouter();
+const { t, locale } = useI18n();
+
 const products = ref([]);
 const categoriesList = ref([]);
 const loading = ref(true);
@@ -182,93 +188,90 @@ const searchQuery = ref('');
 const selectedCategoryId = ref(null);
 const selectedSubCategoryId = ref(null);
 const sortOrder = ref('default');
-
 const currentPage = ref(1);
-
 const imageIndices = ref({});
 
-// UI State
 const isCatOpen = ref(false);
 const isSortOpen = ref(false);
 const isMobileCatOpen = ref(false);
 const isMobileSortOpen = ref(false);
 
-// === LABELS ===
+const getLocalizedText = (localizedObj) => {
+  if (!localizedObj) return '';
+  if (typeof localizedObj === 'string') return localizedObj;
+  return localizedObj[locale.value] || localizedObj['en'] || localizedObj['uk'] || '';
+};
+
+const slugify = (text) => {
+  if (!text) return '';
+  return String(text).toLowerCase().trim()
+      .replace(/['"«»,()]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/[^\w\-а-яіїєґ]/gi, '')
+      .replace(/\-\-+/g, '-');
+};
+
+// --- НОВІ НАДІЙНІ ХЕЛПЕРИ ДЛЯ КАТЕГОРІЙ ---
+const getCatName = (id) => {
+  // ДОДАЛИ .name сюди:
+  const key = `categories.c_${id}.name`;
+  const trans = t(key);
+
+  // Якщо переклад успішно знайдено (vue-i18n не повернув сам ключ)
+  if (trans !== key) return trans;
+
+  // Фолбек на базу даних
+  const foundCat = categoriesList.value.find(c => c.categoryId === id);
+  return foundCat ? foundCat.category_name : '';
+};
+
+const getSubName = (id) => {
+  const key = `subcategories.s_${id}`;
+  const trans = t(key);
+
+  if (trans !== key) return trans;
+
+  // Фолбек на базу даних
+  for (const cat of categoriesList.value) {
+    const foundSub = cat.subCategories?.find(s => s.sub_categoryId === id);
+    if (foundSub) return foundSub.name;
+  }
+  return '';
+};
+
 const currentCategoryLabel = computed(() => {
-  if (selectedSubCategoryId.value) {
-    for (const cat of categoriesList.value) {
-      const sub = cat.subCategories?.find(s => s.sub_categoryId === selectedSubCategoryId.value);
-      if (sub) return sub.name;
-    }
-  }
-  if (selectedCategoryId.value) {
-    const cat = categoriesList.value.find(c => c.categoryId === selectedCategoryId.value);
-    if (cat) return cat.category_name;
-  }
-  return "Категорії";
+  if (selectedSubCategoryId.value) return getSubName(selectedSubCategoryId.value);
+  if (selectedCategoryId.value) return getCatName(selectedCategoryId.value);
+  return t('market.categories');
 });
 
 const currentSortLabel = computed(() => {
-  if (sortOrder.value === 'price_asc') return "Від дешевих";
-  if (sortOrder.value === 'price_desc') return "Від дорогих";
-  return "Сортування";
+  if (sortOrder.value === 'price_asc') return t('market.sortPriceAsc');
+  if (sortOrder.value === 'price_desc') return t('market.sortPriceDesc');
+  return t('market.sorting');
 });
 
-// === СИНХРОНІЗАЦІЯ З URL ===
 const applyFiltersFromQuery = () => {
-  if (categoriesList.value.length === 0) return;
-
-  const catQuery = route.query.category;
-  const subCatQuery = route.query.subcategory;
-
-  let foundCatId = null;
-  let foundSubCatId = null;
+  const catQuery = route.query.cat;
+  const subCatQuery = route.query.sub;
 
   if (catQuery) {
-    // Шукаємо категорію
-    const matchedCat = categoriesList.value.find(
-        c => c.category_name?.toLowerCase() === catQuery.toLowerCase()
-    );
-
-    if (matchedCat) {
-      foundCatId = matchedCat.categoryId;
-
-      // Якщо є підкатегорія в URL, шукаємо і її
-      if (subCatQuery && matchedCat.subCategories) {
-        const matchedSubCat = matchedCat.subCategories.find(
-            s => s.name?.toLowerCase() === subCatQuery.toLowerCase()
-        );
-        if (matchedSubCat) {
-          foundSubCatId = matchedSubCat.sub_categoryId;
-        }
-      }
-    }
-  } else if (subCatQuery) {
-    // Якщо в URL є тільки підкатегорія (про всяк випадок)
-    for (const cat of categoriesList.value) {
-      const matchedSub = cat.subCategories?.find(s => s.name?.toLowerCase() === subCatQuery.toLowerCase());
-      if (matchedSub) {
-        foundCatId = cat.categoryId;
-        foundSubCatId = matchedSub.sub_categoryId;
-        break;
-      }
-    }
+    const parsedCat = parseInt(catQuery, 10);
+    selectedCategoryId.value = isNaN(parsedCat) ? null : parsedCat;
+  } else {
+    selectedCategoryId.value = null;
   }
 
-  selectedCategoryId.value = foundCatId;
-  selectedSubCategoryId.value = foundSubCatId;
+  if (subCatQuery) {
+    const parsedSub = parseInt(subCatQuery, 10);
+    selectedSubCategoryId.value = isNaN(parsedSub) ? null : parsedSub;
+  } else {
+    selectedSubCategoryId.value = null;
+  }
 };
 
-// Слідкуємо за змінами в URL
-watch(
-    () => route.query,
-    () => {
-      applyFiltersFromQuery();
-    },
-    { deep: true }
-);
+watch(() => route.query, () => { applyFiltersFromQuery(); }, { deep: true });
 
-// === API ===
 const fetchData = async () => {
   loading.value = true;
   try {
@@ -278,20 +281,14 @@ const fetchData = async () => {
     ]);
     products.value = pRes.data || [];
     categoriesList.value = cRes.data || [];
-
-    // Застосовуємо фільтри після завантаження списку
     applyFiltersFromQuery();
   } catch (e) { console.error(e); }
   finally { loading.value = false; }
 };
 
-onMounted(() => {
-  fetchData();
-  document.addEventListener('click', closeAllDropdowns);
-});
+onMounted(() => { fetchData(); document.addEventListener('click', closeAllDropdowns); });
 onUnmounted(() => document.removeEventListener('click', closeAllDropdowns));
 
-// === METHODS ===
 const toggleCatDropdown = () => { isCatOpen.value = !isCatOpen.value; isSortOpen.value = false; };
 const toggleSortDropdown = () => { isSortOpen.value = !isSortOpen.value; isCatOpen.value = false; };
 const toggleMobileCat = () => { isMobileCatOpen.value = !isMobileCatOpen.value; isMobileSortOpen.value = false; };
@@ -309,50 +306,43 @@ const vClickOutside = {
   },
   unmounted(el) { document.body.removeEventListener('click', el.clickOutsideEvent); },
 };
-
 const closeDropdowns = () => closeAllDropdowns();
 
-// === ОНОВЛЕНІ ФУНКЦІЇ ВИБОРУ (ЗМІНЮЮТЬ URL) ===
 const selectCategory = (id) => {
-  const cat = categoriesList.value.find(c => c.categoryId === id);
-  if (cat) {
-    // Додаємо категорію в URL, прибираємо підкатегорію
-    router.push({ query: { ...route.query, category: cat.category_name, subcategory: undefined } });
-  }
+  const catName = getCatName(id);
+  const slug = `${id}-${slugify(catName)}`;
 
+  router.push({ query: { ...route.query, cat: slug, sub: undefined } });
   selectedCategoryId.value = id;
   selectedSubCategoryId.value = null;
   closeAllDropdowns();
 };
 
 const selectSubCategory = (id) => {
-  let subName = '';
-  let parentCatName = '';
-
+  let parentCatId = null;
   for (const cat of categoriesList.value) {
-    const sub = cat.subCategories?.find(s => s.sub_categoryId === id);
-    if (sub) {
-      subName = sub.name;
-      parentCatName = cat.category_name;
+    if (cat.subCategories?.some(s => s.sub_categoryId === id)) {
+      parentCatId = cat.categoryId;
       break;
     }
   }
 
-  if (subName) {
-    // Додаємо і категорію, і підкатегорію в URL
-    router.push({ query: { ...route.query, category: parentCatName, subcategory: subName } });
-  }
+  const parentName = getCatName(parentCatId);
+  const subName = getSubName(id);
 
+  const catSlug = `${parentCatId}-${slugify(parentName)}`;
+  const subSlug = `${id}-${slugify(subName)}`;
+
+  router.push({ query: { ...route.query, cat: catSlug, sub: subSlug } });
   selectedSubCategoryId.value = id;
   closeAllDropdowns();
 };
 
 const resetFilters = () => {
   const query = { ...route.query };
-  delete query.category;
-  delete query.subcategory;
+  delete query.cat;
+  delete query.sub;
   router.push({ query });
-
   selectedCategoryId.value = null;
   selectedSubCategoryId.value = null;
   closeAllDropdowns();
@@ -360,10 +350,10 @@ const resetFilters = () => {
 
 const setSort = (order) => { sortOrder.value = order; closeAllDropdowns(); };
 
-// === FILTERING & SORTING ===
 const filteredProducts = computed(() => {
   let list = products.value.filter(p => {
-    const matchSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+    const productName = getLocalizedText(p.name).toLowerCase();
+    const matchSearch = productName.includes(searchQuery.value.toLowerCase());
     let matchCat = true;
     if (selectedSubCategoryId.value) {
       matchCat = p.subCategory && p.subCategory.sub_categoryId === selectedSubCategoryId.value;
@@ -381,27 +371,20 @@ const filteredProducts = computed(() => {
   });
 });
 
-// === PAGINATION LOGIC ===
 const totalPages = computed(() => Math.ceil(filteredProducts.value.length / ITEMS_PER_PAGE));
-
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * ITEMS_PER_PAGE;
   const end = start + ITEMS_PER_PAGE;
   return filteredProducts.value.slice(start, end);
 });
-
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
+watch([searchQuery, selectedCategoryId, selectedSubCategoryId, sortOrder], () => { currentPage.value = 1; });
 
-watch([searchQuery, selectedCategoryId, selectedSubCategoryId, sortOrder], () => {
-  currentPage.value = 1;
-});
-
-// === IMAGES ===
 const getDisplayImages = (p) => {
   const imgs = [];
   if (p.coverImage || p.cover_image) imgs.push(p.coverImage || p.cover_image);
@@ -409,15 +392,10 @@ const getDisplayImages = (p) => {
   return imgs.length ? imgs : ['/placeholder.png'];
 };
 const hasMultipleImages = (p) => getDisplayImages(p).length > 1;
-const getCurrentImage = (p) => {
-  const imgs = getDisplayImages(p);
-  const idx = imageIndices.value[p.product_id] || 0;
-  return imgs[idx];
-};
+const getCurrentImage = (p) => getDisplayImages(p)[imageIndices.value[p.product_id] || 0];
 const nextImage = (p) => {
   const imgs = getDisplayImages(p);
-  const cur = imageIndices.value[p.product_id] || 0;
-  imageIndices.value[p.product_id] = (cur + 1) % imgs.length;
+  imageIndices.value[p.product_id] = ((imageIndices.value[p.product_id] || 0) + 1) % imgs.length;
 };
 const prevImage = (p) => {
   const imgs = getDisplayImages(p);

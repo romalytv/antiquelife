@@ -11,7 +11,7 @@
         <span class="stat-label">Нових</span>
       </div>
       <div class="stat-item">
-        <span class="stat-val success">{{ totalRevenue }} ₴</span>
+        <span class="stat-val success">{{ totalRevenue }} €</span>
         <span class="stat-label">Виручка</span>
       </div>
       <button @click="loadOrders" class="refresh-btn">🔄 Оновити</button>
@@ -44,7 +44,7 @@
             <div class="client-phone">{{ order.phone }}</div>
           </td>
           <td class="td-amount">
-            {{ formatPrice(order.totalAmount) }} ₴
+            {{ formatPrice(order.totalAmount) }} €
           </td>
           <td class="td-delivery">
             <div class="delivery-type">{{ translateDelivery(order.deliveryType) }}</div>
@@ -103,25 +103,33 @@
             <h3>🛒 Товари ({{ selectedOrder.items ? selectedOrder.items.length : 0 }})</h3>
             <div class="items-list">
               <div v-for="item in selectedOrder.items" :key="item.id" class="order-item">
-                <img
-                    :src="(item.product.imageUrls && item.product.imageUrls[0]) || '/placeholder.png'"
-                    class="item-thumb"
+
+                <router-link
+                    :to="{ name: 'Item', params: { id: item.product.product_id } }"
+                    target="_blank"
+                    class="item-link"
                 >
-                <div class="item-details">
-                  <div class="item-name">{{ item.product.name }}</div>
-                  <div class="item-meta">
-                    {{ item.quantity }} шт. х {{ formatPrice(item.priceAtPurchase) }} ₴
+                  <img
+                      :src="item.product.coverImage || (item.product.imageUrls && item.product.imageUrls[0]) || '/placeholder.png'"
+                      class="item-thumb"
+                  >
+                  <div class="item-details">
+                    <div class="item-name">{{ getLocalizedText(item.product.name) }}</div>
+                    <div class="item-meta">
+                      {{ item.quantity }} шт. х {{ formatPrice(item.priceAtPurchase) }} €
+                    </div>
                   </div>
-                </div>
+                </router-link>
+
                 <div class="item-total">
-                  {{ formatPrice(item.priceAtPurchase * item.quantity) }} ₴
+                  {{ formatPrice(item.priceAtPurchase * item.quantity) }} €
                 </div>
               </div>
             </div>
 
             <div class="total-row">
               <span>Всього до сплати:</span>
-              <span class="total-big">{{ formatPrice(selectedOrder.totalAmount) }} ₴</span>
+              <span class="total-big">{{ formatPrice(selectedOrder.totalAmount) }} €</span>
             </div>
           </div>
         </div>
@@ -163,6 +171,13 @@ const availableStatuses = [
   { val: 'CANCELLED', label: 'Скасовано' }
 ];
 
+// --- ДОПОМІЖНА ФУНКЦІЯ ДЛЯ МУЛЬТИМОВНОЇ НАЗВИ ---
+const getLocalizedText = (obj) => {
+  if (!obj) return 'Без назви';
+  if (typeof obj === 'string') return obj;
+  return obj.uk || obj.en || obj.ru || 'Без назви';
+};
+
 // --- STATISTICS ---
 const newOrdersCount = computed(() => orders.value.filter(o => o.status === 'NEW').length);
 const totalRevenue = computed(() =>
@@ -175,8 +190,6 @@ const totalRevenue = computed(() =>
 // --- API METHODS ---
 const loadOrders = async () => {
   try {
-    // 1. Дістаємо токен (перевір, чи він у тебе 'jwt_token' або 'token')
-    // У ProductsManager ти використовував 'jwt_token', тому тут пишу так само
     const token = localStorage.getItem('jwt_token');
 
     if (!token) {
@@ -184,23 +197,17 @@ const loadOrders = async () => {
       return;
     }
 
-    // 2. Додаємо заголовок авторизації
     const res = await axios.get('/admin/orders', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
 
-    // Для налагодження виводимо в консоль те, що прийшло
-    console.log("Замовлення з сервера:", res.data);
-
     orders.value = res.data;
   } catch (e) {
     console.error("Failed to load orders", e);
-    // Якщо токен протух або немає прав
     if (e.response && (e.response.status === 401 || e.response.status === 403)) {
       alert("Сесія закінчилась. Увійдіть знову.");
-      // Тут можна зробити редірект на логін
     }
   }
 };
@@ -209,15 +216,14 @@ const updateStatus = async (newStatus) => {
   if (!selectedOrder.value) return;
   loading.value = true;
   try {
-    const token = localStorage.getItem('jwt_token'); // <--- ДОДАЛИ
+    const token = localStorage.getItem('jwt_token');
 
     await axios.put(
         `/admin/orders/${selectedOrder.value.order_id}/status`,
         { status: newStatus },
-        { headers: { 'Authorization': `Bearer ${token}` } } // <--- ДОДАЛИ ЗАГОЛОВОК
+        { headers: { 'Authorization': `Bearer ${token}` } }
     );
 
-    // Оновлюємо локально
     selectedOrder.value.status = newStatus;
     const idx = orders.value.findIndex(o => o.order_id === selectedOrder.value.order_id);
     if (idx !== -1) orders.value[idx].status = newStatus;
@@ -232,7 +238,7 @@ const updateStatus = async (newStatus) => {
 };
 
 // --- HELPERS ---
-const openOrder = (order) => { selectedOrder.value = { ...order }; }; // Копія об'єкта
+const openOrder = (order) => { selectedOrder.value = { ...order }; };
 const closeModal = () => { selectedOrder.value = null; };
 
 const formatPrice = (p) => p?.toLocaleString('uk-UA');
@@ -256,7 +262,7 @@ const translateDelivery = (type) => {
     'NOVA_POSHTA': 'Нова Пошта',
     'POST_OFFICE': 'Інша пошта',
     'SELF_PICKUP': 'Самовивіз',
-    'COURIER': 'Кур\'єр' // Додали переклад
+    'COURIER': 'Кур\'єр'
   };
   return map[type] || type;
 };
@@ -265,6 +271,53 @@ onMounted(loadOrders);
 </script>
 
 <style scoped>
+.item-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+  transition: opacity 0.2s;
+}
+
+.item-link:hover {
+  opacity: 0.8;
+}
+
+.item-name {
+  color: #2563eb; /* Синій колір, щоб було видно що це посилання */
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.item-link:hover .item-name {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+/* Переконайся, що гнучкість блоку працює правильно */
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.item-details {
+  display: flex;
+  flex-direction: column;
+}
+
 .orders-manager { padding-top: 10px; }
 
 /* --- STATS BAR --- */

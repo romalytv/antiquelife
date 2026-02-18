@@ -1,11 +1,11 @@
 <template>
   <section class="products-showcase">
     <div class="product-header">
-      <h2>Нові надходження</h2>
+      <h2>{{ $t('home.newArrivals') }}</h2>
     </div>
 
     <div class="products-widget-wrapper">
-      <div v-if="loading" class="status-message">Завантаження...</div>
+      <div v-if="loading" class="status-message">{{ $t('home.loading') }}</div>
 
       <div v-else class="products-grid">
         <div
@@ -15,11 +15,11 @@
             @click="goToProduct(product.id)"
         >
           <div class="image-wrapper">
-            <img :src="getProductImage(product)" :alt="product.name" />
+            <img :src="getProductImage(product)" :alt="getLocalizedText(product.name)" />
           </div>
           <div class="product-info">
-            <h3 class="product-title">{{ product.name }}</h3>
-            <p class="product-price">{{ formatPrice(product.price) }} ₴</p>
+            <h3 class="product-title">{{ getLocalizedText(product.name) }}</h3>
+            <p class="product-price">{{ formatPrice(product.price) }} €</p>
           </div>
         </div>
       </div>
@@ -37,23 +37,34 @@
       </div>
 
       <div class="view-all-container">
-        <button class="btn-catalog" @click="goToCatalog">Дивитись каталог</button>
+        <button class="btn-catalog" @click="$router.push($localPath('/market'))">
+          {{ $t('home.viewCatalog') }}
+        </button>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import {ref, onMounted, computed} from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n'; // ДОДАНО
 import axios from 'axios';
 
 const router = useRouter();
+const { t, locale } = useI18n(); // ДОДАНО
 const products = ref([]);
 const loading = ref(true);
 
 const currentPage = ref(1);
 const itemsPerPage = 8;
+
+// --- ХЕЛПЕР ЛОКАЛІЗАЦІЇ ---
+const getLocalizedText = (localizedObj) => {
+  if (!localizedObj) return '';
+  if (typeof localizedObj === 'string') return localizedObj; // Якщо це ще старий формат бази
+  return localizedObj[locale.value] || localizedObj['en'] || localizedObj['uk'] || '';
+};
 
 const fetchLatestProducts = async () => {
   try {
@@ -73,17 +84,9 @@ const fetchLatestProducts = async () => {
   }
 };
 
-// Оновлена функція для вибору картинки
 const getProductImage = (product) => {
-  // 1. Пріоритет: Cover Image
-  if (product.coverImage) {
-    return product.coverImage;
-  }
-  // 2. Якщо обкладинки немає: перша картинка з масиву
-  if (product.imageUrls && product.imageUrls.length > 0) {
-    return product.imageUrls[0];
-  }
-  // 3. Fallback: заглушка
+  if (product.coverImage) return product.coverImage;
+  if (product.imageUrls && product.imageUrls.length > 0) return product.imageUrls[0];
   return 'https://placehold.co/400x500/ffffff/1a1a1a?text=Antique+Life';
 };
 
@@ -93,11 +96,9 @@ const formatPrice = (price) => {
 };
 
 const goToProduct = (id) => {
-  router.push(`/product/${id}`);
-};
-
-const goToCatalog = () => {
-  router.push('/market');
+  if (!id) return;
+  // Використовуємо об'єктний синтаксис (як в ItemPage), щоб роутер сам підставив правильну мову
+  router.push({ name: 'Item', params: { id: id } });
 };
 
 const displayedProducts = computed(() => {
@@ -110,7 +111,6 @@ const totalPages = computed(() => Math.ceil(products.value.length / itemsPerPage
 
 const setPage = (page) => {
   currentPage.value = page;
-  // Скролимо до початку секції при перемиканні (опціонально)
   document.querySelector('.products-showcase').scrollIntoView({ behavior: 'smooth' });
 };
 

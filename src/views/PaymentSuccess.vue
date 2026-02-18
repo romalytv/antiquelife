@@ -1,258 +1,213 @@
 <template>
   <div class="success-page">
-    <div class="card">
+    <div class="success-card fade-in">
+
       <div class="icon-container">
-        <div class="check-icon">
-          <span class="icon-line line-tip"></span>
-          <span class="icon-line line-long"></span>
-          <div class="icon-circle"></div>
-          <div class="icon-fix"></div>
-        </div>
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
       </div>
 
-      <h1 class="title">Оплата успішна!</h1>
+      <h1 class="section-cursive-title">{{ $t('paymentSuccess.title') }}</h1>
 
-      <p class="message">
-        Дякуємо за ваше замовлення. Ми вже почали його обробку.
+      <p class="subtitle">
+        {{ $t('paymentSuccess.message') }}
       </p>
 
-      <div v-if="orderId" class="order-info">
-        <span>Номер замовлення:</span>
-        <strong>#{{ orderId }}</strong>
+      <div v-if="orderId" class="order-details">
+        <span class="label">{{ $t('paymentSuccess.orderNumber') }}</span>
+        <div class="order-id">#{{ orderId }}</div>
       </div>
 
-      <p class="sub-message">
-        📩 Електронний чек та деталі замовлення відправлено на вашу пошту.
-      </p>
+      <div class="info-text">
+        <p>📩 {{ $t('paymentSuccess.emailNote') }}</p>
+      </div>
 
       <div class="actions">
-        <button @click="goToHome" class="btn btn-primary">
-          На головну
-        </button>
-
+        <router-link :to="$localPath('/')" class="btn-main">
+          {{ $t('paymentSuccess.btnHome') }}
+        </router-link>
       </div>
+
     </div>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
-const router = useRouter();
 const route = useRoute();
+const { t } = useI18n();
 const orderId = ref('');
 
 onMounted(() => {
-  // Якщо ви передаєте order_id через URL (наприклад ?order_id=...)
-  // LiqPay при redirect може додавати свої параметри, але ваш бекенд
-  // може сформувати result_url типу /success?id=123
   if (route.query.order_id || route.query.id) {
     orderId.value = route.query.order_id || route.query.id;
   }
-
-  // Додатково: тут можна очистити кошик (Pinia/Vuex store), якщо він ще не пустий
-  // cartStore.clearCart();
 });
-
-const goToHome = () => {
-  router.push('/');
-};
-
-const goToProfile = () => {
-  router.push('/profile'); // або '/orders'
-};
 </script>
 
 <style scoped>
-/* Основний контейнер на весь екран */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
+
 .success-page {
+  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 80vh;
-  background-color: #f8f9fa;
+  background-color: var(--color-bg-main, #fff); /* Чисто білий фон */
   padding: 20px;
 }
 
-/* Картка */
-.card {
-  background: white;
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+.success-card {
+  background: transparent;
+  padding: 60px 40px;
   text-align: center;
-  max-width: 500px;
+  max-width: 550px;
   width: 100%;
-  animation: slideUp 0.5s ease-out;
+  border: 1px solid #eaeaea; /* Тонка строга рамка */
+  position: relative;
+  box-shadow: none; /* Жодних тіней */
 }
 
-/* Тексти */
-.title {
-  color: #2c3e50;
-  font-size: 28px;
-  margin-bottom: 10px;
-  margin-top: 20px;
+/* Декоративна внутрішня рамка для люкс-ефекту */
+.success-card::after {
+  content: '';
+  position: absolute;
+  top: 6px; left: 6px; right: 6px; bottom: 6px;
+  border: 1px solid rgba(6, 28, 11, 0.04);
+  pointer-events: none;
 }
 
-.message {
-  color: #555;
-  font-size: 16px;
-  margin-bottom: 20px;
-  line-height: 1.5;
+/* --- Тексти --- */
+.section-cursive-title {
+  font-family: var(--font-hand, 'Great Vibes', cursive);
+  font-size: 3.5rem;
+  color: var(--color-text-dark, #111);
+  margin: 0 0 10px 0;
+  font-weight: 400;
+  line-height: 1.2;
 }
 
-.sub-message {
-  font-size: 14px;
+.subtitle {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--color-text-light, #666);
+  margin-bottom: 35px;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+
+.order-details {
+  background: #fdfdfd;
+  border: 1px solid #eaeaea;
+  padding: 25px;
+  margin-bottom: 35px;
+}
+
+.label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
   color: #888;
-  margin-bottom: 30px;
-  background: #f0fdf4;
-  padding: 10px;
-  border-radius: 8px;
-  color: #166534;
+  letter-spacing: 2px;
 }
 
-.order-info {
-  margin: 20px 0;
-  padding: 10px;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  color: #666;
+.order-id {
+  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  font-size: 28px;
+  color: var(--color-primary-green, #061c0b);
+  margin-top: 10px;
+  letter-spacing: 1px;
 }
 
-/* Кнопки */
+.info-text p {
+  font-family: 'Montserrat', sans-serif;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* --- Кнопка --- */
 .actions {
+  margin-top: 40px;
+  position: relative;
+  z-index: 2; /* Поверх внутрішньої рамки */
   display: flex;
-  gap: 15px;
   justify-content: center;
 }
 
-.btn {
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s;
+.btn-main {
+  display: inline-block;
+  width: 100%;
+  padding: 18px 30px;
   border: none;
-  font-weight: 600;
+  border-radius: 0;
+  background-color: var(--color-primary-green, #061c0b);
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.3s ease;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.btn-primary {
-  background-color: #10b981; /* Зелений LiqPay */
-  color: white;
+.btn-main:hover {
+  background-color: #0a2e12;
 }
 
-.btn-primary:hover {
-  background-color: #059669;
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background-color: #e5e7eb;
-  color: #374151;
-}
-
-.btn-secondary:hover {
-  background-color: #d1d5db;
-}
-
-/* --- Анімація галочки (Pure CSS) --- */
+/* --- Анімація галочки --- */
 .icon-container {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto;
+  margin-bottom: 30px;
 }
-
-.check-icon {
-  width: 80px;
-  height: 80px;
-  position: relative;
+.checkmark {
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  box-sizing: content-box;
-  border: 4px solid #4CAF50;
-}
-
-.check-icon::before {
-  top: 3px;
-  left: -2px;
-  width: 30px;
-  transform-origin: 100% 50%;
-  border-radius: 100px 0 0 100px;
-}
-
-.check-icon::after {
-  top: 0;
-  left: 30px;
-  width: 60px;
-  transform-origin: 0 50%;
-  border-radius: 0 100px 100px 0;
-  animation: rotate-circle 4.25s ease-in;
-}
-
-.icon-line {
-  height: 5px;
-  background-color: #4CAF50;
   display: block;
-  border-radius: 2px;
-  position: absolute;
-  z-index: 10;
+  stroke-width: 2;
+  stroke: #fff;
+  stroke-miterlimit: 10;
+  margin: 0 auto;
+  box-shadow: inset 0 0 0 var(--color-primary-green, #061c0b);
+  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: var(--color-primary-green, #061c0b);
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
 }
 
-.icon-line.line-tip {
-  top: 46px;
-  left: 14px;
-  width: 25px;
-  transform: rotate(45deg);
-  animation: icon-line-tip 0.75s;
-}
+@keyframes stroke { 100% { stroke-dashoffset: 0; } }
+@keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+@keyframes fill { 100% { box-shadow: inset 0 0 0 50px var(--color-primary-green, #061c0b); } }
 
-.icon-line.line-long {
-  top: 38px;
-  right: 8px;
-  width: 47px;
-  transform: rotate(-45deg);
-  animation: icon-line-long 0.75s;
-}
+/* Поява картки */
+.fade-in { animation: fadeIn 0.8s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-.icon-circle {
-  top: -4px;
-  left: -4px;
-  z-index: 10;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  position: absolute;
-  box-sizing: content-box;
-  border: 4px solid rgba(76, 175, 80, .5);
-}
-
-.icon-fix {
-  top: 8px;
-  width: 5px;
-  height: 85px;
-  position: absolute;
-  left: 28px;
-  transform: rotate(-45deg);
-  z-index: 1;
-}
-
-@keyframes icon-line-tip {
-  0% { width: 0; left: 1px; top: 19px; }
-  54% { width: 0; left: 1px; top: 19px; }
-  70% { width: 50px; left: -8px; top: 37px; }
-  84% { width: 17px; left: 21px; top: 48px; }
-  100% { width: 25px; left: 14px; top: 46px; }
-}
-
-@keyframes icon-line-long {
-  0% { width: 0; right: 46px; top: 54px; }
-  65% { width: 0; right: 46px; top: 54px; }
-  84% { width: 55px; right: 0px; top: 35px; }
-  100% { width: 47px; right: 8px; top: 38px; }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Мобільна адаптація */
+@media (max-width: 600px) {
+  .section-cursive-title { font-size: 2.8rem; }
+  .success-card { padding: 40px 20px; border: none; }
+  .success-card::after { display: none; }
 }
 </style>

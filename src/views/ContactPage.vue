@@ -3,43 +3,43 @@
     <div class="contact-card">
 
       <div class="info-section">
-        <h2 class="section-cursive-title">Контакти</h2>
+        <h2 class="section-cursive-title">{{ $t('contact.title') }}</h2>
         <div class="decorative-line-small"></div>
-        <p class="subtitle">Ми завжди раді почути вас. Завітайте до нас або напишіть повідомлення.</p>
+        <p class="subtitle">{{ $t('contact.subtitle') }}</p>
 
         <div class="info-content">
           <div class="info-item">
-            <span class="label">Адреса</span>
+            <span class="label">{{ $t('contact.addressLabel') }}</span>
             <p>France, ...</p>
           </div>
 
           <div class="info-item">
-            <span class="label">Телефон</span>
+            <span class="label">{{ $t('contact.phoneLabel') }}</span>
             <p>+33 7 45 70 89 19</p>
           </div>
 
           <div class="info-item">
-            <span class="label">Email</span>
+            <span class="label">{{ $t('contact.emailLabel') }}</span>
             <p>info@antiquelife.com</p>
           </div>
 
           <div class="info-item">
-            <span class="label">Графік роботи</span>
-            <p>Пн-Пт: 9:00 - 18:00</p>
+            <span class="label">{{ $t('contact.hoursLabel') }}</span>
+            <p>{{ $t('contact.hoursValue') }}</p>
           </div>
         </div>
       </div>
 
       <div class="form-section">
-        <h3>Напишіть нам</h3>
+        <h3>{{ $t('contact.formTitle') }}</h3>
         <form @submit.prevent="submitForm">
           <div class="form-group">
-            <label for="name">Ваше ім'я</label>
+            <label for="name">{{ $t('contact.nameLabel') }}</label>
             <input
                 type="text"
                 id="name"
                 v-model="form.name"
-                placeholder="ІМ'Я"
+                :placeholder="$t('contact.namePlaceholder')"
                 required
             >
           </div>
@@ -50,24 +50,24 @@
                 type="email"
                 id="email"
                 v-model="form.email"
-                placeholder="IVAN@EXAMPLE.COM"
+                :placeholder="$t('contact.emailPlaceholder')"
                 required
             >
           </div>
 
           <div class="form-group">
-            <label for="message">Повідомлення</label>
+            <label for="message">{{ $t('contact.messageLabel') }}</label>
             <textarea
                 id="message"
                 v-model="form.message"
-                placeholder="ЧИМ МИ МОЖЕМО ДОПОМОГТИ?"
+                :placeholder="$t('contact.messagePlaceholder')"
                 rows="4"
                 required
             ></textarea>
           </div>
 
           <button type="submit" :disabled="isSubmitting" class="btn-main submit-btn">
-            {{ isSubmitting ? 'ВІДПРАВКА...' : 'НАДІСЛАТИ' }}
+            {{ isSubmitting ? $t('contact.btnSending') : $t('contact.btnSend') }}
           </button>
         </form>
       </div>
@@ -78,8 +78,12 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
+import { useI18n } from 'vue-i18n'; // ДОДАНО
 import axios from 'axios';
-import router from "@/router/index.js";
+import { useRouter } from 'vue-router'; // Використовуємо хук замість прямого імпорту
+
+const { t } = useI18n(); // ДОДАНО
+const router = useRouter(); // ДОДАНО
 
 const form = reactive({
   name: '',
@@ -91,7 +95,7 @@ const isSubmitting = ref(false);
 
 const submitForm = async () => {
   if (!form.name || !form.email || !form.message) {
-    alert("Будь ласка, заповніть всі поля");
+    alert(t('contact.alertFill'));
     return;
   }
 
@@ -104,14 +108,22 @@ const submitForm = async () => {
       message: form.message
     });
 
+    // Використовуємо локалізований шлях, якщо у тебе є $localPath,
+    // але оскільки це функція в скрипті, краще передати параметр або використати поточну мову
+    // Припускаємо, що роутер налаштований правильно
     await router.push({
       name: 'ContactSuccess',
-      query: {name: form.name}
+      query: { name: form.name }
     });
+
+    // Очищаємо форму після успішної відправки (якщо не перекидає на іншу сторінку)
+    form.name = '';
+    form.email = '';
+    form.message = '';
 
   } catch (error) {
     console.error("Помилка відправки:", error);
-    alert("Щось пішло не так. Спробуйте пізніше.");
+    alert(t('contact.alertError'));
   } finally {
     isSubmitting.value = false;
   }
@@ -119,6 +131,9 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
+
 /* Загальний контейнер */
 .contact-container {
   min-height: 80vh;
@@ -126,6 +141,7 @@ const submitForm = async () => {
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
+  background-color: var(--color-bg-main); /* Використовуємо змінну з main.css */
 }
 
 .contact-card {
@@ -133,17 +149,17 @@ const submitForm = async () => {
   flex-wrap: wrap;
   background: #fff;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px; /* Трохи розширив для повітря */
   border: 1px solid #eaeaea;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
   overflow: hidden;
-  border-radius: 4px; /* Легке заокруглення на десктопі */
+  border-radius: 4px;
 }
 
 /* --- ЛІВА ЧАСТИНА (Інфо) --- */
 .info-section {
   flex: 1;
-  background-color: #061c0b; /* Темно-зелений */
+  background-color: var(--color-primary-green, #061c0b); /* Зв'язок з main.css */
   color: #fff;
   padding: 60px 50px;
   min-width: 300px;
@@ -152,10 +168,10 @@ const submitForm = async () => {
 }
 
 .section-cursive-title {
-  font-family: 'Snell Roundhand', 'Bickham Script Pro', 'Brush Script MT', 'Great Vibes', cursive, serif;
-  font-style: italic;
-  font-size: 3rem;
-  font-weight: normal;
+  font-family: var(--font-hand, 'Great Vibes', cursive); /* Зв'язок з main.css */
+  font-style: normal;
+  font-size: 3.5rem;
+  font-weight: 400;
   color: #fff;
   margin-top: 0;
   margin-bottom: 20px;
@@ -170,11 +186,11 @@ const submitForm = async () => {
 
 .subtitle {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 1.5;
-  letter-spacing: 0.09em;
-  opacity: 0.8;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
   margin-bottom: 50px;
 }
 
@@ -183,7 +199,7 @@ const submitForm = async () => {
 
 .info-item .label {
   display: block;
-  font-family: 'Georgia', serif;
+  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; /* Люксовий шрифт */
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -196,7 +212,7 @@ const submitForm = async () => {
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   font-weight: 400;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.05em;
   color: #fff;
 }
 
@@ -210,13 +226,13 @@ const submitForm = async () => {
 
 .form-section h3 {
   margin-top: 0;
-  font-family: 'Georgia', serif;
-  color: #111;
-  font-size: 1.6rem;
+  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  color: var(--color-text-dark, #111);
+  font-size: 1.8rem;
   margin-bottom: 40px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: normal;
+  letter-spacing: 2px;
+  font-weight: 400;
 }
 
 .form-group { margin-bottom: 25px; }
@@ -224,10 +240,12 @@ const submitForm = async () => {
 .form-group label {
   display: block;
   margin-bottom: 10px;
-  color: #333;
-  font-family: 'Georgia', serif;
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
+  color: #555;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
 }
 
 .form-group input,
@@ -235,8 +253,8 @@ const submitForm = async () => {
   width: 100%;
   padding: 15px;
   background: transparent;
-  border: 1px solid #eaeaea;
-  border-radius: 4px;
+  border: 1px solid #dcdcdc; /* Тонша рамка */
+  border-radius: 0; /* Строгі кути */
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   letter-spacing: 0.05em;
@@ -256,25 +274,26 @@ const submitForm = async () => {
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #061c0b;
-  background-color: #fdfdfd;
+  border-color: var(--color-primary-green, #061c0b);
+  background-color: #fafafa;
 }
 
 /* --- КНОПКА ВІДПРАВКИ --- */
 .btn-main {
   width: 100%;
-  padding: 16px;
-  font-size: 1.1rem;
-  font-family: 'Georgia', serif;
+  padding: 18px;
+  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   cursor: pointer;
   border: none;
-  border-radius: 4px;
-  background: #061c0b;
+  border-radius: 0; /* Строгі кути */
+  background: var(--color-primary-green, #061c0b);
   color: white;
   transition: background 0.3s, opacity 0.3s;
   margin-top: 15px;
+  font-weight: 500;
 }
 
 .btn-main:hover:not(:disabled) {
@@ -289,14 +308,12 @@ const submitForm = async () => {
 /* --- МОБІЛЬНА АДАПТАЦІЯ --- */
 @media (max-width: 850px) {
   .contact-container {
-    /* Зменшуємо відступи контейнера, щоб секції були ширші */
     padding: 0;
-    background: transparent; /* Прибираємо фон контейнера, щоб бачити фон сторінки */
+    background: transparent;
   }
 
   .contact-card {
     flex-direction: column;
-    /* Прибираємо стилі картки */
     border: none;
     box-shadow: none;
     background: transparent;
@@ -307,18 +324,15 @@ const submitForm = async () => {
   .info-section, .form-section {
     width: 100%;
     min-width: auto;
-    padding: 50px 20px; /* Стандартні відступи для моб */
+    padding: 50px 20px;
     box-sizing: border-box;
-    border-radius: 0; /* Ніяких заокруглень */
+    border-radius: 0;
   }
 
-  /* --- КОНТАКТИ ЙДУТЬ ПЕРШИМИ --- */
   .info-section {
     order: 1;
-    /* Залишаємо темний фон, щоб він виглядав як секція на всю ширину */
   }
 
-  /* --- ФОРМА ЙДЕ ДРУГОЮ --- */
   .form-section {
     order: 2;
     border: none;
@@ -326,7 +340,6 @@ const submitForm = async () => {
     padding-top: 40px;
   }
 
-  /* На темному фоні центруємо заголовки */
   .info-section .section-cursive-title,
   .info-section .subtitle,
   .decorative-line-small {
@@ -335,7 +348,7 @@ const submitForm = async () => {
     margin-right: auto;
   }
 
-  .section-cursive-title { font-size: 2.5rem; }
+  .section-cursive-title { font-size: 2.8rem; }
   .form-section h3 { font-size: 1.4rem; text-align: center; margin-bottom: 30px; }
 }
 </style>

@@ -26,10 +26,10 @@
 
                 <li v-for="cat in categoriesList" :key="cat.id || cat.categoryId">
                   <router-link
-                      :to="{ path: $localPath('/market'), query: { category: cat.category_name || cat.name } }"
+                      :to="{ path: $localPath('/market'), query: { cat: getCategorySlug(cat) } }"
                       @click="closeMenu"
                   >
-                    {{ $t(`categories_list.${cat.categoryId || cat.id}.name`).toUpperCase() }}
+                    {{ getCatName(cat.categoryId || cat.id).toUpperCase() }}
                   </router-link>
                 </li>
               </ul>
@@ -70,14 +70,15 @@ import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useCartStore } from "../stores/cart";
 import LanguageSwitcher from "./LanguageSwitcher.vue";
 import axios from "axios";
+import { useI18n } from "vue-i18n"; // ДОДАНО ДЛЯ ПЕРЕКЛАДІВ
 
 const cartStore = useCartStore();
+const { t } = useI18n(); // ДОДАНО
 
 const isMenuOpen = ref(false);
 const isMarketExpanded = ref(false);
 const savedScrollY = ref(0);
 
-// Початковий список залишається як фолбек
 const categoriesList = ref([
   { id: 1, name: "Антикварний та вінтажний посуд" },
   { id: 2, name: "Антикварні та вінтажні меблі" },
@@ -93,23 +94,42 @@ const categoriesList = ref([
   { id: 12, name: "Різне" },
 ]);
 
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
+// --- НОВІ ХЕЛПЕРИ ДЛЯ ХЕДЕРА ---
+const slugify = (text) => {
+  if (!text) return '';
+  return String(text).toLowerCase().trim()
+      .replace(/['"«»,()]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/[^\w\-а-яіїєґ]/gi, '')
+      .replace(/\-\-+/g, '-');
 };
 
-const closeMenu = () => {
-  isMenuOpen.value = false;
-  isMarketExpanded.value = false;
+const getCatName = (id) => {
+  // ДОДАЛИ .name сюди:
+  const key = `categories.c_${id}.name`;
+  const trans = t(key);
+
+  if (trans !== key) return trans;
+
+  // Фолбек: якщо перекладу немає, беремо назву зі списку за замовчуванням
+  const foundCat = categoriesList.value.find(c => (c.categoryId || c.id) === id);
+  return foundCat ? (foundCat.category_name || foundCat.name) : '';
 };
 
-// Відкриття підменю при наведенні (тільки для десктопу)
+const getCategorySlug = (cat) => {
+  const id = cat.categoryId || cat.id;
+  const name = getCatName(id);
+  return `${id}-${slugify(name)}`;
+};
+// ---------------------------------
+
+const toggleMenu = () => { isMenuOpen.value = !isMenuOpen.value; };
+const closeMenu = () => { isMenuOpen.value = false; isMarketExpanded.value = false; };
+
 const handleDesktopHover = (state) => {
-  if (window.innerWidth > 768) {
-    isMarketExpanded.value = state;
-  }
+  if (window.innerWidth > 768) isMarketExpanded.value = state;
 };
 
-// Клік по "Каталог" (на мобільному відкриває список, на десктопі пускає на сторінку)
 const toggleMarket = (event) => {
   if (window.innerWidth <= 768) {
     event.preventDefault();
@@ -126,20 +146,15 @@ const fetchCategories = async () => {
       );
     }
   } catch (error) {
-    console.log(
-        "API категорії недоступні, використовується список за замовчуванням",
-    );
+    console.log("API категорії недоступні, використовується список за замовчуванням");
   }
 };
 
-onMounted(() => {
-  fetchCategories();
-});
+onMounted(() => { fetchCategories(); });
 
 watch(isMenuOpen, (isOpen) => {
   if (isOpen) {
     savedScrollY.value = window.scrollY || window.pageYOffset || 0;
-
     document.body.style.position = "fixed";
     document.body.style.top = `-${savedScrollY.value}px`;
     document.body.style.left = "0";
@@ -151,10 +166,8 @@ watch(isMenuOpen, (isOpen) => {
     document.body.style.left = "";
     document.body.style.right = "";
     document.body.style.width = "";
-
     window.scrollTo(0, savedScrollY.value || 0);
   }
-
   document.body.classList.toggle("menu-open", isOpen);
 });
 

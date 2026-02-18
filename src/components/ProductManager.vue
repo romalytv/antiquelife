@@ -62,22 +62,26 @@
 
         <div class="form-grid">
           <div class="form-group">
-            <label>Назва</label>
-            <input v-model="form.name" required placeholder="Назва товару">
+            <label>Назва *</label>
+            <div class="lang-group">
+              <input v-model="form.name.uk" required placeholder="Українською">
+              <input v-model="form.name.en" placeholder="Англійською">
+              <input v-model="form.name.ru" placeholder="російською">
+            </div>
           </div>
 
           <div class="form-group">
-            <label>Ціна (грн)</label>
+            <label>Ціна (євро) *</label>
             <input v-model="form.price" type="number" step="0.01" required>
           </div>
 
           <div class="form-group">
-            <label>Кількість</label>
+            <label>Кількість *</label>
             <input v-model="form.quantity" type="number" min="0" required>
           </div>
 
           <div class="form-group">
-            <label>Категорія</label>
+            <label>Категорія *</label>
             <select v-model="form.categoryId" required>
               <option value="" disabled>Оберіть категорію</option>
               <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">
@@ -91,19 +95,15 @@
             <input
                 v-model="form.subCategory"
                 list="dynamic-subcats"
-
                 :disabled="filteredSubCategories.length === 0"
                 :placeholder="filteredSubCategories.length > 0 ? 'Оберіть зі списку або введіть' : 'Для цієї категорії немає підкатегорій'"
                 class="form-control"
             >
-
             <datalist id="dynamic-subcats">
-              <option
-                  v-for="sub in filteredSubCategories"
-                  :key="sub.subCategoryId"  :value="sub.name"
-              />
+              <option v-for="sub in filteredSubCategories" :key="sub.subCategoryId" :value="sub.name" />
             </datalist>
           </div>
+
           <div class="form-group">
             <label>Статус</label>
             <select v-model="form.status">
@@ -115,12 +115,20 @@
 
           <div class="form-group">
             <label>Епоха</label>
-            <input v-model="form.epoch" placeholder="Напр. XIX ст.">
+            <div class="lang-group">
+              <input v-model="form.epoch.uk" placeholder="Напр. XIX ст.">
+              <input v-model="form.epoch.en" placeholder="Напр. 19th c.">
+              <input v-model="form.epoch.ru" placeholder="Напр. XIX в.">
+            </div>
           </div>
 
           <div class="form-group">
             <label>Походження</label>
-            <input v-model="form.origin" placeholder="Напр. Франція">
+            <div class="lang-group">
+              <input v-model="form.origin.uk" placeholder="Напр. Франція">
+              <input v-model="form.origin.en" placeholder="Напр. France">
+              <input v-model="form.origin.ru" placeholder="Напр. Франция">
+            </div>
           </div>
 
           <div class="form-group">
@@ -131,28 +139,51 @@
 
         <div class="form-grid-row">
           <div class="form-group">
-            <label>Бренд</label>
+            <label>Бренд (Не перекладається)</label>
             <input v-model="form.brand" placeholder="Limoges">
           </div>
+
           <div class="form-group">
             <label>Колір</label>
-            <input v-model="form.color" placeholder="Білий">
+            <div class="lang-group">
+              <input v-model="form.color.uk" placeholder="Білий">
+              <input v-model="form.color.en" placeholder="White">
+              <input v-model="form.color.ru" placeholder="Белый">
+            </div>
           </div>
+
           <div class="form-group">
             <label>Матеріал</label>
-            <input v-model="form.material" placeholder="Порцеляна">
+            <div class="lang-group">
+              <input v-model="form.material.uk" placeholder="Порцеляна">
+              <input v-model="form.material.en" placeholder="Porcelain">
+              <input v-model="form.material.ru" placeholder="Фарфор">
+            </div>
           </div>
         </div>
 
         <div class="form-group full-width">
           <label>Опис</label>
-          <textarea
-              ref="textareaRef"
-              v-model="form.description"
-              @input="autoResize"
-              class="auto-expand-textarea"
-              placeholder="Введіть опис товару..."
-          ></textarea>
+          <div class="lang-group">
+            <textarea
+                v-model="form.description.uk"
+                @input="autoResize"
+                class="auto-expand-textarea"
+                placeholder="Введіть опис українською..."
+            ></textarea>
+            <textarea
+                v-model="form.description.en"
+                @input="autoResize"
+                class="auto-expand-textarea"
+                placeholder="Введіть опис англійською..."
+            ></textarea>
+            <textarea
+                v-model="form.description.ru"
+                @input="autoResize"
+                class="auto-expand-textarea"
+                placeholder="Введіть опис російською..."
+            ></textarea>
+          </div>
         </div>
 
         <div class="form-actions">
@@ -187,10 +218,15 @@
             <img :src="p.coverImage ? p.coverImage : ((p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : '/placeholder.png')" class="thumb">
           </td>
           <td class="td-info">
-            <div class="p-title">{{ p.name }}</div>
-            <div class="p-meta">{{ p.epoch }} {{ p.origin ? '• ' + p.origin : '' }} {{ p.category ? '• ' + p.category.category_name : '' }} {{ p.subCategory ? '/ ' + p.subCategory.name : '' }}</div>
+            <div class="p-title">{{ getLocalizedText(p.name) }}</div>
+            <div class="p-meta">
+              {{ getLocalizedText(p.epoch) }}
+              {{ getLocalizedText(p.origin) ? '• ' + getLocalizedText(p.origin) : '' }}
+              {{ p.category ? '• ' + p.category.category_name : '' }}
+              {{ p.subCategory ? '/ ' + p.subCategory.name : '' }}
+            </div>
           </td>
-          <td class="td-price">{{ p.price }} ₴</td>
+          <td class="td-price">{{ p.price }} €</td>
           <td class="td-status"><span :class="['badge', p.status]">{{ p.status }}</span></td>
           <td class="td-actions">
             <div class="actions">
@@ -219,45 +255,63 @@ const categories = ref([]);
 const isLoading = ref(false);
 const isEditing = ref(false);
 const isProcessing = ref(false);
-const textareaRef = ref(null);
 
-// Форма
+// Допоміжна функція для ініціалізації об'єкта мов
+const initLoc = () => ({ uk: '', en: '', ru: '' });
+
+// Форма (Тепер з об'єктами для мультимовних полів)
 const form = ref({
   product_id: null,
-  name: '',
-  description: '',
+  name: initLoc(),
+  description: initLoc(),
   price: 0,
   quantity: 1,
   status: 'AVAILABLE',
-  epoch: '',
-  origin: '',
+  epoch: initLoc(),
+  origin: initLoc(),
   dimensions: '',
-  categoryId: '', // ID категорії (Number)
-  subCategory: '', // Назва підкатегорії (String)
+  categoryId: '',
+  subCategory: '',
   brand: '',
-  color: '',
-  material: '',
+  color: initLoc(),
+  material: initLoc(),
   coverImage: ''
 });
 
 const useAiCover = ref(false);
-
 const galleryItems = ref([]);
 
-// --- ОБЧИСЛЮВАНІ ВЛАСТИВОСТІ (COMPUTED) ---
+// --- ДОПОМІЖНІ ФУНКЦІЇ ДЛЯ ЛОКАЛІЗАЦІЇ ---
 
+// 1. Витягування тексту для таблиці (пріоритет: uk -> рядок -> '')
+const getLocalizedText = (obj) => {
+  if (!obj) return '';
+  if (typeof obj === 'string') return obj;
+  return obj.uk || obj.en || obj.ru || '';
+};
+
+// 2. Безпечне перетворення даних з бекенду/ШІ в об'єкт
+const ensureLocalized = (data) => {
+  if (typeof data === 'object' && data !== null) {
+    return {
+      uk: data.uk || '',
+      en: data.en || '',
+      ru: data.ru || ''
+    };
+  }
+  // Якщо прийшов звичайний рядок або нічого
+  return { uk: data || '', en: '', ru: '' };
+};
+
+// --- ОБЧИСЛЮВАНІ ВЛАСТИВОСТІ (COMPUTED) ---
 const itemsForAi = computed(() => {
   return galleryItems.value.filter(item => item.type === 'local').map(item => item.file);
 });
 
-// Динамічний список підкатегорій на основі обраної категорії
 const filteredSubCategories = computed(() => {
   const selectedId = form.value.categoryId;
   if (!selectedId) return [];
-
-  // Шукаємо категорію (порівняння == для безпеки типів)
   const currentCat = categories.value.find(c => c.categoryId == selectedId);
-
   if (currentCat && currentCat.subCategories && currentCat.subCategories.length > 0) {
     return currentCat.subCategories;
   }
@@ -265,21 +319,14 @@ const filteredSubCategories = computed(() => {
 });
 
 // --- WATCHERS ---
-
-// Авто-висота для опису
-const autoResize = () => {
-  const element = textareaRef.value;
+// Авто-висота для ОПИСУ (тепер працює з $event, бо полів 3 штуки)
+const autoResize = (event) => {
+  const element = event.target;
   if (!element) return;
   element.style.height = 'auto';
   element.style.height = element.scrollHeight + 'px';
 };
 
-watch(() => form.value.description, async () => {
-  await nextTick();
-  autoResize();
-});
-
-// Очищаємо підкатегорію, якщо змінили головну категорію (і це не режим редагування)
 watch(() => form.value.categoryId, (newVal, oldVal) => {
   if (newVal !== oldVal && !isEditing.value) {
     form.value.subCategory = '';
@@ -287,41 +334,35 @@ watch(() => form.value.categoryId, (newVal, oldVal) => {
 });
 
 // --- AI LOGIC ---
-
 const handleAiData = (aiData) => {
   if (!aiData) return;
 
-  // 1. Заповнюємо прості поля
-  form.value.name = aiData.name || '';
-  form.value.description = aiData.description || '';
-  form.value.epoch = aiData.epoch || '';
-  form.value.origin = aiData.origin || '';
-  if (aiData.price) form.value.price = aiData.price;
+  // 1. Заповнюємо мультимовні поля безпечно
+  form.value.name = ensureLocalized(aiData.name);
+  form.value.description = ensureLocalized(aiData.description);
+  form.value.epoch = ensureLocalized(aiData.epoch);
+  form.value.origin = ensureLocalized(aiData.origin);
+  form.value.color = ensureLocalized(aiData.color);
+  form.value.material = ensureLocalized(aiData.material);
 
+  // Стандартні поля
+  if (aiData.price) form.value.price = aiData.price;
   form.value.brand = aiData.brand || '';
-  form.value.color = aiData.color || '';
-  form.value.material = aiData.material || '';
 
   // 2. ЛОГІКА "РОЗУМНОГО" ВИБОРУ КАТЕГОРІЇ
   let foundCategoryId = null;
   const aiSub = aiData.sub_category;
   const aiCatName = aiData.category_guess;
 
-  // ЕТАП 1: Зворотний пошук (Найнадійніший)
-  // Якщо ШІ дав підкатегорію, шукаємо, до якої ГЛАВНОЇ категорії вона належить у нас в базі
   if (aiSub && categories.value.length > 0) {
     for (const cat of categories.value) {
-      // Перевіряємо, чи є в цієї категорії така підкатегорія
       if (cat.subCategories && cat.subCategories.some(sub => sub.name === aiSub)) {
-        console.log(`🤖 AI FIX: Знайдено батьківську категорію "${cat.categoryName}" для підкатегорії "${aiSub}"`);
         foundCategoryId = cat.categoryId;
-        break; // Знайшли - виходимо
+        break;
       }
     }
   }
 
-  // ЕТАП 2: Якщо зворотний пошук не дав результату (або підкатегорії немає),
-  // пробуємо шукати за назвою категорії, яку дав ШІ
   if (!foundCategoryId && aiCatName) {
     const searchName = aiCatName.trim().toLowerCase();
     const foundCat = categories.value.find(c => {
@@ -331,23 +372,26 @@ const handleAiData = (aiData) => {
     if (foundCat) foundCategoryId = foundCat.categoryId;
   }
 
-  // 3. Застосовуємо знайдене
   if (foundCategoryId) {
     form.value.categoryId = foundCategoryId;
-
-    // Ставимо підкатегорію (якщо вона була)
     if (aiSub) {
-      nextTick(() => {
-        form.value.subCategory = aiSub;
-      });
+      nextTick(() => { form.value.subCategory = aiSub; });
     }
   }
+
+  // Оновлюємо висоту textarea після ШІ
+  nextTick(() => {
+    const textareas = document.querySelectorAll('.auto-expand-textarea');
+    textareas.forEach(ta => {
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    });
+  });
 
   alert('✨ Дані заповнено штучним інтелектом!');
 };
 
 // --- ФАЙЛИ ---
-
 const handleFileSelect = (event) => {
   const newFiles = Array.from(event.target.files);
   if (!newFiles.length) return;
@@ -365,14 +409,12 @@ const removeImage = (index) => {
 };
 
 // --- CRUD ОПЕРАЦІЇ ---
-
 const loadData = async () => {
   try {
     const prodRes = await axios.get(`/admin/products`);
     products.value = prodRes.data.reverse();
 
     const catRes = await axios.get(`/api/categories`);
-    console.log("Категорії завантажено:", catRes.data);
     categories.value = catRes.data;
   } catch (error) {
     if (error.response?.status === 403) emit('auth-error');
@@ -389,12 +431,9 @@ const handleSubmit = async () => {
     const formData = new FormData();
     const oldUrls = galleryItems.value.filter(item => item.type === 'server').map(item => item.url);
 
-    // ✅ ВІДПРАВЛЯЄМО РЯДОК (String)
-    // Бекенд сам перевірить: якщо така підкатегорія є - прив'яже, якщо ні - змінить категорію на "Різне".
     const productPayload = {
       ...form.value,
       imageUrls: oldUrls
-      // subCategory тут лежить як String (наприклад "Тарілки"), цього достатньо
     };
 
     formData.append('product', JSON.stringify(productPayload));
@@ -421,38 +460,22 @@ const handleSubmit = async () => {
 };
 
 // --- AI LOGIC (GENERATION) ---
-
 const processImage = async () => {
-  if (galleryItems.value.length === 0) {
-    alert('Спочатку додайте фото товару!');
-    return;
-  }
-
-  // Беремо завжди ПЕРШЕ фото як джерело (найчастіше воно найкраще)
+  if (galleryItems.value.length === 0) { alert('Спочатку додайте фото товару!'); return; }
   const sourceItem = galleryItems.value[0];
-
-  // Дозволяємо працювати тільки з новими (локальними) файлами для безпеки та швидкості
-  if (sourceItem.type !== 'local') {
-    alert("Для генерації обкладинки, будь ласка, додайте нове фото з комп'ютера.");
-    return;
-  }
+  if (sourceItem.type !== 'local') { alert("Для генерації обкладинки додайте нове фото."); return; }
 
   isProcessing.value = true;
   try {
     const formData = new FormData();
     formData.append('image', sourceItem.file);
 
-    // Виклик бекенду
     const res = await axios.post('/admin/ai/generate-cover', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
 
-    // Зберігаємо результат
     form.value.coverImage = res.data.url;
-
-    // Автоматично вмикаємо чекбокс при успішній генерації
     useAiCover.value = true;
-
   } catch (err) {
     console.error(err);
     alert('Помилка генерації: ' + (err.response?.data || err.message));
@@ -461,40 +484,45 @@ const processImage = async () => {
   }
 };
 
-const clearAiImage = () => {
-  form.value.coverImage = '';
-  useAiCover.value = false;
-};
+const clearAiImage = () => { form.value.coverImage = ''; useAiCover.value = false; };
 
 const editProduct = (item) => {
-  // Визначаємо ID категорії безпечно
   const catId = item.category ? item.category.categoryId : '';
 
   form.value = {
     product_id: item.product_id,
-    name: item.name,
-    description: item.description,
+
+    // БЕЗПЕЧНО підтягуємо мови
+    name: ensureLocalized(item.name),
+    description: ensureLocalized(item.description),
+    epoch: ensureLocalized(item.epoch),
+    origin: ensureLocalized(item.origin),
+    color: ensureLocalized(item.color),
+    material: ensureLocalized(item.material),
+
     price: item.price,
     quantity: item.quantity,
     status: item.status,
-    epoch: item.epoch,
-    origin: item.origin,
     dimensions: item.dimensions,
-
     categoryId: catId,
-
-    // Беремо .name, бо форма працює з рядком
     subCategory: item.subCategory ? item.subCategory.name : '',
-
     brand: item.brand || '',
-    color: item.color || '',
-    material: item.material || '',
     coverImage: item.coverImage || ''
   };
+
   useAiCover.value = !!item.coverImage;
   galleryItems.value = (item.imageUrls || []).map(url => ({ type: 'server', url: url }));
   isEditing.value = true;
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Оновлюємо висоту текстарей
+  nextTick(() => {
+    const textareas = document.querySelectorAll('.auto-expand-textarea');
+    textareas.forEach(ta => {
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    });
+  });
 };
 
 const deleteProduct = async (id) => {
@@ -507,9 +535,9 @@ const deleteProduct = async (id) => {
 
 const resetForm = () => {
   form.value = {
-    product_id: null, name: '', description: '', price: 0, quantity: 1,
-    status: 'AVAILABLE', epoch: '', origin: '', dimensions: '',
-    categoryId: '', subCategory: '', brand: '', color: '', material: '', coverImage: ''
+    product_id: null, name: initLoc(), description: initLoc(), price: 0, quantity: 1,
+    status: 'AVAILABLE', epoch: initLoc(), origin: initLoc(), dimensions: '',
+    categoryId: '', subCategory: '', brand: '', color: initLoc(), material: initLoc(), coverImage: ''
   };
   useAiCover.value = false;
   galleryItems.value.forEach(item => { if (item.type === 'local') URL.revokeObjectURL(item.url); });
@@ -519,6 +547,15 @@ const resetForm = () => {
 
 onMounted(loadData);
 </script>
+
+<style scoped>
+/* Додаємо невеличкий відступ для згрупованих інпутів */
+.lang-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+</style>
 
 <style scoped>
 /* --- NEW AI STYLES --- */

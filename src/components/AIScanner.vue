@@ -62,16 +62,29 @@ const analyzeImage = async () => {
       images: base64Images
     });
 
-    // Перевірка на пусту відповідь
-    const rawContent = response.data.output?.[0]?.content?.[0]?.text;
-    if (!rawContent) throw new Error("EMPTY_RESPONSE");
+    // Отримуємо сирий текст
+    const rawContent = response.data.output?.[0]?.content?.[0]?.text || response.data;
 
-    const cleanJson = rawContent.replace(/```json|```/g, '').trim();
+    if (!rawContent || typeof rawContent !== 'string') {
+      throw new Error("EMPTY_RESPONSE");
+    }
+
+    console.log("🤖 Сира відповідь від ШІ:", rawContent); // Залишив для дебагу, щоб ти бачив, що він там пише
+
+    // МАГІЯ ТУТ: Шукаємо суто JSON від першої { до останньої }
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+
+    if (!jsonMatch) {
+      throw new Error("JSON_PARSE_ERROR"); // Якщо взагалі немає фігурних дужок
+    }
+
+    const cleanJson = jsonMatch[0]; // Беремо тільки те, що схоже на об'єкт
 
     let parsedData;
     try {
       parsedData = JSON.parse(cleanJson);
     } catch (e) {
+      console.error("❌ Помилка парсингу. Вирізаний JSON виглядає так:", cleanJson);
       throw new Error("JSON_PARSE_ERROR");
     }
 
@@ -81,11 +94,8 @@ const analyzeImage = async () => {
     console.error("AI Error:", err);
 
     // --- ГОЛОВНА ЛОГІКА РОЗШИФРОВКИ ПОМИЛОК ---
-
     if (axios.isAxiosError(err) && err.response) {
-      // Помилки, які прийшли від сервера (OpenAI або ваш бекенд)
       const status = err.response.status;
-
       switch (status) {
         case 429:
           humanError.value = "⏳ Забагато запитів. Ліміт AI вичерпано. Будь ласка, зачекайте хвилину і спробуйте знову.";
@@ -106,18 +116,15 @@ const analyzeImage = async () => {
           humanError.value = `❌ Невідома помилка сервера (Код: ${status}).`;
       }
     } else if (err.code === "ERR_NETWORK") {
-      // Немає інтернету
       humanError.value = "📡 Немає зв'язку з інтернетом. Перевірте з'єднання.";
     } else if (err.message === "JSON_PARSE_ERROR") {
       humanError.value = "🥴 AI відповів щось незрозуміле. Спробуйте ще раз (іноді він помиляється у форматі).";
     } else if (err.message === "EMPTY_RESPONSE") {
       humanError.value = "📭 AI нічого не відповів. Можливо, фото поганої якості?";
     } else {
-      // Інші помилки
       humanError.value = "Щось пішло не так: " + err.message;
     }
 
-    // Все одно передаємо нагору, якщо батьківському компоненту це треба
     emit('ai-error', err);
   } finally {
     loading.value = false;
