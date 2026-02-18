@@ -60,7 +60,7 @@ const handleLogin = async () => {
 
   try {
     // Замінив URL на твій реальний бекенд
-    const response = await axios.post('/api/auth/login', {
+    const response = await axios.post('/auth/login', {
       username: username.value,
       password: password.value
     });
